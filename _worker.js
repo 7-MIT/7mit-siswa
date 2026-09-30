@@ -1,5 +1,5 @@
 // telkom/email server runtime V53 — Cloudflare Pages advanced mode.
-// Required secret: HOSTINGER_MAIL_API_KEY
+// Email feature disabled (V143); only calendar holidays + static assets remain.
 // Frontend JavaScript remains inline in index.html; this file executes server-side only.
 
 const SUPABASE_URL="https://lajzrempjyoqkubkumhb.supabase.co";
@@ -180,88 +180,9 @@ async function authorizeRead(env,profile,folder,uid){
   return {...owned,found};
 }
 
-async function handleMail(request,env){
-  if(request.method!=="POST")return json({ok:false,message:"Metode tidak didukung."},405);
-  let body={};
-  try{body=await request.json()}catch{}
-  const action=clean(body.action,40);
-  const session=clean(request.headers.get("x-7mit-session"),100);
-  const profile=await supabaseProfile(session);
-
-  if(action==="status"){
-    if(!env.HOSTINGER_MAIL_API_KEY){
-      return json({ok:true,configured:false,message:"Secret HOSTINGER_MAIL_API_KEY belum dipasang di Cloudflare."});
-    }
-    try{
-      const box=await mailbox(env);
-      return json({ok:true,configured:true,mailbox_address:box.address,mailbox_resource_id:box.resourceId});
-    }catch(error){
-      return json({ok:true,configured:false,message:error.message||"Hostinger Mail API belum siap."});
-    }
-  }
-
-  if(action==="send"){
-    const to=normalize(body.to);
-    if(!emailOk(to))throw Object.assign(new Error("Alamat Email eksternal tidak valid."),{status:400});
-    const subject=clean(body.subject,300);
-    const text=clean(body.body,12000);
-    if(!subject&&!text)throw Object.assign(new Error("Subjek dan isi Email tidak boleh sama-sama kosong."),{status:400});
-
-    const box=await mailbox(env);
-    const planUsage=await consumeEmailQuota(session);
-    const payload={
-      to:[to],
-      displayName:clean(profile?.me?.display_name||"7 MIT",200),
-      subject:subject||"(Tanpa subjek)",
-      text
-    };
-
-    const ref=body.reply_hostinger;
-    if(ref&&Number(ref.uid)>0&&clean(ref.folder,100)){
-      payload.inReplyTo={uid:Number(ref.uid),folder:clean(ref.folder,100)};
-    }
-
-    const sent=await hostingerFetch(env,`/api/v1/mailboxes/${encodeURIComponent(box.resourceId)}/send`,{
-      method:"POST",
-      body:JSON.stringify(payload)
-    });
-
-    if(sent.status!==204){
-      throw Object.assign(new Error(`Hostinger mengembalikan status ${sent.status} saat mengirim.`),{status:502});
-    }
-    return json({ok:true,transport:"hostinger_mail_api",recipient:to,mailbox_address:box.address,plan_usage:planUsage});
-  }
-
-  if(action==="list"||action==="sync"){
-    const mode=["inbox","sent","all"].includes(clean(body.folder,20))?clean(body.folder,20):"inbox";
-    const owned=await ownedExternal(env,profile,mode);
-    return json({
-      ok:true,
-      configured:true,
-      messages:owned.rows,
-      imported:owned.inboxMine.length,
-      mailbox_address:owned.box.address
-    });
-  }
-
-  if(action==="read"){
-    const folder=clean(body.folder,100);
-    const uid=Number(body.uid)||0;
-    if(!uid||!["INBOX","INBOX.Sent"].includes(folder)){
-      throw Object.assign(new Error("Referensi Email Hostinger tidak valid."),{status:400});
-    }
-    const owned=await authorizeRead(env,profile,folder,uid);
-    const r=await hostingerFetch(env,`/api/v1/mailboxes/${encodeURIComponent(owned.box.resourceId)}/folders/${encodeURIComponent(folder)}/messages/${uid}/text`);
-    return json({
-      ok:true,
-      body_text:clean(r.data?.data?.text,12000),
-      body_html:clean(r.data?.data?.html,30000)
-    });
-  }
-
-  return json({ok:false,message:"Aksi Hostinger Mail API tidak dikenal."},400);
+async function handleMail(){
+  return json({ok:false,disabled:true,message:"Fitur Email sudah dinonaktifkan."},410);
 }
-
 
 async function handleCalendarHolidays(request){
   if(request.method!=="GET"&&request.method!=="HEAD"){
