@@ -23085,7 +23085,8 @@ document.addEventListener("click",e=>{const t=e.target.closest?.("[data-play-ans
     try{if(typeof refreshLucideIcons==="function")refreshLucideIcons()}catch(error){}
   }
 
-  async function fetchCentralRow(){
+  let centralRowCache=null,centralRowCacheAt=0;
+  async function k7CentralCall(action){
     const token=await window.K7Session.getToken();
     const response=await fetch(`${SUPABASE_URL}/functions/v1/kelas7mit-state-api`,{
       method:"POST",
@@ -23095,14 +23096,31 @@ document.addEventListener("click",e=>{const t=e.target.closest?.("[data-play-ans
         "Content-Type":"application/json",
         "x-7mit-session":token
       },
-      body:JSON.stringify({action:"read"}),
+      body:JSON.stringify({action}),
       cache:"no-store"
     });
     const text=await response.text();
     let payload={};
     try{payload=text?JSON.parse(text):{}}catch(error){}
     if(!response.ok||payload?.ok===false)throw new Error(payload?.message||`HTTP ${response.status}`);
-    return payload?.row||null;
+    return payload;
+  }
+  // Probe ringan: hanya revisi terbaru (tanpa mengunduh seluruh data kelas).
+  async function fetchCentralRevision(){return k7CentralCall("revision")}
+  async function fetchCentralRow(){
+    // Jika revisi di server sama dengan data yang sudah kita punya, jangan unduh ulang (maks. 30 detik).
+    if(centralRowCache&&Date.now()-centralRowCacheAt<30000){
+      try{
+        const probe=await fetchCentralRevision();
+        if(Number(probe?.revision)===Number(centralRowCache.revision)&&String(probe?.updated_at||"")===String(centralRowCache.updated_at||"")){
+          return window.structuredClone(centralRowCache);
+        }
+      }catch(error){}
+    }
+    const payload=await k7CentralCall("read");
+    const row=payload?.row||null;
+    if(row){centralRowCache=window.structuredClone(row);centralRowCacheAt=Date.now()}
+    return row;
   }
 
   async function reliableLoad({showToast=false}={}){
