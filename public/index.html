@@ -28486,6 +28486,14 @@ html.k7-lite .cm3d-pop{animation:none}
     if(n)cs.multiplyScalar(1/n);
     const d=(S.board||S.teacher||C).clone().sub(cs);
     S.front=Math.abs(d.x)>Math.abs(d.z)?new T.Vector3(Math.sign(d.x),0,0):new T.Vector3(0,0,Math.sign(d.z)||-1);
+    // penomoran tampilan = denah 2D: Banjar 1-4 (kiri->kanan), 2 kursi/meja, baris dari depan ke belakang -> 1,2 / 3,4 / 5,6 dst.
+    if(Object.keys(S.seatPos).length===24){
+      const right=new T.Vector3(-S.front.z,0,S.front.x);
+      const arr=Object.values(S.seatPos).map(p=>({p,r:right.dot(p),d:S.front.dot(p)})).sort((a,b)=>a.r-b.r);
+      const np={};
+      for(let c=0;c<8;c++){arr.slice(c*3,c*3+3).sort((a,b)=>b.d-a.d).forEach((e,r)=>{np[(c>>1)*6+r*2+(c&1)+1]=e.p})}
+      S.seatPos=np;
+    }
     // label + cincin kursi
     for(const k in S.seatPos){
       const sp=new T.Sprite(new T.SpriteMaterial({transparent:true,depthWrite:false,sizeAttenuation:true}));
