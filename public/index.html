@@ -12821,6 +12821,7 @@ html[data-theme-resolved="dark"] .quiz-choice-note-v141{
     <nav class="nav" id="nav">
       <button class="active" data-page="dashboard"><span class="nav-icon"><i data-lucide="layout-dashboard"></i></span>Ringkasan</button>
       <button data-page="finance"><span class="nav-icon"><i data-lucide="wallet-cards"></i></span>Keuangan Kelas</button>
+      <button data-page="classMap"><span class="nav-icon"><i data-lucide="map"></i></span>Denah Kelas</button>
             <button data-page="learningSchool"><span class="nav-icon"><i data-lucide="graduation-cap"></i></span>Belajar</button>
       <button data-page="files"><span class="nav-icon"><i data-lucide="folder-open"></i></span>Files</button>
       <button data-page="notes"><span class="nav-icon"><i data-lucide="notebook-pen"></i></span>Catatan</button>
@@ -12835,7 +12836,6 @@ html[data-theme-resolved="dark"] .quiz-choice-note-v141{
       <button data-page="social"><span class="nav-icon"><i data-lucide="orbit"></i></span>Social</button>
       <button data-page="achievements"><span class="nav-icon"><i data-lucide="trophy"></i></span>Tracking Prestasi</button>
           <button data-page="students"><span class="nav-icon"><i data-lucide="users-round"></i></span>Data & Catatan Siswa</button>
-      <button data-page="classMap"><span class="nav-icon"><i data-lucide="map"></i></span>Denah Kelas</button>
       <button data-page="documents"><span class="nav-icon"><i data-lucide="files"></i></span>Dokumen & Voting</button>
       <button data-page="officers"><span class="nav-icon"><i data-lucide="network"></i></span>Struktur Organisasi</button>
           <button data-page="settings"><span class="nav-icon"><i data-lucide="settings"></i></span>Pengaturan</button><button type="button" data-feedback-open><span class="nav-icon"><i data-lucide="message-square-more"></i></span>Feedback</button>
@@ -28300,7 +28300,7 @@ html.k7-lite .cm3d-pop{animation:none}
 /* V143 · Denah Kelas 2D/3D — model GLB, navigasi kamera, cari kursi. three.js dimuat lazy saat tab 3D dibuka. */
 (()=>{
   'use strict';
-  const GLB='/denah-kelas.glb',VENDOR='/vendor/',LIBS=['three.min.js','BufferGeometryUtils.js','GLTFLoader.js','OrbitControls.js'];
+  const GLB='/denah-kelas.glb?v=2',VENDOR='/vendor/',LIBS=['three.min.js','BufferGeometryUtils.js','GLTFLoader.js','OrbitControls.js'];
   const $=(s,r=document)=>r.querySelector(s);
   const card=$('#classMap .classmap-stage-card');
   if(!card||card.dataset.cm3d)return;
@@ -28448,41 +28448,43 @@ html.k7-lite .cm3d-pop{animation:none}
       let m=/^kursi_(\d+)$/.exec(o.name||'');
       if(m){const b=new T.Box3().setFromObject(o),c=b.getCenter(new T.Vector3());S.seatPos[+m[1]]=new T.Vector3(c.x,b.min.y,c.z);seatNode[+m[1]]=b}
       if(o.name==='meja_guru'){S.teacher=new T.Box3().setFromObject(o).getCenter(new T.Vector3())}
+      if(o.name==='papan_tulis_kaca'){S.board=new T.Box3().setFromObject(o).getCenter(new T.Vector3())}
     });
-    const SHELL=/^(dinding_|jendela$|kaca$|ambang_|palang_tengah$|tiang_jendela$|pintu_masuk$|gagang_pintu$|pilar_kuning$)/;
-    const buckets=new Map(),shellMeshes=[];
+    const NOSHELL=/^(meja|kursi)_|^(lantai|nat_x|nat_z)$/;
+    const buckets=new Map(),shellB=new Map();
+    const BC=box.getCenter(new T.Vector3()),Bs=box.getSize(new T.Vector3()),WALLD=0.45;
     root.traverse(o=>{
       if(!o.isMesh)return;
-      let shell=false;for(let p=o;p;p=p.parent){if(SHELL.test(p.name||'')){shell=true;break}}
+      let skip=false;for(let p=o;p;p=p.parent){if(NOSHELL.test(p.name||'')){skip=true;break}}
       let g=o.geometry.clone();g.applyMatrix4(o.matrixWorld);
       Object.keys(g.attributes).forEach(k=>{if(k!=='position'&&k!=='normal')g.deleteAttribute(k)});
       if(!g.attributes.normal)g.computeVertexNormals();
       if(g.index)g=g.toNonIndexed();
-      if(shell){const m=new T.Mesh(g,o.material);m.matrixAutoUpdate=false;shellMeshes.push(m);return}
+      let wall=null;
+      if(!skip){
+        g.computeBoundingBox();const c=g.boundingBox.getCenter(new T.Vector3()).sub(BC);
+        const dx=Bs.x/2-Math.abs(c.x),dz=Bs.z/2-Math.abs(c.z);
+        if(Math.min(dx,dz)<WALLD&&g.boundingBox.max.y>0.3){wall=dx<dz?{a:'x',s:Math.sign(c.x)}:{a:'z',s:Math.sign(c.z)}}
+      }
+      if(wall){
+        const key=wall.a+wall.s+o.material.uuid;
+        if(!shellB.has(key))shellB.set(key,{mat:o.material,geos:[],axis:wall.a,sign:wall.s});
+        shellB.get(key).geos.push(g);return;
+      }
       const key=o.material.uuid;
       if(!buckets.has(key))buckets.set(key,{mat:o.material,geos:[]});
       buckets.get(key).geos.push(g);
     });
     const group=new T.Group();
-    buckets.forEach(b=>{const mesh=new T.Mesh(U.mergeBufferGeometries(b.geos,false),b.mat);mesh.matrixAutoUpdate=false;mesh.userData.floorOrSolid=true;group.add(mesh)});
+    buckets.forEach(b=>{const mesh=new T.Mesh(U.mergeBufferGeometries(b.geos,false),b.mat);mesh.matrixAutoUpdate=false;group.add(mesh)});
     const C=box.getCenter(new T.Vector3()),sz=box.getSize(new T.Vector3());
     S.bounds={box,C,sz,hx:sz.x/2,hz:sz.z/2};
-    shellMeshes.forEach(m=>{
-      m.geometry.computeBoundingBox();
-      const c=m.geometry.boundingBox.getCenter(new T.Vector3()).sub(C);
-      const nx=c.x/S.bounds.hx,nz=c.z/S.bounds.hz;
-      if(Math.max(Math.abs(nx),Math.abs(nz))>0.6){
-        m.userData.axis=Math.abs(nx)>Math.abs(nz)?'x':'z';
-        m.userData.sign=Math.sign(m.userData.axis==='x'?nx:nz);
-        S.shell.push(m);
-      }
-      group.add(m);
-    });
+    shellB.forEach(b=>{const m=new T.Mesh(U.mergeBufferGeometries(b.geos,false),b.mat);m.matrixAutoUpdate=false;m.userData.axis=b.axis;m.userData.sign=b.sign;S.shell.push(m);group.add(m)});
     S.scene.add(group);S.root=group;
     // arah depan: dari pusat kursi ke meja guru
     const cs=new T.Vector3();let n=0;for(const k in S.seatPos){cs.add(S.seatPos[k]);n++}
     if(n)cs.multiplyScalar(1/n);
-    const d=(S.teacher||C).clone().sub(cs);
+    const d=(S.board||S.teacher||C).clone().sub(cs);
     S.front=Math.abs(d.x)>Math.abs(d.z)?new T.Vector3(Math.sign(d.x),0,0):new T.Vector3(0,0,Math.sign(d.z)||-1);
     // label + cincin kursi
     for(const k in S.seatPos){
@@ -28547,7 +28549,7 @@ html.k7-lite .cm3d-pop{animation:none}
     const side=V(-f.z,0,f.x);
     const tanH=Math.tan(S.camera.fov*Math.PI/360),asp=S.camera.aspect||1.5;
     const along=Math.abs(f.x)?B.sz.z:B.sz.x,depth=Math.abs(f.x)?B.sz.x:B.sz.z; // lebar layar x kedalaman kelas
-    if(kind==='iso'){const dir=V(B.sz.x*0.62,md*0.78,B.sz.z*0.9).normalize(),dist=Math.max(md*1.3,Math.hypot(B.sz.x,B.sz.z)*0.62/(tanH*Math.min(1,asp*0.85)));return{p:V(C.x,floor+0.2,C.z).addScaledVector(dir,dist),t:V(C.x,floor+0.2,C.z)}}
+    if(kind==='iso'){const dir=V(B.sz.x*0.62,md*0.78,B.sz.z*0.9).normalize(),dist=Math.max(md*1.05,Math.hypot(B.sz.x,B.sz.z)*0.5/(tanH*Math.min(1,asp*0.85)));return{p:V(C.x,floor+0.2,C.z).addScaledVector(dir,dist),t:V(C.x,floor+0.2,C.z)}}
     if(kind==='top'){const h=Math.max(depth*0.5/tanH,along*0.5/(tanH*asp))*1.18+1;return{p:V(C.x,floor+h,C.z).addScaledVector(f,-0.001),t:V(C.x,floor,C.z)}}
     if(kind==='back'){const p=C.clone().addScaledVector(f,-(Math.abs(f.x)?B.hx:B.hz)*0.92);p.y=floor+1.9;return{p,t:boardT.clone().setY(floor+1.0)}}
     if(kind==='guru'){const t=(S.teacher||C).clone();t.y=floor+0.8;const p=t.clone().addScaledVector(f,-2.6).addScaledVector(side,-2.4);p.y=floor+2.4;return{p,t}}
