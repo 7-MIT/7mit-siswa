@@ -14882,7 +14882,23 @@ window.supabase={createClient:(u,k)=>new S(u,k)};
       badge:"Keuangan"
     }
   ];
-  const CLASS_ROSTER = ["Akhtara Praharsa Budhitama","Alamgir Daniswara Sadewa","Aliando Pratama","Arzanka Araya Ramadhan","Ahmad Tahir Abid","Aretha Aqeela Pasha Hasna","Adam Mikail Hizkia Zilfa","Azzahra Fernanda Sudjarwo","Anes Ayman Ramadhan","Alfiyah Hanifah Ash Shidiqie","Aulia Haritza Rizkiyah","Andini Eka Putri","Alesha Yasmin","Aisyah Setya Anindita","Arumi Kinasih Az-Zahra","Amira Nur Khairiyah","Amelia Tri Astuti","Ghaitsa Aqila Zahirah","Ghalisa Zalwa Rusdianto","Harsya Aryasatya Ibrahim","Jihan Nur Hidayah","Kaysahla Saphira Putri","Muhamad Yusuf Fatur Rahman","Mikhail Raffandra Alfadli","Muhammad Faris Al Ghifari","Muhammad Hakam Darmawan","Raisya Nabila","Salim Fathan Alfarizqi","Tristan Hakim Lionelka Susanto"];
+  const CLASS_ROSTER = ["Adam Mikail Hizkia Zilfa","Adelio Baradeva Raditya Putra","Ahmad Tahir Abid","Akhtara Praharsa Budhitama","Alamgir Daniswara Sadewa","Alaric Hakim Herdiansyah","Arsa Alifiandra Rahmanto","Bona Gabe Tampubolon","Daethara Al Rashad","Dawud Hanif Darwin","Elferiz Alaqsha Aslam","Habibie Aginara El Hadziq","Harsya Aryasatya Ibrahim","Izyan Waiz Utomo","Kafyal Rusydi Fasya","Mikhail Raffandra Alfadli","Muhammad Ali Ibrahim Alfatih","Muhammad Baihaqi Al Ghazali","Narendra Pramudya Sofkhal","Rafa Arkan Maulana","Rafandri Akhmad Ridho Narotama","Salim Fathan Alfarizqi","Salman Arya Fuadi","Ziggy Saverio Aninditya"];
+  const K7_NAME_FIXES={"habibie agnara el hadziq":"habibie aginara el hadziq","habibie angara el hadziq":"habibie aginara el hadziq","kafyal rusydi fazya":"kafyal rusydi fasya","mikhail rafandra alfadli":"mikhail raffandra alfadli","muhammad baihaqi al ghozali":"muhammad baihaqi al ghazali","ziggy saverio anindityo":"ziggy saverio aninditya","muhammad ali ibrahim alfath":"muhammad ali ibrahim alfatih"};
+  // Daftar siswa resmi = 24 nama CLASS_ROSTER. Nama lain (cache lama) dibuang, ejaan lama dipetakan.
+  function k7RosterFilter(list){
+    const norm=v=>String(v||"").trim().toLocaleLowerCase("id-ID").replace(/\s+/g," ");
+    const official=new Map(CLASS_ROSTER.map(n=>[norm(n),n]));
+    const seen=new Set(),out=[];
+    for(const st of Array.isArray(list)?list:[]){
+      let k=norm(st&&st.name);
+      if(K7_NAME_FIXES[k])k=K7_NAME_FIXES[k];
+      if(!official.has(k)||seen.has(k))continue;
+      seen.add(k);out.push({...st,name:official.get(k)});
+    }
+    return out;
+  }
+  try{window.k7RosterFilter=k7RosterFilter}catch(e){}
+
   const DEFAULT_LMS_COURSES = [{"id":"course-bi","code":"BI","name":"Bahasa Indonesia","teacher":"Guru Mata Pelajaran","room":"7 MIT","active":true},{"id":"course-math","code":"MATH","name":"Mathematics","teacher":"Guru Mata Pelajaran","room":"7 MIT","active":true},{"id":"course-music","code":"MUSIC","name":"Music","teacher":"Guru Mata Pelajaran","room":"7 MIT","active":true},{"id":"course-steam","code":"STEAM","name":"STEAM","teacher":"Guru Mata Pelajaran","room":"7 MIT","active":true},{"id":"course-pancasila","code":"PANC","name":"Pancasila","teacher":"Guru Mata Pelajaran","room":"7 MIT","active":true},{"id":"course-religion","code":"REL","name":"Religion","teacher":"Guru Mata Pelajaran","room":"7 MIT","active":true},{"id":"course-science","code":"SCI","name":"Science","teacher":"Guru Mata Pelajaran","room":"7 MIT","active":true},{"id":"course-english","code":"ENG","name":"English","teacher":"Guru Mata Pelajaran","room":"7 MIT","active":true},{"id":"course-character","code":"CHAR","name":"Character","teacher":"Guru Mata Pelajaran","room":"7 MIT","active":true},{"id":"course-pe","code":"PE","name":"PE","teacher":"Guru Mata Pelajaran","room":"7 MIT","active":true},{"id":"course-club","code":"CLUB","name":"Club","teacher":"Guru Mata Pelajaran","room":"7 MIT","active":true},{"id":"course-global","code":"GP","name":"Global Perspective","teacher":"Guru Mata Pelajaran","room":"7 MIT","active":true},{"id":"course-writing","code":"AW","name":"Academic Writing","teacher":"Guru Mata Pelajaran","room":"7 MIT","active":true},{"id":"course-foreign","code":"FL","name":"Foreign Languages","teacher":"Guru Mata Pelajaran","room":"7 MIT","active":true}];
     const DEFAULT_SIS_SCHEDULE = [{"id":"schedule-senin-1","day":"Senin","period":1,"courseId":"course-bi","room":"7 MIT","note":""},{"id":"schedule-senin-2","day":"Senin","period":2,"courseId":"course-math","room":"7 MIT","note":""},{"id":"schedule-senin-3","day":"Senin","period":3,"courseId":"course-music","room":"7 MIT","note":""},{"id":"schedule-senin-4","day":"Senin","period":4,"courseId":"course-steam","room":"7 MIT","note":""},{"id":"schedule-selasa-1","day":"Selasa","period":1,"courseId":"course-bi","room":"7 MIT","note":""},{"id":"schedule-selasa-2","day":"Selasa","period":2,"courseId":"course-pancasila","room":"7 MIT","note":""},{"id":"schedule-selasa-3","day":"Selasa","period":3,"courseId":"course-religion","room":"7 MIT","note":""},{"id":"schedule-selasa-4","day":"Selasa","period":4,"courseId":"course-science","room":"7 MIT","note":""},{"id":"schedule-rabu-1","day":"Rabu","period":1,"courseId":"course-religion","room":"7 MIT","note":""},{"id":"schedule-rabu-2","day":"Rabu","period":2,"courseId":"course-math","room":"7 MIT","note":""},{"id":"schedule-rabu-3","day":"Rabu","period":3,"courseId":"course-english","room":"7 MIT","note":""},{"id":"schedule-rabu-4","day":"Rabu","period":4,"courseId":"course-character","room":"7 MIT","note":""},{"id":"schedule-rabu-5","day":"Rabu","period":5,"courseId":"course-science","room":"7 MIT","note":""},{"id":"schedule-kamis-1","day":"Kamis","period":1,"courseId":"course-pe","room":"7 MIT","note":""},{"id":"schedule-kamis-2","day":"Kamis","period":2,"courseId":"course-math","room":"7 MIT","note":""},{"id":"schedule-kamis-3","day":"Kamis","period":3,"courseId":"course-science","room":"7 MIT","note":""},{"id":"schedule-kamis-4","day":"Kamis","period":4,"courseId":"course-club","room":"7 MIT","note":""},{"id":"schedule-jumat-1","day":"Jumat","period":1,"courseId":"course-global","room":"7 MIT","note":""},{"id":"schedule-jumat-2","day":"Jumat","period":2,"courseId":"course-english","room":"7 MIT","note":""},{"id":"schedule-jumat-3","day":"Jumat","period":3,"courseId":"course-writing","room":"7 MIT","note":""},{"id":"schedule-jumat-4","day":"Jumat","period":4,"courseId":"course-foreign","room":"7 MIT","note":""}];
     const defaultState = {
@@ -14980,7 +14996,7 @@ window.supabase={createClient:(u,k)=>new S(u,k)};
       result.meta.rosterSeededVersion=2;
     }
     delete result.schedule;
-    result.students=result.students.map((student,index)=>({
+    result.students=k7RosterFilter(result.students).map((student,index)=>({
       id:student.id||`student-custom-${index+1}`,
       name:String(student.name||"Tanpa Nama"),
       notes:Array.isArray(student.notes)?student.notes:[]
@@ -15165,7 +15181,7 @@ window.supabase={createClient:(u,k)=>new S(u,k)};
       }
     });
 
-    return [...byName.values()].map(normalizeStudentRow).sort(recoverySortName);
+    return k7RosterFilter([...byName.values()].map(normalizeStudentRow)).sort(recoverySortName);
   }
 
   function mergeRecoveredState(remoteRaw,localRaw){
@@ -23061,7 +23077,7 @@ document.addEventListener("click",e=>{const t=e.target.closest?.("[data-play-ans
       const key=String(name).toLocaleLowerCase("id-ID");
       if(!map.has(key))map.set(key,{id:`student-${String(index+1).padStart(2,"0")}`,name,notes:[]});
     });
-    return [...map.values()].sort((a,b)=>String(a.name).localeCompare(String(b.name),"id-ID",{sensitivity:"base"}));
+    return (window.k7RosterFilter?window.k7RosterFilter([...map.values()]):[...map.values()]).sort((a,b)=>String(a.name).localeCompare(String(b.name),"id-ID",{sensitivity:"base"}));
   }
 
   function normalizeIncoming(raw,backup){
