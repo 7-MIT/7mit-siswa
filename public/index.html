@@ -12823,6 +12823,7 @@ html[data-theme-resolved="dark"] .quiz-choice-note-v141{
       <button data-page="finance"><span class="nav-icon"><i data-lucide="wallet-cards"></i></span>Keuangan Kelas</button>
       <button data-page="classMap"><span class="nav-icon"><i data-lucide="map"></i></span>Denah Kelas</button>
             <button data-page="learningSchool"><span class="nav-icon"><i data-lucide="graduation-cap"></i></span>Belajar</button>
+      <button data-page="studyTools"><span class="nav-icon"><i data-lucide="sparkles"></i></span>Alat Belajar</button>
       <button data-page="files"><span class="nav-icon"><i data-lucide="folder-open"></i></span>Files</button>
       <button data-page="notes"><span class="nav-icon"><i data-lucide="notebook-pen"></i></span>Catatan</button>
       
@@ -13551,6 +13552,10 @@ html[data-theme-resolved="dark"] .quiz-choice-note-v141{
   </div>
 </section>
 
+
+    
+    
+    <section class="page" id="studyTools"></section>
 
     <section class="page" id="documents">
       <header class="topbar"><div class="title"><h2>Dokumen & Voting</h2><p>Lihat dokumen kelas dan informasi voting.</p></div>
@@ -28759,5 +28764,353 @@ html.k7-lite .cm3d-pop{animation:none}
 .dues-amount-hint.error{color:#b42318;font-weight:800}
 .dues-installment.done .dues-amount-quick{display:none}
 </style>
+<style id="k7-cmdk-v146">
+/* ===== V146 · Pencarian cepat (Ctrl/⌘ + K) + poles ===== */
+.k7-cmdk-btn{display:flex;align-items:center;gap:9px;width:100%;margin:0 0 10px;min-height:40px;padding:0 12px;border-radius:14px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.1);color:inherit;font:inherit;font-size:12px;font-weight:800;cursor:pointer;text-align:left;transition:background .15s,transform .12s}
+.k7-cmdk-btn:hover{background:rgba(255,255,255,.18)}
+.k7-cmdk-btn svg{width:15px;height:15px;opacity:.85}
+.k7-cmdk-btn kbd{margin-left:auto;font:inherit;font-size:10px;opacity:.75;border:1px solid rgba(255,255,255,.3);border-radius:6px;padding:1px 6px}
+.k7-cmdk{position:fixed;inset:0;z-index:2147483100;display:none;align-items:flex-start;justify-content:center;padding:10vh 14px 14px;background:rgba(15,23,42,.45)}
+.k7-cmdk.open{display:flex;animation:k7CmdIn .15s ease both}
+@keyframes k7CmdIn{from{opacity:0}to{opacity:1}}
+.k7-cmdk-box{width:min(560px,100%);max-height:72vh;display:flex;flex-direction:column;border-radius:20px;background:var(--surface,#fff);color:var(--ink,#172033);border:1px solid var(--line,#e3e8f0);box-shadow:0 30px 80px rgba(15,23,42,.35);overflow:hidden}
+.k7-cmdk-in{display:flex;align-items:center;gap:10px;padding:0 16px;border-bottom:1px solid var(--line,#e3e8f0)}
+.k7-cmdk-in input{flex:1;min-height:54px;border:0;outline:0;background:transparent;color:inherit;font:inherit;font-size:15px;transform:none!important}
+.k7-cmdk-in svg{width:18px;height:18px;color:var(--muted,#667085)}
+.k7-cmdk-list{overflow:auto;padding:8px}
+.k7-cmdk-item{display:flex;align-items:center;gap:11px;width:100%;min-height:44px;padding:0 12px;border:0;border-radius:12px;background:transparent;color:inherit;font:inherit;font-size:13px;font-weight:750;cursor:pointer;text-align:left}
+.k7-cmdk-item.on,.k7-cmdk-item:hover{background:color-mix(in srgb,var(--blue,#2563eb) 12%,transparent)}
+.k7-cmdk-item svg{width:16px;height:16px;color:var(--muted,#667085);flex:0 0 auto}
+.k7-cmdk-item small{margin-left:auto;color:var(--muted,#667085);font-size:10px;font-weight:700}
+.k7-cmdk-empty{padding:26px;text-align:center;color:var(--muted,#667085);font-size:12px}
+.k7-cmdk-foot{display:flex;gap:14px;padding:9px 16px;border-top:1px solid var(--line,#e3e8f0);color:var(--muted,#667085);font-size:10px}
+/* poles ringan */
+@media(max-width:640px){
+  .page>.topbar .title h2{font-size:clamp(20px,6vw,26px)!important;line-height:1.15}
+  .student-access-banner{padding:11px 13px!important}
+  .student-access-banner p{display:none}
+}
+
+</style>
+<style id="k7-study-v146">
+/* ===== V146 · ALAT BELAJAR (siswa) ===== */
+.st-tabs{display:flex;gap:6px;flex-wrap:wrap;padding:5px;border-radius:16px;border:1px solid var(--line,#e3e8f0);background:var(--surface,#fff);margin-bottom:14px;width:fit-content;max-width:100%}
+.st-tab{border:0;background:transparent;color:var(--muted,#667085);font:inherit;font-size:12px;font-weight:850;min-height:38px;padding:0 15px;border-radius:12px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;transition:background .18s,color .18s,transform .12s}
+.st-tab svg{width:16px;height:16px}
+.st-tab:hover{color:var(--ink,#172033)}
+.st-tab.on{background:var(--blue,#2563eb);color:#fff;box-shadow:0 8px 20px rgba(37,99,235,.28)}
+.st-panel{display:none}.st-panel.on{display:block;animation:k7Rise .3s var(--k7-ease,ease) both}
+.st-card{border:1px solid var(--line,#e3e8f0);border-radius:20px;background:var(--surface,#fff);padding:18px;box-shadow:0 14px 34px rgba(15,23,42,.06)}
+.st-grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:14px}
+@media(max-width:860px){.st-grid{grid-template-columns:1fr}}
+.st-h{margin:0 0 4px;font-size:15px}.st-sub{margin:0 0 12px;color:var(--muted,#667085);font-size:11px;line-height:1.5}
+.st-btn{min-height:40px;padding:0 16px;border-radius:12px;border:1px solid var(--line,#e3e8f0);background:var(--surface-2,#f8fafc);color:var(--ink,#172033);font:inherit;font-size:12px;font-weight:850;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:7px}
+.st-btn.pri{background:var(--blue,#2563eb);border-color:transparent;color:#fff;box-shadow:0 8px 20px rgba(37,99,235,.25)}
+.st-btn.ghost{background:transparent}
+.st-btn:disabled{opacity:.5;cursor:not-allowed}
+.st-input{width:100%;min-height:40px;border:1px solid var(--line,#e3e8f0);border-radius:12px;background:var(--surface,#fff);color:var(--ink,#172033);font:inherit;font-size:13px;padding:0 12px}
+.st-input:focus{outline:2px solid var(--blue,#2563eb);outline-offset:1px}
+/* timer */
+.st-timer{display:grid;justify-items:center;gap:14px}
+.st-modes{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+.st-mode{border:1px solid var(--line,#e3e8f0);background:var(--surface-2,#f8fafc);color:var(--muted,#667085);font:inherit;font-size:11px;font-weight:850;min-height:32px;padding:0 13px;border-radius:999px;cursor:pointer}
+.st-mode.on{background:color-mix(in srgb,var(--blue,#2563eb) 14%,transparent);border-color:var(--blue,#2563eb);color:var(--blue,#2563eb)}
+.st-ring{position:relative;width:min(260px,70vw);aspect-ratio:1}
+.st-ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.st-ring circle{fill:none;stroke-width:9;stroke-linecap:round}
+.st-ring .bg{stroke:rgba(148,163,184,.25)}
+.st-ring .fg{stroke:var(--blue,#2563eb);transition:stroke-dashoffset .3s linear}
+.st-ring[data-mode="short"] .fg,.st-ring[data-mode="long"] .fg{stroke:#16a34a}
+.st-time{position:absolute;inset:0;display:grid;place-content:center;text-align:center}
+.st-time b{font-size:clamp(38px,9vw,54px);font-variant-numeric:tabular-nums;letter-spacing:-.02em;line-height:1}
+.st-time small{margin-top:6px;color:var(--muted,#667085);font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em}
+.st-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.st-settings{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%}
+.st-settings label{display:grid;gap:4px;font-size:10px;font-weight:800;color:var(--muted,#667085)}
+.st-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:6px}
+.st-stat{padding:12px;border-radius:14px;background:var(--surface-2,#f8fafc);border:1px solid var(--line,#e3e8f0);text-align:center}
+.st-stat b{display:block;font-size:20px}.st-stat small{color:var(--muted,#667085);font-size:10px;font-weight:800}
+.st-week{display:flex;gap:6px;align-items:flex-end;height:70px;margin-top:12px}
+.st-week i{flex:1;border-radius:8px 8px 4px 4px;background:rgba(148,163,184,.3);min-height:6px;position:relative}
+.st-week i.has{background:linear-gradient(180deg,var(--blue,#2563eb),#22a6e8)}
+.st-week i span{position:absolute;bottom:-17px;left:50%;transform:translateX(-50%);font-size:9px;color:var(--muted,#667085);font-style:normal}
+/* todo */
+.st-add{display:grid;grid-template-columns:1fr auto auto auto;gap:8px}
+@media(max-width:700px){.st-add{grid-template-columns:1fr 1fr}.st-add .st-input:first-child{grid-column:1/-1}}
+.st-filter{display:flex;gap:6px;margin:12px 0;flex-wrap:wrap}
+.st-chip{border:1px solid var(--line,#e3e8f0);background:var(--surface-2,#f8fafc);font:inherit;font-size:11px;font-weight:850;color:var(--muted,#667085);min-height:30px;padding:0 12px;border-radius:999px;cursor:pointer}
+.st-chip.on{background:var(--blue,#2563eb);color:#fff;border-color:transparent}
+.st-list{display:grid;gap:8px}
+.st-todo{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;padding:11px 12px;border:1px solid var(--line,#e3e8f0);border-radius:14px;background:var(--surface,#fff);transition:opacity .2s,transform .2s}
+.st-todo.done{opacity:.55}.st-todo.done .st-todo-t{text-decoration:line-through}
+.st-check{width:22px;height:22px;border-radius:7px;border:2px solid var(--line,#cbd5e1);background:transparent;cursor:pointer;display:grid;place-items:center;color:#fff;padding:0}
+.st-todo.done .st-check{background:#16a34a;border-color:#16a34a}
+.st-todo-t{font-size:13px;font-weight:750;word-break:break-word}
+.st-meta{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+.st-badge{font-size:10px;font-weight:850;padding:3px 8px;border-radius:999px;background:var(--surface-2,#f1f5f9);color:var(--muted,#667085)}
+.st-badge.late{background:#fee4e2;color:#b42318}.st-badge.today{background:#fef0c7;color:#b54708}.st-badge.soon{background:#dbeafe;color:#1d4ed8}
+.st-badge.p-high{background:#fee4e2;color:#b42318}.st-badge.p-low{background:#dcfce7;color:#166534}
+.st-del{border:0;background:transparent;color:var(--muted,#94a3b8);cursor:pointer;font-size:18px;line-height:1;padding:4px 8px;border-radius:8px}
+.st-del:hover{background:#fee4e2;color:#b42318}
+.st-empty{padding:26px 12px;text-align:center;color:var(--muted,#667085);font-size:12px;border:1px dashed var(--line,#e3e8f0);border-radius:14px}
+/* grades */
+.st-rows{display:grid;gap:8px}
+.st-row{display:grid;grid-template-columns:1.4fr .8fr .8fr auto;gap:8px;align-items:center}
+@media(max-width:560px){.st-row{grid-template-columns:1fr 1fr}.st-row .st-input:first-child{grid-column:1/-1}}
+.st-result{display:grid;gap:10px}
+.st-big{font-size:34px;font-weight:950;letter-spacing:-.02em}
+.st-grade{display:inline-grid;place-items:center;width:46px;height:46px;border-radius:14px;color:#fff;font-weight:950;font-size:20px;background:linear-gradient(135deg,var(--blue,#2563eb),#22a6e8)}
+.st-note{padding:11px 13px;border-radius:14px;font-size:12px;font-weight:700;line-height:1.5;background:color-mix(in srgb,var(--blue,#2563eb) 9%,transparent);border:1px solid color-mix(in srgb,var(--blue,#2563eb) 24%,transparent)}
+.st-note.warn{background:#fef0c7;border-color:#fedf89;color:#7a2e0e}.st-note.ok{background:#dcfce7;border-color:#abefc6;color:#05603a}
+/* countdown */
+.st-cd{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:12px;border:1px solid var(--line,#e3e8f0);border-radius:16px;background:var(--surface,#fff)}
+.st-cd-n{min-width:62px;text-align:center;padding:8px 6px;border-radius:12px;background:linear-gradient(135deg,var(--blue,#2563eb),#22a6e8);color:#fff}
+.st-cd-n b{display:block;font-size:22px;line-height:1}.st-cd-n small{font-size:9px;font-weight:800;opacity:.9}
+.st-cd.past .st-cd-n{background:#94a3b8}
+/* hari ini (dashboard) */
+.st-today{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:0 0 16px}
+@media(max-width:1100px){.st-today{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.st-today{grid-template-columns:1fr 1fr;gap:8px}}
+.st-t{border:1px solid var(--line,#e3e8f0);border-radius:18px;background:var(--surface,#fff);padding:14px;box-shadow:0 10px 26px rgba(15,23,42,.05);cursor:pointer;text-align:left;font:inherit;color:inherit;display:grid;gap:3px;transition:transform .15s var(--k7-ease,ease),box-shadow .15s}
+.st-t:hover{transform:translateY(-2px);box-shadow:0 16px 34px rgba(15,23,42,.1)}
+.st-t small{color:var(--muted,#667085);font-size:10px;font-weight:850;text-transform:uppercase;letter-spacing:.06em;display:flex;align-items:center;gap:5px}
+.st-t small svg{width:13px;height:13px}
+.st-t b{font-size:21px;letter-spacing:-.01em}.st-t span{font-size:11px;color:var(--muted,#667085);line-height:1.4;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.st-quick{grid-column:1/-1;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.st-running{position:fixed;left:50%;bottom:calc(14px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:880;display:none;align-items:center;gap:10px;padding:8px 14px;border-radius:999px;background:rgba(15,23,42,.92);color:#fff;font-size:12px;font-weight:850;box-shadow:0 12px 30px rgba(15,23,42,.35);cursor:pointer;border:0}
+.st-running.show{display:inline-flex}
+.st-running b{font-variant-numeric:tabular-nums}
+html.k7-lite .st-panel.on{animation:none}
+
+</style>
+<script id="k7-study-v146-js">
+/* V146 · Alat Belajar siswa: Fokus (Pomodoro), To-Do, Kalkulator Nilai, Hitung Mundur + widget "Hari Ini". Data tersimpan di perangkat (localStorage per akun). */
+(()=>{
+  'use strict';
+  const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+  const root=$('#studyTools');
+  if(!root||root.dataset.ready)return;
+  root.dataset.ready='1';
+  const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const pad=n=>String(n).padStart(2,'0');
+  const dkey=(d=new Date())=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+  const parseD=s=>{const m=/^(\d{4})-(\d{2})-(\d{2})/.exec(String(s||''));return m?new Date(+m[1],+m[2]-1,+m[3],12):null};
+  const daysFrom=(s)=>{const d=parseD(s);if(!d)return null;const t=new Date();t.setHours(12,0,0,0);return Math.round((d-t)/864e5)};
+  const toastS=m=>{try{typeof toast==='function'?toast(m):window.toast?.(m)}catch{}};
+  const icons=()=>{try{window.lucide?.createIcons?.()}catch{}};
+
+  /* ---------- penyimpanan ---------- */
+  const uname=()=>{try{return String(window.KELAS7MIT_ACTIVE_ACCOUNT?.username||window.K7Session?.read?.()?.profile?.username||'tamu').replace(/@7mit$/i,'')}catch{return 'tamu'}};
+  const KEY=()=>`k7st:${uname()}:v1`;
+  const DEF=()=>({focus:{set:{focus:25,short:5,long:15},auto:true,hist:{},run:null,mode:'focus'},todos:[],grades:{target:85,rows:[{n:'Tugas',w:20,s:''},{n:'Kuis',w:20,s:''},{n:'UTS',w:25,s:''},{n:'UAS',w:35,s:''}]},cds:[]});
+  let D=null,dkeyLoaded='';
+  function load(){const k=KEY();if(D&&dkeyLoaded===k)return D;dkeyLoaded=k;try{const raw=JSON.parse(localStorage.getItem(k)||'null');D=raw?{...DEF(),...raw,focus:{...DEF().focus,...raw.focus},grades:{...DEF().grades,...raw.grades}}:DEF()}catch{D=DEF()}return D}
+  function save(){try{localStorage.setItem(KEY(),JSON.stringify(D))}catch{}}
+
+  /* ---------- UI utama ---------- */
+  root.innerHTML=`<header class="topbar"><div class="title"><h2>Alat Belajar</h2><p>Fokus belajar, catat to-do, hitung nilai, dan pantau hari penting. Data tersimpan di perangkatmu.</p></div></header>
+  <div class="st-tabs" role="tablist" aria-label="Alat belajar">
+    <button class="st-tab on" data-st-tab="focus" role="tab"><i data-lucide="timer"></i> Fokus</button>
+    <button class="st-tab" data-st-tab="todo" role="tab"><i data-lucide="list-checks"></i> To-Do</button>
+    <button class="st-tab" data-st-tab="grade" role="tab"><i data-lucide="calculator"></i> Nilai</button>
+    <button class="st-tab" data-st-tab="cd" role="tab"><i data-lucide="calendar-clock"></i> Hitung Mundur</button>
+  </div>
+  <div class="st-panel on" data-st-panel="focus"></div><div class="st-panel" data-st-panel="todo"></div><div class="st-panel" data-st-panel="grade"></div><div class="st-panel" data-st-panel="cd"></div>`;
+  const P=n=>$(`[data-st-panel="${n}"]`,root);
+  let tab='focus';
+  function setTab(n){tab=n;$$('.st-tab',root).forEach(b=>b.classList.toggle('on',b.dataset.stTab===n));$$('.st-panel',root).forEach(p=>p.classList.toggle('on',p.dataset.stPanel===n));render();try{localStorage.setItem('k7st-tab',n)}catch{}}
+  root.addEventListener('click',e=>{const t=e.target.closest('[data-st-tab]');if(t)setTab(t.dataset.stTab)});
+
+  /* ---------- FOKUS ---------- */
+  const MODES={focus:'Fokus',short:'Istirahat',long:'Istirahat Panjang'};
+  let tick=0;
+  const F=()=>load().focus;
+  const dur=m=>Math.max(1,Math.min(180,Number(F().set[m])||25))*60000;
+  function remaining(){const r=F().run;if(!r)return dur(F().mode);return r.running?Math.max(0,r.endAt-Date.now()):Math.max(0,r.left)}
+  const fmtT=ms=>{const s=Math.ceil(ms/1000);return `${pad(Math.floor(s/60))}:${pad(s%60)}`};
+  function startT(){const f=F();const left=remaining();f.run={running:true,mode:f.mode,endAt:Date.now()+left,left,total:dur(f.mode)};save();loop();renderFocus();pill()}
+  function pauseT(){const f=F();if(!f.run?.running)return;f.run={...f.run,running:false,left:Math.max(0,f.run.endAt-Date.now())};save();clearInterval(tick);tick=0;renderFocus();pill()}
+  function resetT(){const f=F();f.run=null;save();clearInterval(tick);tick=0;document.title=baseTitle;renderFocus();pill()}
+  function setMode(m){const f=F();f.mode=m;f.run=null;save();clearInterval(tick);tick=0;document.title=baseTitle;renderFocus();pill()}
+  const baseTitle=document.title;
+  function beep(){try{const a=new (window.AudioContext||window.webkitAudioContext)();[0,.28,.56].forEach((t,i)=>{const o=a.createOscillator(),g=a.createGain();o.frequency.value=i===2?988:784;o.connect(g);g.connect(a.destination);g.gain.setValueAtTime(.0001,a.currentTime+t);g.gain.exponentialRampToValueAtTime(.25,a.currentTime+t+.03);g.gain.exponentialRampToValueAtTime(.0001,a.currentTime+t+.24);o.start(a.currentTime+t);o.stop(a.currentTime+t+.26)})}catch{}try{navigator.vibrate?.([200,100,200])}catch{}}
+  function finish(){
+    const f=F(),r=f.run,mode=r?.mode||f.mode;
+    clearInterval(tick);tick=0;document.title=baseTitle;
+    if(mode==='focus'){const k=dkey(),h=f.hist[k]||(f.hist[k]={s:0,m:0});h.s+=1;h.m+=Math.round((r?.total||dur('focus'))/60000)}
+    f.run=null;
+    const sessions=todaySessions();
+    const next=mode==='focus'?(sessions%4===0?'long':'short'):'focus';
+    f.mode=f.auto?next:mode;save();beep();
+    toastS(mode==='focus'?'Sesi fokus selesai! Waktunya istirahat sebentar.':'Istirahat selesai. Siap fokus lagi?');
+    renderFocus();renderToday();pill();
+  }
+  function loop(){clearInterval(tick);tick=setInterval(()=>{const f=F();if(!f.run?.running){clearInterval(tick);tick=0;return}const left=f.run.endAt-Date.now();if(left<=0){finish();return}updateRing(left);pill();document.title=`${fmtT(left)} · ${MODES[f.run.mode]}`},250)}
+  const todaySessions=()=>F().hist[dkey()]?.s||0,todayMinutes=()=>F().hist[dkey()]?.m||0;
+  function streak(){const h=F().hist;let n=0;const d=new Date();if(!h[dkey(d)]?.s)d.setDate(d.getDate()-1);while(h[dkey(d)]?.s){n++;d.setDate(d.getDate()-1)}return n}
+  function updateRing(left){const f=F(),total=f.run?.total||dur(f.mode),c=2*Math.PI*45,ring=$('.st-ring .fg',root),t=$('.st-time b',root);if(ring){ring.style.strokeDasharray=c;ring.style.strokeDashoffset=c*(1-Math.min(1,Math.max(0,left/total)))}if(t)t.textContent=fmtT(left)}
+  function renderFocus(){
+    const f=F(),run=f.run,mode=run?.mode||f.mode,left=remaining();
+    const days=[...Array(7)].map((_,i)=>{const d=new Date();d.setDate(d.getDate()-(6-i));return{k:dkey(d),l:['M','S','S','R','K','J','S'][d.getDay()],m:f.hist[dkey(d)]?.m||0}});
+    const max=Math.max(30,...days.map(d=>d.m));
+    P('focus').innerHTML=`<div class="st-grid"><div class="st-card st-timer">
+      <div class="st-modes">${Object.entries(MODES).map(([k,l])=>`<button class="st-mode ${mode===k?'on':''}" data-st-mode="${k}" ${run?.running&&run.mode!==k?'disabled':''}>${l}</button>`).join('')}</div>
+      <div class="st-ring" data-mode="${mode}"><svg viewBox="0 0 100 100"><circle class="bg" cx="50" cy="50" r="45"/><circle class="fg" cx="50" cy="50" r="45" style="stroke-dasharray:${2*Math.PI*45};stroke-dashoffset:${2*Math.PI*45*(1-Math.min(1,left/(run?.total||dur(mode))))}"/></svg><div class="st-time"><b>${fmtT(left)}</b><small>${MODES[mode]}</small></div></div>
+      <div class="st-actions">${run?.running?'<button class="st-btn pri" data-st-act="pause"><i data-lucide="pause"></i> Jeda</button>':`<button class="st-btn pri" data-st-act="start"><i data-lucide="play"></i> ${run?'Lanjut':'Mulai'}</button>`}<button class="st-btn" data-st-act="reset"><i data-lucide="rotate-ccw"></i> Reset</button></div>
+      <div class="st-settings"><label>Fokus (mnt)<input class="st-input" type="number" min="1" max="180" data-st-set="focus" value="${f.set.focus}"></label><label>Istirahat<input class="st-input" type="number" min="1" max="60" data-st-set="short" value="${f.set.short}"></label><label>Panjang<input class="st-input" type="number" min="1" max="90" data-st-set="long" value="${f.set.long}"></label></div>
+      <label style="font-size:11px;font-weight:800;color:var(--muted,#667085);display:flex;gap:8px;align-items:center"><input type="checkbox" data-st-auto ${f.auto?'checked':''}> Pindah otomatis ke sesi berikutnya</label></div>
+      <div class="st-card"><h3 class="st-h">Progres belajarmu</h3><p class="st-sub">Setiap 4 sesi fokus, ada istirahat panjang. Konsisten lebih penting daripada lama.</p>
+        <div class="st-stats"><div class="st-stat"><b>${todaySessions()}</b><small>Sesi hari ini</small></div><div class="st-stat"><b>${todayMinutes()}</b><small>Menit fokus</small></div><div class="st-stat"><b>${streak()}🔥</b><small>Hari beruntun</small></div></div>
+        <div class="st-week" aria-label="Menit fokus 7 hari terakhir">${days.map(d=>`<i class="${d.m?'has':''}" style="height:${Math.max(8,Math.round(d.m/max*100))}%" title="${d.m} menit"><span>${d.l}</span></i>`).join('')}</div><div style="height:22px"></div>
+        <div class="st-note">Tips: matikan notifikasi, siapkan satu tugas saja per sesi, dan tulis hasilnya di Catatan setelah selesai.</div></div></div>`;
+    icons();
+  }
+  P('focus').addEventListener('click',e=>{const m=e.target.closest('[data-st-mode]');if(m&&!m.disabled)return setMode(m.dataset.stMode);const a=e.target.closest('[data-st-act]');if(!a)return;({start:startT,pause:pauseT,reset:resetT})[a.dataset.stAct]?.()});
+  P('focus').addEventListener('change',e=>{const s=e.target.closest('[data-st-set]');if(s){const v=Math.max(1,Math.min(180,parseInt(s.value,10)||1));F().set[s.dataset.stSet]=v;if(!F().run){}save();renderFocus()}if(e.target.matches('[data-st-auto]')){F().auto=e.target.checked;save()}});
+
+  /* pil mengambang saat timer berjalan di halaman lain */
+  const pillEl=document.createElement('button');pillEl.className='st-running';pillEl.type='button';pillEl.setAttribute('aria-label','Buka timer fokus');document.body.appendChild(pillEl);
+  pillEl.addEventListener('click',()=>{go('focus')});
+  function pill(){const r=F().run,here=root.classList.contains('active');if(r?.running&&!here){pillEl.innerHTML=`<i data-lucide="timer"></i> ${MODES[r.mode]} <b>${fmtT(Math.max(0,r.endAt-Date.now()))}</b>`;pillEl.classList.add('show');icons()}else pillEl.classList.remove('show')}
+
+  /* ---------- TO-DO ---------- */
+  let todoFilter='aktif';
+  const uid=()=>Math.random().toString(36).slice(2,9)+Date.now().toString(36).slice(-4);
+  function dueBadge(t){if(!t.due)return'';const n=daysFrom(t.due);if(n===null)return'';if(t.done)return`<span class="st-badge">${t.due}</span>`;if(n<0)return`<span class="st-badge late">Terlambat ${-n} hari</span>`;if(n===0)return'<span class="st-badge today">Hari ini</span>';if(n===1)return'<span class="st-badge today">Besok</span>';if(n<=3)return`<span class="st-badge soon">${n} hari lagi</span>`;return`<span class="st-badge">${t.due}</span>`}
+  function renderTodo(){
+    const all=load().todos,list=all.filter(t=>todoFilter==='semua'||(todoFilter==='aktif'?!t.done:t.done)).sort((a,b)=>(a.done-b.done)||String(a.due||'9999').localeCompare(String(b.due||'9999'))||({high:0,mid:1,low:2}[a.p]-{high:0,mid:1,low:2}[b.p]));
+    const open=all.filter(t=>!t.done).length;
+    P('todo').innerHTML=`<div class="st-card"><h3 class="st-h">To-Do pribadi</h3><p class="st-sub">${open?`${open} belum selesai`:'Semua beres. Mantap!'} · ${all.length-open} selesai</p>
+      <form class="st-add" data-st-form="todo"><input class="st-input" name="t" placeholder="Apa yang mau kamu kerjakan?" maxlength="140" required><input class="st-input" name="d" type="date" aria-label="Batas waktu"><select class="st-input" name="p" aria-label="Prioritas"><option value="mid">Sedang</option><option value="high">Penting</option><option value="low">Santai</option></select><button class="st-btn pri" type="submit">Tambah</button></form>
+      <div class="st-filter">${['aktif','selesai','semua'].map(f=>`<button class="st-chip ${todoFilter===f?'on':''}" data-st-filter="${f}">${f[0].toUpperCase()+f.slice(1)}</button>`).join('')}${all.some(t=>t.done)?'<button class="st-chip" data-st-clear>Hapus yang selesai</button>':''}</div>
+      <div class="st-list">${list.length?list.map(t=>`<div class="st-todo ${t.done?'done':''}" data-id="${t.id}"><button class="st-check" data-st-toggle aria-label="Tandai selesai">${t.done?'✓':''}</button><div><div class="st-todo-t">${esc(t.t)}</div><div class="st-meta">${dueBadge(t)}${t.p==='high'?'<span class="st-badge p-high">Penting</span>':t.p==='low'?'<span class="st-badge p-low">Santai</span>':''}</div></div><button class="st-del" data-st-del aria-label="Hapus">×</button></div>`).join(''):`<div class="st-empty">${todoFilter==='aktif'?'Belum ada tugas aktif. Tambahkan satu di atas.':'Belum ada data.'}</div>`}</div></div>`;
+  }
+  P('todo').addEventListener('submit',e=>{const f=e.target.closest('[data-st-form="todo"]');if(!f)return;e.preventDefault();const fd=new FormData(f),t=String(fd.get('t')||'').trim();if(!t)return;load().todos.unshift({id:uid(),t,due:String(fd.get('d')||''),p:String(fd.get('p')||'mid'),done:false,at:Date.now()});save();renderTodo();renderToday()});
+  P('todo').addEventListener('click',e=>{const row=e.target.closest('.st-todo'),id=row?.dataset.id,L=load().todos;if(e.target.closest('[data-st-toggle]')){const t=L.find(x=>x.id===id);if(t){t.done=!t.done;save();renderTodo();renderToday()}return}if(e.target.closest('[data-st-del]')){D.todos=L.filter(x=>x.id!==id);save();renderTodo();renderToday();return}const fl=e.target.closest('[data-st-filter]');if(fl){todoFilter=fl.dataset.stFilter;renderTodo();return}if(e.target.closest('[data-st-clear]')){D.todos=L.filter(x=>!x.done);save();renderTodo();renderToday()}});
+
+  /* ---------- NILAI ---------- */
+  const num=v=>{const n=parseFloat(String(v).replace(',','.'));return Number.isFinite(n)?n:null};
+  const letter=a=>a>=90?'A':a>=80?'B':a>=70?'C':a>=60?'D':'E';
+  function calcGrades(){const g=load().grades,rows=g.rows.map(r=>({n:r.n,w:Math.max(0,num(r.w)||0),s:num(r.s)}));const W=rows.reduce((a,r)=>a+r.w,0),filled=rows.filter(r=>r.s!==null&&r.w>0),WF=filled.reduce((a,r)=>a+r.w,0),sum=filled.reduce((a,r)=>a+r.s*r.w,0),avg=WF?sum/WF:null,rem=Math.max(0,W-WF),target=num(g.target);const need=rem>0&&target!==null?(target*W-sum)/rem:null;return{W,WF,avg,rem,need,target,sum}}
+  function gradeResult(){
+    const g=load().grades,c=calcGrades();
+    let note='';
+    if(c.avg===null)note='<div class="st-note">Isi nilai komponen yang sudah kamu punya (kosongkan yang belum), lalu lihat nilai sementara dan nilai yang kamu butuhkan.</div>';
+    else if(c.rem<=0)note=`<div class="st-note ${c.avg>=(c.target??0)?'ok':'warn'}">Semua komponen terisi. Nilai akhir: <b>${c.avg.toFixed(1)}</b> (${letter(c.avg)}).</div>`;
+    else if(c.need!==null){note=c.need<=0?`<div class="st-note ok">Target ${c.target} sudah aman, berapa pun nilai sisanya. 🎉</div>`:c.need>100?`<div class="st-note warn">Untuk mencapai ${c.target}, sisa komponen (${c.rem}% bobot) butuh rata-rata <b>${c.need.toFixed(1)}</b> (di atas 100). Pertimbangkan menurunkan target.</div>`:`<div class="st-note">Untuk mencapai target <b>${c.target}</b>, sisa komponen (${c.rem}% bobot) perlu rata-rata minimal <b>${c.need.toFixed(1)}</b>.</div>`}
+    return `<h3 class="st-h">Hasil</h3>
+      <div style="display:flex;gap:14px;align-items:center"><span class="st-grade">${c.avg===null?'–':letter(c.avg)}</span><div><div class="st-big">${c.avg===null?'–':c.avg.toFixed(1)}</div><small style="color:var(--muted,#667085);font-weight:800">Nilai sementara (komponen terisi)</small></div></div>
+      <label style="display:grid;gap:5px;font-size:11px;font-weight:800;color:var(--muted,#667085)">Target nilai akhir<input class="st-input" data-st-target inputmode="decimal" value="${esc(g.target)}" style="max-width:140px"></label><div data-st-note>${note}</div>`;
+  }
+  function weightInfo(){const c=calcGrades();return `Total bobot sekarang: <b>${c.W}%</b>${c.W!==100?' <span style="color:#b54708">(sebaiknya 100%)</span>':''}.`}
+  function renderGrade(){
+    const g=load().grades;
+    P('grade').innerHTML=`<div class="st-grid"><div class="st-card"><h3 class="st-h">Komponen nilai</h3><p class="st-sub">Nama, nilai (0–100), dan bobot (%). <span data-st-winfo>${weightInfo()}</span></p>
+      <div class="st-rows">${g.rows.map((r,i)=>`<div class="st-row" data-i="${i}"><input class="st-input" data-st-g="n" value="${esc(r.n)}" placeholder="Komponen" maxlength="24"><input class="st-input" data-st-g="s" inputmode="decimal" value="${esc(r.s)}" placeholder="Nilai"><input class="st-input" data-st-g="w" inputmode="decimal" value="${esc(r.w)}" placeholder="Bobot %"><button class="st-del" data-st-grow-del aria-label="Hapus komponen">×</button></div>`).join('')}</div>
+      <div class="st-actions" style="justify-content:flex-start;margin-top:12px"><button class="st-btn" data-st-grow-add>+ Tambah komponen</button></div></div>
+      <div class="st-card st-result" id="stGradeResult">${gradeResult()}</div></div>`;
+  }
+  // hanya kartu hasil yang diperbarui saat mengetik (input tidak dirender ulang)
+  function softGrade(){const w=$('[data-st-winfo]',root),r=$('#stGradeResult',root);if(w)w.innerHTML=weightInfo();if(r){const t=$('[data-st-target]',r),keep=document.activeElement===t;const pos=keep?t.selectionStart:0;r.innerHTML=gradeResult();if(keep){const n=$('[data-st-target]',r);n.focus();try{n.setSelectionRange(pos,pos)}catch{}}}}
+  P('grade').addEventListener('input',e=>{const g=load().grades,row=e.target.closest('.st-row');if(e.target.matches('[data-st-g]')&&row){g.rows[+row.dataset.i][e.target.dataset.stG]=e.target.value;save();softGrade()}if(e.target.matches('[data-st-target]')){g.target=e.target.value;save();softGrade()}});
+  P('grade').addEventListener('click',e=>{const g=load().grades;if(e.target.closest('[data-st-grow-add]')){g.rows.push({n:'Komponen',w:10,s:''});save();renderGrade();return}const d=e.target.closest('[data-st-grow-del]');if(d){g.rows.splice(+d.closest('.st-row').dataset.i,1);save();renderGrade()}});
+
+  /* ---------- HITUNG MUNDUR ---------- */
+  function classEvents(){try{const s=window.state||{};return(s.agenda||[]).map(a=>({n:a.title,d:a.date,src:'Agenda kelas'})).filter(x=>parseD(x.d)).concat((s.tasks||[]).filter(t=>!/selesai|done|lunas/i.test(t.status||'')&&parseD(t.deadline)).map(t=>({n:t.title,d:t.deadline,src:'Tugas kelas'})))}catch{return[]}}
+  function renderCd(){
+    const mine=load().cds.map(c=>({...c,src:'Milikku',mine:true})),all=[...classEvents(),...mine].map(x=>({...x,n2:daysFrom(x.d)})).filter(x=>x.n2!==null&&x.n2>=-1).sort((a,b)=>a.n2-b.n2).slice(0,30);
+    P('cd').innerHTML=`<div class="st-card"><h3 class="st-h">Hitung mundur</h3><p class="st-sub">Agenda dan tugas kelas otomatis muncul. Tambahkan juga hari pentingmu sendiri, misalnya ujian atau lomba.</p>
+      <form class="st-add" data-st-form="cd" style="grid-template-columns:1fr auto auto"><input class="st-input" name="n" placeholder="Nama acara" maxlength="60" required><input class="st-input" name="d" type="date" required><button class="st-btn pri" type="submit">Tambah</button></form>
+      <div class="st-list" style="margin-top:14px">${all.length?all.map(x=>`<div class="st-cd ${x.n2<0?'past':''}"><div class="st-cd-n"><b>${x.n2<0?'✓':x.n2}</b><small>${x.n2<0?'LEWAT':x.n2===0?'HARI INI':'HARI LAGI'}</small></div><div><div class="st-todo-t">${esc(x.n)}</div><div class="st-meta"><span class="st-badge">${esc(x.src)}</span><span class="st-badge">${esc(x.d)}</span></div></div>${x.mine?`<button class="st-del" data-st-cd-del="${x.id}" aria-label="Hapus">×</button>`:'<span></span>'}</div>`).join(''):'<div class="st-empty">Belum ada acara mendatang.</div>'}</div></div>`;
+  }
+  P('cd').addEventListener('submit',e=>{const f=e.target.closest('[data-st-form="cd"]');if(!f)return;e.preventDefault();const fd=new FormData(f);load().cds.push({id:uid(),n:String(fd.get('n')).trim(),d:String(fd.get('d'))});save();renderCd();renderToday()});
+  P('cd').addEventListener('click',e=>{const d=e.target.closest('[data-st-cd-del]');if(d){D.cds=D.cds.filter(c=>c.id!==d.dataset.stCdDel);save();renderCd();renderToday()}});
+
+  /* ---------- widget "Hari Ini" di dashboard ---------- */
+  function ensureToday(){
+    const dash=$('#dashboard');if(!dash)return null;let w=$('#stToday');if(w&&w.isConnected)return w;
+    w=document.createElement('section');w.id='stToday';w.className='st-today';w.setAttribute('aria-label','Ringkasan hari ini');
+    const head=$(':scope>header.topbar',dash);head?head.after(w):dash.prepend(w);
+    w.addEventListener('click',e=>{const b=e.target.closest('[data-st-go]');if(!b)return;const [t,act]=b.dataset.stGo.split(':');go(t);if(act==='start'){if(!F().run?.running)startT()}if(act==='add')setTimeout(()=>$('[data-st-form="todo"] [name="t"]',root)?.focus(),60)});
+    return w;
+  }
+  function renderToday(){
+    const w=ensureToday();if(!w)return;
+    const todos=load().todos,open=todos.filter(t=>!t.done),due=open.filter(t=>t.due&&daysFrom(t.due)!==null&&daysFrom(t.due)<=1).length;
+    const ev=classEvents().map(x=>({...x,n:x.n,k:daysFrom(x.d)})).filter(x=>x.k!==null&&x.k>=0).sort((a,b)=>a.k-b.k)[0];
+    const myCd=load().cds.map(c=>({...c,k:daysFrom(c.d)})).filter(c=>c.k!==null&&c.k>=0).sort((a,b)=>a.k-b.k)[0];
+    const nx=[ev,myCd].filter(Boolean).sort((a,b)=>a.k-b.k)[0];
+        w.innerHTML=`<button class="st-t" data-st-go="focus:start"><small><i data-lucide="timer"></i> Fokus hari ini</small><b>${todayMinutes()} mnt</b><span>${todaySessions()} sesi · ${streak()} hari beruntun · ketuk untuk mulai 25 menit</span></button>
+      <button class="st-t" data-st-go="todo:add"><small><i data-lucide="list-checks"></i> To-Do</small><b>${open.length} aktif</b><span>${due?`${due} jatuh tempo hari ini/besok`:'Tidak ada yang mendesak'} · ketuk untuk menambah</span></button>
+      <button class="st-t" data-st-go="cd"><small><i data-lucide="calendar-clock"></i> Berikutnya</small><b>${nx?(nx.k===0?'Hari ini':nx.k+' hari lagi'):'—'}</b><span>${nx?esc(nx.n):'Belum ada agenda mendatang'}</span></button>
+      <button class="st-t" data-st-go="grade"><small><i data-lucide="calculator"></i> Kalkulator nilai</small><b>Hitung nilai</b><span>Lihat nilai sementara dan berapa yang kamu butuhkan di ujian</span></button>`;
+    icons();
+  }
+
+  /* ---------- navigasi & render ---------- */
+  function go(t){try{typeof showPage==='function'?showPage('studyTools'):$('#nav [data-page="studyTools"]')?.click()}catch{$('#nav [data-page="studyTools"]')?.click()}setTab(t||'focus')}
+  function render(){load();({focus:renderFocus,todo:renderTodo,grade:renderGrade,cd:renderCd})[tab]();pill()}
+  document.addEventListener('click',e=>{const n=e.target.closest('#nav [data-page]');if(!n)return;setTimeout(()=>{if(n.dataset.page==='studyTools')render();else{pill();if(n.dataset.page==='dashboard')renderToday()}},50)});
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&F().run?.running){loop();renderToday()}});
+  window.k7Study={go,render,_state:()=>load(),_finish:finish};
+  // pulihkan timer yang sedang berjalan setelah reload; saat ditinggalkan lama, selesaikan diam-diam
+  (function boot(){
+    load();let t0='focus';try{t0=localStorage.getItem('k7st-tab')||'focus'}catch{}if(['focus','todo','grade','cd'].includes(t0))tab=t0;
+    const r=F().run;if(r?.running){if(r.endAt<=Date.now()){F().run=null;save()}else loop()}
+    $$('.st-tab',root).forEach(b=>b.classList.toggle('on',b.dataset.stTab===tab));$$('.st-panel',root).forEach(p=>p.classList.toggle('on',p.dataset.stPanel===tab));
+    renderToday();setInterval(()=>{if(!document.hidden){renderToday();if(root.classList.contains('active')&&(tab==='cd'||tab==='todo'))render()}},60000);
+    // identitas akun baru siap setelah login -> muat ulang data per akun
+    let last=uname();setInterval(()=>{const u=uname();if(u!==last){last=u;D=null;renderToday();if(root.classList.contains('active'))render()}},1500);
+    if(root.classList.contains('active'))render();
+  })();
+})();
+
+</script>
+<script id="k7-cmdk-v146-js">
+/* V146 · Pencarian cepat: Ctrl/⌘+K atau tombol "Cari menu". Mencari semua menu portal. */
+(()=>{
+  'use strict';
+  if(window.__k7cmdk)return;window.__k7cmdk=1;
+  const $=(s,r=document)=>r.querySelector(s);
+  const norm=v=>String(v||'').normalize('NFKD').replace(/[̀-ͯ]/g,'').toLowerCase();
+  const nav=$('#nav');if(!nav)return;
+  const box=document.createElement('div');
+  box.className='k7-cmdk';box.setAttribute('role','dialog');box.setAttribute('aria-modal','true');box.setAttribute('aria-label','Pencarian cepat');
+  box.innerHTML=`<div class="k7-cmdk-box"><div class="k7-cmdk-in"><i data-lucide="search"></i><input type="search" placeholder="Cari menu… (mis. keuangan, denah, catatan)" autocomplete="off" aria-label="Cari menu"></div><div class="k7-cmdk-list" role="listbox"></div><div class="k7-cmdk-foot"><span>↑↓ pilih</span><span>Enter buka</span><span>Esc tutup</span></div></div>`;
+  document.body.appendChild(box);
+  const input=$('input',box),list=$('.k7-cmdk-list',box);
+  let items=[],sel=0;
+  const collect=()=>[...nav.querySelectorAll('button[data-page]')].filter(b=>b.offsetParent!==null||true).map(b=>({page:b.dataset.page,label:b.textContent.replace(/\s+/g,' ').trim().replace(/\bBeta\b/,'').trim(),icon:b.querySelector('[data-lucide]')?.getAttribute('data-lucide')||'arrow-right'}));
+  const score=(q,l)=>{l=norm(l);if(!q)return 1;if(l.startsWith(q))return 3;if(l.includes(q))return 2;let i=0;for(const ch of l){if(ch===q[i])i++;if(i===q.length)return 1}return 0};
+  function render(){
+    const q=norm(input.value.trim()),all=collect();
+    items=all.map(x=>({...x,s:score(q,x.label)})).filter(x=>x.s>0).sort((a,b)=>b.s-a.s);
+    if(sel>=items.length)sel=0;
+    list.innerHTML=items.length?items.map((x,i)=>`<button class="k7-cmdk-item ${i===sel?'on':''}" data-i="${i}" role="option"><i data-lucide="${x.icon}"></i>${x.label}<small>Buka</small></button>`).join(''):'<div class="k7-cmdk-empty">Tidak ada menu yang cocok.</div>';
+    try{window.lucide?.createIcons?.()}catch{}
+    list.querySelector('.on')?.scrollIntoView({block:'nearest'});
+  }
+  function open(){box.classList.add('open');input.value='';sel=0;render();setTimeout(()=>input.focus(),20)}
+  function close(){box.classList.remove('open')}
+  function pick(i){const it=items[i];if(!it)return;close();const b=nav.querySelector(`button[data-page="${it.page}"]`);b?.click()}
+  input.addEventListener('input',()=>{sel=0;render()});
+  input.addEventListener('keydown',e=>{if(e.key==='ArrowDown'){e.preventDefault();sel=Math.min(items.length-1,sel+1);render()}else if(e.key==='ArrowUp'){e.preventDefault();sel=Math.max(0,sel-1);render()}else if(e.key==='Enter'){e.preventDefault();pick(sel)}else if(e.key==='Escape'){close()}});
+  list.addEventListener('click',e=>{const b=e.target.closest('[data-i]');if(b)pick(+b.dataset.i)});
+  box.addEventListener('click',e=>{if(e.target===box)close()});
+  document.addEventListener('keydown',e=>{
+    const typing=/^(input|textarea|select)$/i.test(e.target?.tagName||'')||e.target?.isContentEditable;
+    if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();box.classList.contains('open')?close():open()}
+    else if(e.key==='/'&&!typing&&!box.classList.contains('open')){e.preventDefault();open()}
+    else if(e.key==='Escape'&&box.classList.contains('open'))close();
+  });
+  const btn=document.createElement('button');
+  btn.type='button';btn.className='k7-cmdk-btn';btn.innerHTML='<i data-lucide="search"></i> Cari menu <kbd>Ctrl K</kbd>';
+  btn.addEventListener('click',open);
+  nav.before(btn);
+  try{window.lucide?.createIcons?.()}catch{}
+  window.k7Cmdk={open,close};
+})();
+
+</script>
 </body>
 </html>
