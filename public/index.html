@@ -14732,14 +14732,17 @@ window.supabase={createClient:(u,k)=>new S(u,k)};
         const dear=/dear/i.test(r.subject),flag=/flag|upacara/i.test(r.subject);
         acts.push({label:dear?"DEAR Time":r.subject,start:startOf(r,"0"),end:endOf(r,"0"),kind:dear?"dear":flag?"ceremony":"short"});
       });
-      const lk=slot(day,"Lunch");
-      if(lk)acts.push({label:"Lunch",start:lk.startsAt,end:lk.endsAt,kind:"lunch"});
-      const ls=lk?mins(lk.startsAt):null,le=lk?mins(lk.endsAt):null;
-      const edges=[...acts.filter(a=>a.kind!=="lunch").map(a=>[a.start,a.end]),...lessons.map(l=>[l.start,l.end])].filter(e=>mins(e[0])!==null&&mins(e[1])!==null).sort((a,b)=>mins(a[0])-mins(b[0]));
+      const blocks=[];
+      per.filter(p=>p.kind!=="lesson"&&(p.day===day||(p.day==="*"&&!per.some(q=>q.day===day&&q.period===p.period)))).forEach(p=>{
+        const lunch=/lunch/i.test(p.period);
+        acts.push({label:lunch?"Lunch":p.label,start:p.startsAt,end:p.endsAt,kind:lunch?"lunch":p.kind==="prayer"?"prayer":"break"});
+        blocks.push([mins(p.startsAt),mins(p.endsAt)]);
+      });
+      const edges=[...acts.filter(a=>a.kind!=="lunch"&&a.kind!=="prayer"&&a.kind!=="break").map(a=>[a.start,a.end]),...lessons.map(l=>[l.start,l.end])].filter(e=>mins(e[0])!==null&&mins(e[1])!==null).sort((a,b)=>mins(a[0])-mins(b[0]));
       for(let i=0;i<edges.length-1;i++){
         const a=mins(edges[i][1]),b=mins(edges[i+1][0]),gap=b-a;
         if(gap<=0)continue;
-        if(ls!==null&&a<le&&b>ls)continue;
+        if(blocks.some(x=>a<x[1]&&b>x[0]))continue;
         acts.push({label:gap>=10?"Break":"Short Break",start:edges[i][1],end:edges[i+1][0],kind:gap>=10?"break":"short"});
       }
       acts.sort((a,b)=>(mins(a.start)||0)-(mins(b.start)||0));
@@ -19753,12 +19756,12 @@ function renderLsSchedule(){
     return `<div class="k7sch-day${day===today?" is-today":""}" style="grid-row:${i+2}">${X(day.slice(0,3))}<small>${X(day)}</small></div>${cells}`}).join("");
   const lunch=`<div class="k7sch-lunch" style="grid-column:${col("Lunch")};grid-row:2/${LS_DAYS.length+2}"><span>Lunch Break</span></div>`;
   const list=LS_DAYS.map(day=>{const mine=rows.filter(r=>r.day===day).sort((a,b)=>(a.periodStart??a.period)-(b.periodStart??b.period)||(a.sortOrder||0)-(b.sortOrder||0));
-    const lk=slot(day,"Lunch");let out="",done=false;
-    mine.forEach(r=>{if(!done&&lk&&(r.periodStart??r.period)>=7){out+=`<div class="k7sch-brk">Istirahat · ${X(lk.startsAt)}–${X(lk.endsAt)}</div>`;done=true}
+    const brks=per.filter(p=>p.kind!=="lesson"&&(p.day===day||(p.day==="*"&&!per.some(q=>q.day===day&&q.period===p.period)))).sort((a,b)=>(mins(a.startsAt)||0)-(mins(b.startsAt)||0));let out="",done=false;
+    mine.forEach(r=>{if(!done&&brks.length&&(r.periodStart??r.period)>=7){out+=brks.map(b=>`<div class="k7sch-brk${b.kind==="prayer"?" is-prayer":""}">${X(/lunch/i.test(b.period)?"Istirahat":b.label)} · ${X(b.startsAt)}–${X(b.endsAt)}</div>`).join("");done=true}
       const ps=Number(r.periodStart??r.period)||0,pe=Number(r.periodEnd??ps)||ps,t=timeOf(r);
       out+=`<div class="k7sch-li${live(r)?" is-live":""}" style="--h:${hue(r.subject)}"><div class="k7sch-lt"><b>${ps===pe?"Jam "+ps:"Jam "+ps+"–"+pe}</b><small>${X(t.text)}</small></div><div class="k7sch-lb"><b>${X(r.subject)}${r.group?` <em>${X(r.group)}</em>`:""}</b><small>${X([r.room,r.teacherCode].filter(Boolean).join(" · "))}${r.note?" · "+X(r.note):""}</small></div>${actions(r)}</div>`});
     return `<section class="k7sch-ld${day===today?" is-today":""}"><h4>${X(day)}${day===today?" <em>Hari ini</em>":""}</h4>${out||'<div class="k7sch-brk">Belum ada jadwal</div>'}</section>`}).join("");
-  const diffs=per.filter(p=>p.day!=="*").map(p=>`${X(p.day)}: ${p.kind==="break"?"Istirahat":"Jam ke-"+X(p.period)} ${X(p.startsAt)}–${X(p.endsAt)}`);
+  const diffs=per.filter(p=>p.day!=="*").map(p=>`${X(p.day)}: ${p.kind==="lesson"?"Jam ke-"+X(p.period):X(p.label||"Istirahat")} ${X(p.startsAt)}–${X(p.endsAt)}`);
   return `<div class="ls-toolbar"><div class="ls-toolbar-copy"><b>Jadwal Pelajaran</b><small>Tabel: kelas7mit_schedule · ${rows.length} sesi</small></div>${edit?`<div class="ls-actions"><button class="ls-action primary" data-ls-add="schedule"><i data-lucide="plus"></i>Tambah Jadwal</button></div>`:""}</div>
   <div class="k7sch-wrap"><div class="k7sch-grid">${head}${grid}${lunch}</div></div>
   <div class="k7sch-list">${list}</div>
@@ -28942,6 +28945,7 @@ html.k7-lite .cm3d-pop{animation:none}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .k7sch-item,:root:not([data-theme="light"]) .k7sch-li{background:hsl(var(--h) 35% 20%);border-color:hsl(var(--h) 35% 36%);color:#eef2ff}:root:not([data-theme="light"]) .k7sch-item small,:root:not([data-theme="light"]) .k7sch-lt small,:root:not([data-theme="light"]) .k7sch-lb small{color:#cbd5e1}:root:not([data-theme="light"]) .k7sch-item em,:root:not([data-theme="light"]) .k7sch-lb em{color:hsl(var(--h) 80% 78%)}}
 
 .ls-db-banner .ls-action{white-space:nowrap;flex:none}
+.k7sch-brk.is-prayer{background:color-mix(in srgb,#10b981 14%,transparent);color:#047857}
 </style>
 </body>
 </html>
