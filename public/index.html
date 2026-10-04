@@ -14691,8 +14691,8 @@ window.supabase={createClient:(u,k)=>new S(u,k)};
   const STORAGE_KEY = "kelas7mit_siswa_cache_v10";
   const LEGACY_STORAGE_KEY = "kelas7mit_pengurus_v1";
 
-  const SUPABASE_TABLE = "siswa_portal_state";
-  const STUDENTS_TABLE = "siswa_students";
+  
+  
   const DAYS = ["Senin","Selasa","Rabu","Kamis","Jumat"];
   const WEEK_DAYS = ["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"];
   const PERIODS_BY_DAY = {
@@ -15403,74 +15403,15 @@ window.supabase={createClient:(u,k)=>new S(u,k)};
     renderAll();
     if(message) toast(message);
   }
-  async function requestStudents(path="",options={}){
-    const response=await fetchWithTimeout(`${SUPABASE_URL}/rest/v1/${STUDENTS_TABLE}${path}`,{
-      cache:"no-store",
-      ...options,
-      headers:cloudHeaders(options.headers||{})
-    });
-    if(!response.ok){
-      const text=await response.text();
-      throw new Error(`Students ${response.status}: ${text.slice(0,240)}`);
-    }
-    if(response.status===204) return null;
-    const text=await response.text();
-    return text?JSON.parse(text):null;
-  }
-  async function seedStudentsSupabase(){
-    const payload=CLASS_ROSTER.map(name=>({name,notes:[]}));
-    await requestStudents("?on_conflict=name",{
-      method:"POST",
-      headers:{Prefer:"resolution=ignore-duplicates,return=minimal"},
-      body:JSON.stringify(payload)
-    });
-  }
-  async function updateStudentSupabase(student,patch,message="Data siswa berhasil diperbarui."){
-    const body={};
-    if(Object.prototype.hasOwnProperty.call(patch,"name")) body.name=patch.name;
-    if(Object.prototype.hasOwnProperty.call(patch,"notes")) body.notes=patch.notes;
-    const rows=await requestStudents(`?id=eq.${encodeURIComponent(student.id)}`,{
-      method:"PATCH",
-      headers:{Prefer:"return=representation"},
-      body:JSON.stringify(body)
-    });
-    const updated=normalizeStudentRow(rows?.[0]||{...student,...body});
-    const current=state.students.find(item=>item.id===student.id);
-    if(current) Object.assign(current,updated);
-    if(current!==student) Object.assign(student,updated);
-    state.students.sort(sortName);
-    saveStudentCache(message);
-    return current||student;
-  }
-  async function deleteStudentSupabase(student){
-    await requestStudents(`?id=eq.${encodeURIComponent(student.id)}`,{
-      method:"DELETE",
-      headers:{Prefer:"return=minimal"}
-    });
-    state.students=state.students.filter(s=>s.id!==student.id);
-    saveStudentCache("Siswa berhasil dihapus.");
-  }
-  async function resetStudentNotesSupabase(){
-    try{
-      await requestStudents("",{
-        method:"PATCH",
-        headers:{Prefer:"return=minimal"},
-        body:JSON.stringify({notes:[]})
-      });
-      state.students.forEach(student=>student.notes=[]);
-      saveStudentCache();
-    }catch(error){
-      console.error("Reset catatan gagal:",error);
-    }
-  }
-  async function resetStudentsToRosterSupabase(){
-    await requestStudents("",{method:"DELETE",headers:{Prefer:"return=minimal"}});
-    await seedStudentsSupabase();
-    await loadStudentsFromSupabase(false);
-  }
+  
+  
+  
+  
+  
+  
 
   
-  const JSON_TABLE="siswa_portal_state";
+  
   let studentRealtimeClient=null;
   let studentRealtimeChannel=null;
   let studentRealtimeReconnectTimer=null;
@@ -15573,193 +15514,9 @@ window.supabase={createClient:(u,k)=>new S(u,k)};
     return normalizeState(remoteData);
   }
 
-  async function recoveryReadTable(table,query="select=*"){
-    const response=await fetchWithTimeout(
-      `${SUPABASE_URL}/rest/v1/${table}?${query}`,
-      {headers:cloudHeaders(),cache:"no-store"}
-    );
-    if(!response.ok)return [];
-    const text=await response.text();
-    try{return text?JSON.parse(text):[]}catch(error){return []}
-  }
+  
 
-  async function recoverStudentJsonFromSeparateTables(){
-    setSyncStatus("Memulihkan JSON dari data lama…","syncing");
-
-    const results=await Promise.allSettled([
-      recoveryReadTable("announcements","select=*&order=created_at.desc"),
-      recoveryReadTable("agenda","select=*&order=agenda_date.asc"),
-      recoveryReadTable("tasks","select=*&order=deadline.asc"),
-      recoveryReadTable("duties","select=*&order=day_name.asc"),
-      recoveryReadTable("finance_transactions","select=*&order=transaction_date.desc"),
-      recoveryReadTable("inventory_items","select=*&order=item_name.asc"),
-      recoveryReadTable("documents","select=*&order=title.asc"),
-      recoveryReadTable("polls","select=*&order=created_at.desc"),
-      recoveryReadTable("poll_options","select=*&order=option_order.asc"),
-      recoveryReadTable("class_goals","select=*&order=deadline.asc"),
-      recoveryReadTable("appreciations","select=*&order=created_at.desc"),
-      recoveryReadTable("lost_found","select=*&order=created_at.desc"),
-      recoveryReadTable("organization_members","select=*&order=sort_order.asc"),
-      recoveryReadTable("students","select=id,name,notes,created_at,updated_at&order=name.asc")
-    ]);
-
-    const rows=index=>
-      results[index].status==="fulfilled"&&Array.isArray(results[index].value)
-        ?results[index].value
-        :[];
-
-    const recovered=normalizeState({});
-    recovered.announcements=rows(0).map(row=>({
-      id:String(row.source_id||row.id),
-      title:row.title||"",
-      priority:row.priority||"Informasi",
-      message:row.message||"",
-      createdAt:row.created_at||""
-    }));
-    recovered.agenda=rows(1).map(row=>({
-      id:String(row.source_id||row.id),
-      title:row.title||"",
-      date:row.agenda_date||row.date||"",
-      time:row.agenda_time||row.time||"",
-      location:row.location||""
-    }));
-    recovered.tasks=rows(2).map(row=>({
-      id:String(row.source_id||row.id),
-      title:row.title||"",
-      owner:row.owner||"",
-      deadline:row.deadline||"",
-      status:row.status||"Belum Mulai"
-    }));
-    recovered.duties=rows(3).map(row=>({
-      id:String(row.source_id||row.id),
-      day:row.day_name||row.day||"",
-      group:row.group_name||row.group||"",
-      members:row.members||""
-    }));
-    recovered.finance=rows(4).map(row=>({
-      id:String(row.source_id||row.id),
-      type:row.transaction_type||row.type||"Pemasukan",
-      amount:Number(row.amount)||0,
-      date:row.transaction_date||row.date||"",
-      description:row.description||"",
-      createdAt:row.created_at||""
-    }));
-    recovered.inventory=rows(5).map(row=>({
-      id:String(row.source_id||row.id),
-      item:row.item_name||row.item||"",
-      quantity:Number(row.quantity)||0,
-      condition:row.item_condition||row.condition||"Baik",
-      location:row.location||""
-    }));
-    recovered.documents=rows(6).map(row=>({
-      id:String(row.source_id||row.id),
-      title:row.title||"",
-      type:row.document_type||row.type||"Dokumen",
-      url:row.url||""
-    }));
-
-    const optionMap=new Map();
-    rows(8).forEach(row=>{
-      const key=String(row.poll_source_id||row.poll_id||"");
-      if(!optionMap.has(key))optionMap.set(key,[]);
-      optionMap.get(key).push({
-        text:row.option_text||row.option||"",
-        order:Number(row.option_order??row.sort_order??0)
-      });
-    });
-
-    recovered.polls=rows(7).map(row=>{
-      const key=String(row.source_id||row.id);
-      return {
-        id:key,
-        question:row.question||row.title||"",
-        options:(optionMap.get(key)||optionMap.get(String(row.id))||[])
-          .sort((a,b)=>a.order-b.order)
-          .map(item=>item.text)
-          .filter(Boolean),
-        status:row.status||"Draf",
-        singleResponse:row.single_response!==false,
-        createdAt:row.created_at||""
-      };
-    });
-
-    recovered.classGoals=rows(9).map(row=>({
-      id:String(row.source_id||row.id),
-      title:row.title||"",
-      description:row.description||"",
-      progress:Number(row.progress)||0,
-      deadline:row.deadline||""
-    }));
-    recovered.appreciations=rows(10).map(row=>({
-      id:String(row.source_id||row.id),
-      recipient:row.recipient||"",
-      category:row.category||"Kontribusi",
-      message:row.message||"",
-      createdAt:row.created_at||""
-    }));
-    recovered.lostFound=rows(11).map(row=>({
-      id:String(row.source_id||row.id),
-      itemName:row.item_name||row.itemName||"",
-      status:row.status||"Hilang",
-      location:row.location||"",
-      description:row.description||"",
-      createdAt:row.created_at||""
-    }));
-
-    const groupedRoles={};
-    rows(12).forEach(row=>{
-      if(!groupedRoles[row.role_key])groupedRoles[row.role_key]=[];
-      if(row.member_name)groupedRoles[row.role_key].push(row.member_name);
-    });
-    Object.entries(groupedRoles).forEach(([key,names])=>{
-      recovered.roles[key]=names.join("; ");
-    });
-
-    recovered.students=rows(13).length
-      ?rows(13).map(normalizeStudentRow).sort(sortName)
-      :window.structuredClone(defaultState.students);
-
-    const recoveredCount=studentJsonDataCount(recovered);
-    if(recoveredCount===0)return false;
-
-    recovered.meta={
-      ...(recovered.meta||{}),
-      version:5,
-      jsonReady:true,
-      schemaVersion:5,
-      writer:"student-auto-recovery",
-      localUpdatedAt:nowISO(),
-      lastSyncedAt:nowISO(),
-      dirty:false,
-      contentCount:recoveredCount
-    };
-
-    const payload={
-      id:"main",
-      data:recovered,
-      updated_at:recovered.meta.localUpdatedAt
-    };
-
-    const response=await fetchWithTimeout(
-      `${SUPABASE_URL}/rest/v1/${JSON_TABLE}?on_conflict=id`,
-      {
-        method:"POST",
-        headers:cloudHeaders({
-          Prefer:"resolution=merge-duplicates,return=representation"
-        }),
-        body:JSON.stringify(payload)
-      }
-    );
-
-    const text=await response.text();
-    if(!response.ok){
-      throw new Error(`Pemulihan JSON ${response.status}: ${text.slice(0,220)}`);
-    }
-
-    applyStudentJsonRemote(payload);
-    setSyncStatus("JSON berhasil dipulihkan · data sudah muncul","online");
-    return true;
-  }
+  
 
   async function fetchStudentJsonState(){
     // V43: data siswa selalu dibaca dari API otoritatif.
@@ -15947,67 +15704,7 @@ window.supabase={createClient:(u,k)=>new S(u,k)};
     studentRealtimeChannel=null;
   }
 
-  function startStudentTableRealtime(){
-    if(!window.supabase?.createClient||!navigator.onLine){
-      clearTimeout(studentRealtimeReconnectTimer);
-      studentRealtimeReconnectTimer=setTimeout(startStudentTableRealtime,2200);
-      return;
-    }
-
-    stopStudentRealtime();
-
-    try{
-      studentRealtimeClient=window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_ANON_KEY,
-        {
-          auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false},
-          realtime:{params:{eventsPerSecond:20}}
-        }
-      );
-
-      studentRealtimeChannel=studentRealtimeClient
-        .channel(`siswa-7mit-json-${Math.random().toString(36).slice(2)}`)
-        .on(
-          "postgres_changes",
-          {
-            event:"*",
-            schema:"public",
-            table:JSON_TABLE,
-            filter:"id=eq.main"
-          },
-          async payload=>{
-            const row=payload?.new;
-            if(!row)return;
-
-            try{
-              await loadStudentJson();
-              setSyncStatus("JSON real-time aktif · perubahan otomatis diterapkan","online");
-            }catch(error){
-              console.error("Pembaruan otomatis siswa gagal:",error);
-              setTimeout(loadStudentJson,1000);
-            }
-          }
-        )
-        .subscribe(status=>{
-          if(status==="SUBSCRIBED"){
-            setSyncStatus("JSON real-time aktif · menunggu perubahan","online");
-          }else if(
-            status==="CHANNEL_ERROR"||
-            status==="TIMED_OUT"||
-            status==="CLOSED"
-          ){
-            setSyncStatus("JSON real-time menyambungkan ulang…","syncing");
-            clearTimeout(studentRealtimeReconnectTimer);
-            studentRealtimeReconnectTimer=setTimeout(startStudentTableRealtime,1800);
-          }
-        });
-    }catch(error){
-      console.error("JSON Realtime siswa gagal:",error);
-      clearTimeout(studentRealtimeReconnectTimer);
-      studentRealtimeReconnectTimer=setTimeout(startStudentTableRealtime,2200);
-    }
-  }
+  function startStudentTableRealtime(){return;}
 
   async function loadStudentPortalTables(){
     return loadStudentJson();
@@ -19787,7 +19484,7 @@ function setCurrentLessonSubject(value){
 
 
 /* ===== belajar.7mit — LMS + SCHOOL INFORMATION SYSTEM ===== */
-/* Separate Supabase tables. These arrays are runtime-only and are NOT stored in kelas7mit_state. */
+/* Separate Supabase tables. These arrays are runtime-only and live in their own kelas7mit_* tables. */
 const LS_KEYS=["lmsCourses","lmsMaterials","lmsAssignments","lmsGrades","sisAttendance","sisSchedule"];
 const LS_DATA={lmsCourses:[],lmsMaterials:[],lmsAssignments:[],lmsGrades:[],sisAttendance:[],sisSchedule:[]};
 const LS_DAYS=["Senin","Selasa","Rabu","Kamis","Jumat"];
@@ -20014,7 +19711,7 @@ function renderLearningSchool(){
       <span class="ls-system-tag"><i data-lucide="table-2"></i> sis_schedule</span>
     </div>
   </div>
-  <div class="ls-db-banner"><i data-lucide="database"></i><div><b>Database belajar.7mit</b><br>belajar.7mit tidak lagi memakai array di <code>kelas7mit_state</code>. Tekan Refresh untuk memuat ulang keenam tabel.</div><button class="ls-action" data-ls-refresh style="margin-left:auto"><i data-lucide="refresh-cw"></i>Refresh</button></div>
+  <div class="ls-db-banner"><i data-lucide="database"></i><div><b>Database belajar.7mit</b><br>belajar.7mit memakai tabel terpisah (<code>kelas7mit_*</code>), bukan satu JSON state. Tekan Refresh untuk memuat ulang keenam tabel.</div><button class="ls-action" data-ls-refresh style="margin-left:auto"><i data-lucide="refresh-cw"></i>Refresh</button></div>
   <div class="ls-kpis">
     <div class="ls-kpi"><div class="ls-kpi-top"><i data-lucide="book-open"></i>Mata Pelajaran</div><strong>${courseCount}</strong><small>lms_courses</small></div>
     <div class="ls-kpi"><div class="ls-kpi-top"><i data-lucide="clipboard-check"></i>Assignment Aktif</div><strong>${openAssignments}</strong><small>lms_assignments</small></div>
