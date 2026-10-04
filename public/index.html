@@ -14695,116 +14695,9 @@ window.supabase={createClient:(u,k)=>new S(u,k)};
   
   const DAYS = ["Senin","Selasa","Rabu","Kamis","Jumat"];
   const WEEK_DAYS = ["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"];
-  const PERIODS_BY_DAY = {
-    Senin:[
-      {number:1,start:"08:00",end:"08:40"},
-      {number:2,start:"08:45",end:"09:25"},
-      {number:3,start:"09:35",end:"10:15"},
-      {number:4,start:"10:20",end:"11:00"},
-      {number:5,start:"11:10",end:"11:50"},
-      {number:6,start:"11:55",end:"12:35"},
-      {number:7,start:"13:35",end:"14:15"},
-      {number:8,start:"14:20",end:"15:00"}
-    ],
-    Selasa:[
-      {number:1,start:"07:30",end:"08:10"},
-      {number:2,start:"08:15",end:"08:55"},
-      {number:3,start:"09:10",end:"09:50"},
-      {number:4,start:"09:55",end:"10:35"},
-      {number:5,start:"10:45",end:"11:25"},
-      {number:6,start:"11:30",end:"12:10"},
-      {number:7,start:"13:10",end:"13:50"},
-      {number:8,start:"13:55",end:"14:35"}
-    ],
-    Rabu:[
-      {number:1,start:"07:30",end:"08:10"},
-      {number:2,start:"08:15",end:"08:55"},
-      {number:3,start:"09:10",end:"09:50"},
-      {number:4,start:"09:55",end:"10:35"},
-      {number:5,start:"10:45",end:"11:25"},
-      {number:6,start:"11:30",end:"12:10"},
-      {number:7,start:"13:10",end:"13:50"},
-      {number:8,start:"13:55",end:"14:35"}
-    ],
-    Kamis:[
-      {number:1,start:"07:30",end:"08:10"},
-      {number:2,start:"08:15",end:"08:55"},
-      {number:3,start:"09:10",end:"09:50"},
-      {number:4,start:"09:55",end:"10:35"},
-      {number:5,start:"10:45",end:"11:25"},
-      {number:6,start:"11:30",end:"12:10"},
-      {number:7,start:"13:10",end:"13:50"},
-      {number:8,start:"13:55",end:"14:35"}
-    ],
-    Jumat:[
-      {number:1,start:"07:30",end:"08:10"},
-      {number:2,start:"08:15",end:"08:55"},
-      {number:3,start:"09:10",end:"09:50"},
-      {number:4,start:"09:55",end:"10:35"},
-      {number:5,start:"10:40",end:"11:20"},
-      {number:6,start:"13:00",end:"13:40"},
-      {number:7,start:"13:45",end:"14:25"},
-      {number:8,start:"14:30",end:"15:10"}
-    ]
-  };
+  const PERIODS_BY_DAY = {};
 
-  const DAY_ACTIVITIES = {
-    Senin:[
-      {label:"Flag Ceremony",start:"07:15",end:"07:55",kind:"ceremony"},
-      {label:"Short Break",start:"08:40",end:"08:45",kind:"short"},
-      {label:"Break",start:"09:25",end:"09:35",kind:"break"},
-      {label:"Short Break",start:"10:15",end:"10:20",kind:"short"},
-      {label:"Break",start:"11:00",end:"11:10",kind:"break"},
-      {label:"Short Break",start:"11:50",end:"11:55",kind:"short"},
-      {label:"Lunch",start:"12:35",end:"13:35",kind:"lunch"},
-      {label:"Short Break",start:"14:15",end:"14:20",kind:"short"}
-    ],
-    Selasa:[
-      {label:"DEAR Time",start:"07:15",end:"07:25",kind:"dear"},
-      {label:"Short Break",start:"07:25",end:"07:30",kind:"short"},
-      {label:"Short Break",start:"08:10",end:"08:15",kind:"short"},
-      {label:"Break",start:"08:55",end:"09:10",kind:"break"},
-      {label:"Short Break",start:"09:50",end:"09:55",kind:"short"},
-      {label:"Short Break",start:"10:35",end:"10:45",kind:"short"},
-      {label:"Short Break",start:"11:25",end:"11:30",kind:"short"},
-      {label:"Lunch",start:"12:10",end:"13:10",kind:"lunch"},
-      {label:"Short Break",start:"13:50",end:"13:55",kind:"short"}
-    ],
-    Rabu:[
-      {label:"DEAR Time",start:"07:15",end:"07:25",kind:"dear"},
-      {label:"Short Break",start:"07:25",end:"07:30",kind:"short"},
-      {label:"Short Break",start:"08:10",end:"08:15",kind:"short"},
-      {label:"Break",start:"08:55",end:"09:10",kind:"break"},
-      {label:"Short Break",start:"09:50",end:"09:55",kind:"short"},
-      {label:"Short Break",start:"10:35",end:"10:45",kind:"short"},
-      {label:"Short Break",start:"11:25",end:"11:30",kind:"short"},
-      {label:"Lunch",start:"12:10",end:"13:10",kind:"lunch"},
-      {label:"Short Break",start:"13:50",end:"13:55",kind:"short"}
-    ],
-    Kamis:[
-      {label:"DEAR Time",start:"07:15",end:"07:25",kind:"dear"},
-      {label:"Short Break",start:"07:25",end:"07:30",kind:"short"},
-      {label:"Short Break",start:"08:10",end:"08:15",kind:"short"},
-      {label:"Break",start:"08:55",end:"09:10",kind:"break"},
-      {label:"Short Break",start:"09:50",end:"09:55",kind:"short"},
-      {label:"Short Break",start:"10:35",end:"10:45",kind:"short"},
-      {label:"Short Break",start:"11:25",end:"11:30",kind:"short"},
-      {label:"Lunch",start:"12:10",end:"13:10",kind:"lunch"},
-      {label:"Short Break",start:"13:50",end:"13:55",kind:"short"}
-    ],
-    Jumat:[
-      {label:"DEAR Time",start:"07:15",end:"07:25",kind:"dear"},
-      {label:"Short Break",start:"07:25",end:"07:30",kind:"short"},
-      {label:"Short Break",start:"08:10",end:"08:15",kind:"short"},
-      {label:"Break",start:"08:55",end:"09:10",kind:"break"},
-      {label:"Short Break",start:"09:50",end:"09:55",kind:"short"},
-      {label:"Short Break",start:"10:35",end:"10:40",kind:"short"},
-      {label:"Lunch Break",start:"11:20",end:"11:50",kind:"lunch"},
-      {label:"Sholat Jum'at",start:"11:50",end:"13:00",kind:"prayer"},
-      {label:"Short Break",start:"13:40",end:"13:45",kind:"short"},
-      {label:"Short Break",start:"14:25",end:"14:30",kind:"short"}
-    ]
-  };
+  const DAY_ACTIVITIES = {};
 
   function periodsForDay(day){
     return PERIODS_BY_DAY[day]||[];
@@ -14813,55 +14706,56 @@ window.supabase={createClient:(u,k)=>new S(u,k)};
   function activitiesForDay(day){
     return DAY_ACTIVITIES[day]||[];
   }
-    const FIXED_TIMETABLE = {
-    Senin:[
-      "Bahasa Indonesia","Bahasa Indonesia",
-      "Mathematics","Mathematics",
-      "Music","Music",
-      "STEAM","STEAM"
-    ],
-    Selasa:[
-      "Bahasa Indonesia","Bahasa Indonesia",
-      "Pendidikan Pancasila","Pendidikan Pancasila",
-      "Pendidikan Agama","Pendidikan Agama",
-      "Science","Science"
-    ],
-    Rabu:[
-      "Pendidikan Agama",
-      "Mathematics","Mathematics",
-      "English","English",
-      "Character Education",
-      "Science","Science"
-    ],
-    Kamis:[
-      "Physical Education","Physical Education",
-      "Mathematics","Mathematics",
-      "Science","Science",
-      "Mandatory Club","Mandatory Club"
-    ],
-    Jumat:[
-      "Global Perspective","Global Perspective",
-      "English","English",
-      "Academic Writing","Academic Writing",
-      "Foreign Languages","Foreign Languages"
-    ]
-  };
-  const TIMETABLE_TEACHERS = {
-    "Bahasa Indonesia":"Akhmad Afwa",
-    "Mathematics":"Tiara Sekar Harum",
-    "Music":"Johan Adrian Supriyono",
-    "STEAM":"Amri Ramadhan",
-    "Pendidikan Pancasila":"Kakay Euis",
-    "Pendidikan Agama":"Syariful Amri",
-    "Science":"Laila Lailufari",
-    "English":"Moh Dandi Sulaiman",
-    "Character Education":"Syariful Amri",
-    "Physical Education":"Faizin Dafa Romadh­loni",
-    "Mandatory Club":"Tim Mandatory Club",
-    "Global Perspective":"Bayraktar Soydan Selamet",
-    "Academic Writing":"Suciati Gita Dwistanti, M.Pd.",
-    "Foreign Languages":"Guru Foreign Languages"
-  };
+    const FIXED_TIMETABLE = {};
+  const TIMETABLE_TEACHERS = {};
+  /* ===== Jadwal dari server (kelas7mit_schedule): mengisi ulang tabel waktu di tempat ===== */
+  function k7ApplyServerTimetable(snap){
+    const rows=Array.isArray(snap?.sisSchedule)?snap.sisSchedule:[],per=Array.isArray(snap?.schedulePeriods)?snap.schedulePeriods:[];
+    if(!rows.length||!per.length)return false;
+    const days=["Senin","Selasa","Rabu","Kamis","Jumat"];
+    const slot=(d,k)=>per.find(p=>p.day===d&&p.period===k)||per.find(p=>p.day==="*"&&p.period===k)||null;
+    const mins=t=>{const m=/^(\d{1,2}):(\d{2})$/.exec(t||"");return m?(+m[1])*60+(+m[2]):null};
+    [PERIODS_BY_DAY,DAY_ACTIVITIES,FIXED_TIMETABLE,TIMETABLE_TEACHERS].forEach(o=>Object.keys(o).forEach(k=>delete o[k]));
+    const startOf=(r,k)=>r.startsAt||slot(r.day,k)?.startsAt||"",endOf=(r,k)=>r.endsAt||slot(r.day,k)?.endsAt||"";
+    days.forEach(day=>{
+      const mine=rows.filter(r=>r.day===day).sort((a,b)=>(a.sortOrder||0)-(b.sortOrder||0));
+      if(!mine.length)return;
+      const lessons=[],subjects=[];
+      for(let n=1;n<=8;n++){
+        const sl=slot(day,String(n));if(!sl)continue;
+        const cover=mine.find(r=>(Number(r.periodStart??r.period)||0)<=n&&n<=(Number(r.periodEnd??r.periodStart??r.period)||0));
+        lessons.push({number:n,start:sl.startsAt,end:sl.endsAt});subjects.push(cover?.subject||"—");
+      }
+      if(!lessons.length)return;
+      const acts=[];
+      mine.filter(r=>(Number(r.periodStart??r.period)||0)===0).forEach(r=>{
+        const dear=/dear/i.test(r.subject),flag=/flag|upacara/i.test(r.subject);
+        acts.push({label:dear?"DEAR Time":r.subject,start:startOf(r,"0"),end:endOf(r,"0"),kind:dear?"dear":flag?"ceremony":"short"});
+      });
+      const lk=slot(day,"Lunch");
+      if(lk)acts.push({label:"Lunch",start:lk.startsAt,end:lk.endsAt,kind:"lunch"});
+      const ls=lk?mins(lk.startsAt):null,le=lk?mins(lk.endsAt):null;
+      const edges=[...acts.filter(a=>a.kind!=="lunch").map(a=>[a.start,a.end]),...lessons.map(l=>[l.start,l.end])].filter(e=>mins(e[0])!==null&&mins(e[1])!==null).sort((a,b)=>mins(a[0])-mins(b[0]));
+      for(let i=0;i<edges.length-1;i++){
+        const a=mins(edges[i][1]),b=mins(edges[i+1][0]),gap=b-a;
+        if(gap<=0)continue;
+        if(ls!==null&&a<le&&b>ls)continue;
+        acts.push({label:gap>=10?"Break":"Short Break",start:edges[i][1],end:edges[i+1][0],kind:gap>=10?"break":"short"});
+      }
+      acts.sort((a,b)=>(mins(a.start)||0)-(mins(b.start)||0));
+      PERIODS_BY_DAY[day]=lessons;FIXED_TIMETABLE[day]=subjects;DAY_ACTIVITIES[day]=acts;
+    });
+    const by={};
+    rows.forEach(r=>{const w=r.teacherName||r.teacherCode;if(!w)return;(by[r.subject]=by[r.subject]||new Set()).add(w)});
+    Object.keys(by).forEach(s=>{TIMETABLE_TEACHERS[s]=[...by[s]].join(" / ")});
+    window.__k7TimetableReady=true;
+    try{localStorage.setItem("k7-timetable-v1",JSON.stringify({sisSchedule:rows,schedulePeriods:per}))}catch(e){}
+    try{if(typeof renderCurrentLesson==="function")renderCurrentLesson(new Date())}catch(e){}
+    return true;
+  }
+  window.k7ApplyServerTimetable=k7ApplyServerTimetable;
+  try{const c=JSON.parse(localStorage.getItem("k7-timetable-v1")||"null");if(c)k7ApplyServerTimetable(c)}catch(e){}
+
   const STUDENT_NOTE_AUTHORS = [
     "Guru · Syariful Amri, Lc.",
     "Ketua Kelas · Adelio Baradeva Raditya Putra",
@@ -16009,6 +15903,12 @@ function setCurrentLessonSubject(value){
       $("#currentNext").textContent=nextPeriod
         ?`Period ${nextPeriod.number} dimulai dalam ${formatCountdown(remaining)}`
         :`Kegiatan selesai dalam ${formatCountdown(remaining)}`;
+    }else if(!subjects&&!window.__k7TimetableReady){
+      setCurrentLessonSubject("Memuat jadwal…");
+      $("#currentDetail").textContent="Mengambil jadwal terbaru dari server.";
+      $("#currentPeriod").textContent="—";
+      $("#currentTime").textContent="—";
+      $("#currentNext").textContent="—";
     }else if(!subjects){
       setCurrentLessonSubject("Hari Libur");
       $("#currentDetail").textContent="Tidak ada pelajaran Kelas 7 MIT hari ini.";
@@ -19554,7 +19454,7 @@ async function lsLoadSeparateData(force=false){
   try{
     const snapshot=await lsRpc("learning_school_snapshot",{});
     for(const key of LS_KEYS)LS_DATA[key]=Array.isArray(snapshot?.[key])?snapshot[key]:[];
-    LS_REMOTE.loaded=true;LS_REMOTE.lastLoadedAt=Date.now();
+    LS_REMOTE.loaded=true;LS_REMOTE.lastLoadedAt=Date.now();if(typeof window.k7ApplyServerTimetable==="function")window.k7ApplyServerTimetable({sisSchedule:LS_DATA.sisSchedule,schedulePeriods:LS_DATA.schedulePeriods});
   }catch(error){
     console.error("belajar.7mit separate tables:",error);
     LS_REMOTE.loaded=false;LS_REMOTE.error=String(error?.message||error||"Gagal memuat data");
@@ -19563,6 +19463,24 @@ async function lsLoadSeparateData(force=false){
     if($("#learningSchoolContent"))renderLearningSchool()
   }
 }
+let K7_TT_SIG="";
+async function k7TimetablePull(){
+  try{
+    const snap=await lsRpc("kelas7mit_schedule_snapshot",{});
+    if(!snap||!Array.isArray(snap.sisSchedule)||snap.version===K7_TT_SIG)return;
+    K7_TT_SIG=snap.version;
+    LS_DATA.sisSchedule=snap.sisSchedule;LS_DATA.schedulePeriods=Array.isArray(snap.schedulePeriods)?snap.schedulePeriods:[];
+    if(typeof window.k7ApplyServerTimetable==="function")window.k7ApplyServerTimetable(snap);
+    if($("#learningSchoolContent")&&K7_LS_TAB==="schedule")renderLearningSchool();
+  }catch(error){console.warn("Sinkron jadwal ditunda:",error?.message||error)}
+}
+(function(){
+  const go=()=>{if(!document.hidden)k7TimetablePull()};
+  setTimeout(go,2500);setTimeout(go,9000);setInterval(go,60000);
+  document.addEventListener("visibilitychange",go);window.addEventListener("online",go);window.addEventListener("focus",go);
+  window.k7TimetablePull=k7TimetablePull;
+})();
+
 async function lsUpsert(entity,record,payload,message){
   try{
     closeModal();
