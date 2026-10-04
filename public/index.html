@@ -19485,8 +19485,8 @@ function setCurrentLessonSubject(value){
 
 /* ===== belajar.7mit — LMS + SCHOOL INFORMATION SYSTEM ===== */
 /* Separate Supabase tables. These arrays are runtime-only and live in their own kelas7mit_* tables. */
-const LS_KEYS=["lmsCourses","lmsMaterials","lmsAssignments","lmsGrades","sisAttendance","sisSchedule"];
-const LS_DATA={lmsCourses:[],lmsMaterials:[],lmsAssignments:[],lmsGrades:[],sisAttendance:[],sisSchedule:[]};
+const LS_KEYS=["lmsCourses","lmsMaterials","lmsAssignments","lmsGrades","sisAttendance","sisSchedule","schedulePeriods"];
+const LS_DATA={lmsCourses:[],lmsMaterials:[],lmsAssignments:[],lmsGrades:[],sisAttendance:[],sisSchedule:[],schedulePeriods:[]};
 const LS_DAYS=["Senin","Selasa","Rabu","Kamis","Jumat"];
 const LS_ATTENDANCE_STATUS=["Hadir","Terlambat","Izin","Sakit","Alpa"];
 let LS_REMOTE={loaded:false,loading:false,error:"",lastLoadedAt:0};
@@ -19653,13 +19653,18 @@ function openLsEditor(type,record=null,preset={}){
     if(!lsCanSchoolEdit())return;
     openModal(editing?"Edit Jadwal":"Tambah Jadwal",`<div class="form-grid">
       ${field("lsDay","Hari","select",record?.day||"Senin",lsOpt(LS_DAYS))}
-      ${field("lsPeriod","Jam Ke-","number",record?.period||1)}
+      ${field("lsPeriod","Jam Mulai (ke-)","number",record?.periodStart??record?.period??1)}
+      ${field("lsPeriodEnd","Jam Selesai (ke-)","number",record?.periodEnd??record?.periodStart??record?.period??1)}
       ${field("lsCourse","Mata Pelajaran","select",record?.courseId||courseOpts[0]?.value||"",courseOpts)}
+      ${field("lsSubject","Nama Tampil (opsional)","text",record?.subject||"")}
+      ${field("lsTeacherCode","Kode Guru","text",record?.teacherCode||"")}
       ${field("lsRoom","Ruang / Kelas","text",record?.room||"7 MIT")}
+      ${field("lsGroup","Pilihan / Kelompok (mis. Islam)","text",record?.group||"")}
       ${field("lsNote","Catatan","text",record?.note||"")}
     </div>`,()=>{
       if(!value("lsCourse"))return toast("Mata pelajaran wajib dipilih.");
-      lsUpsert("schedule",record,{day:value("lsDay"),period:Math.max(1,Number(value("lsPeriod"))||1),courseId:value("lsCourse"),room:value("lsRoom"),note:value("lsNote")},"Jadwal disimpan.")
+      const ps=Math.max(0,Number(value("lsPeriod"))||0),pe=Math.max(ps,Number(value("lsPeriodEnd"))||ps);
+      lsUpsert("schedule",record,{day:value("lsDay"),periodStart:ps,periodEnd:pe,courseId:value("lsCourse"),subject:value("lsSubject"),teacherCode:value("lsTeacherCode"),teacherName:record?.teacherName||"",room:value("lsRoom"),group:value("lsGroup"),note:value("lsNote"),startsAt:record?.startsAt||"",endsAt:record?.endsAt||""},"Jadwal disimpan.")
     })
   }
 }
@@ -19708,7 +19713,7 @@ function renderLearningSchool(){
       <span class="ls-system-tag"><i data-lucide="table-2"></i> lms_assignments</span>
       <span class="ls-system-tag"><i data-lucide="table-2"></i> lms_grades</span>
       <span class="ls-system-tag"><i data-lucide="table-2"></i> sis_attendance</span>
-      <span class="ls-system-tag"><i data-lucide="table-2"></i> sis_schedule</span>
+      <span class="ls-system-tag"><i data-lucide="table-2"></i> kelas7mit_schedule</span>
     </div>
   </div>
   <div class="ls-db-banner"><i data-lucide="database"></i><div><b>Database belajar.7mit</b><br>belajar.7mit memakai tabel terpisah (<code>kelas7mit_*</code>), bukan satu JSON state. Tekan Refresh untuk memuat ulang keenam tabel.</div><button class="ls-action" data-ls-refresh style="margin-left:auto"><i data-lucide="refresh-cw"></i>Refresh</button></div>
@@ -19746,7 +19751,7 @@ function renderLsOverview(){
   return `<div class="ls-two"><div><div class="ls-toolbar"><div class="ls-toolbar-copy"><b>Learning Overview</b><small>Materi dan assignment dari tabel terpisah</small></div></div>
     <div class="ls-mini-list">${materials.length?materials.map(m=>{const c=lsCourseById(m.courseId);return `<div class="ls-mini-row"><i data-lucide="library-big"></i><div><b>${esc(m.title)}</b><small>${esc(c?.name||"Tanpa course")} · ${esc(m.type||"Materi")}</small></div></div>`}).join(""):'<div class="ls-empty">Belum ada materi.</div>'}
     ${assignments.map(a=>{const c=lsCourseById(a.courseId),[st]=lsDueStatus(a);return `<div class="ls-mini-row"><i data-lucide="clipboard-list"></i><div><b>${esc(a.title)}</b><small>${esc(c?.name||"Tanpa course")} · ${lsDateLabel(a.dueDate)} · ${st}</small></div></div>`}).join("")}</div></div>
-    <div><div class="ls-toolbar"><div class="ls-toolbar-copy"><b>School Schedule</b><small>sis_schedule</small></div></div><div class="ls-mini-list">
+    <div><div class="ls-toolbar"><div class="ls-toolbar-copy"><b>School Schedule</b><small>kelas7mit_schedule</small></div></div><div class="ls-mini-list">
       ${days.map(d=>`<div class="ls-mini-row"><i data-lucide="calendar-days"></i><div><b>${d.day}</b><small>${d.rows.length?d.rows.map(r=>lsCourseById(r.courseId)?.name||"Course").join(" · "):"Belum ada jadwal"}</small></div></div>`).join("")}
     </div></div></div>`
 }
@@ -19802,9 +19807,44 @@ function renderLsAttendance(){
   ${rows.length?`<div class="ls-table-wrap"><table class="ls-table"><thead><tr>${lsRole()==="student"?"":"<th>Siswa</th>"}<th>Tanggal</th><th>Status</th><th>Catatan</th>${lsCanSchoolEdit()?"<th>Aksi</th>":""}</tr></thead><tbody>${rows.slice().sort((a,b)=>String(b.date||"").localeCompare(String(a.date||""))).map(r=>{const kind=r.status==="Hadir"?"good":r.status==="Terlambat"?"warn":r.status==="Alpa"?"bad":"info";return `<tr>${lsRole()==="student"?"":`<td>${esc(r.studentName||lsStudentById(r.studentId)?.name||"—")}</td>`}<td>${lsDateLabel(r.date)}</td><td>${lsStatus(r.status||"—",kind)}</td><td>${esc(r.note||"—")}</td>${lsCanSchoolEdit()?`<td><div class="cell-actions"><button class="mini-btn" data-ls-edit="attendance" data-ls-id="${r.id}"><i data-lucide="pencil"></i>Edit</button><button class="mini-btn danger" data-ls-delete="attendance" data-ls-id="${r.id}" data-ls-label="kehadiran"><i data-lucide="trash-2"></i>Hapus</button></div></td>`:""}</tr>`}).join("")}</tbody></table></div>`:'<div class="ls-empty">Belum ada data kehadiran.</div>'}`
 }
 function renderLsSchedule(){
-  const days=LS_DAYS.map(day=>({day,rows:lsRows("sisSchedule").filter(s=>s.day===day).sort((a,b)=>(a.period||0)-(b.period||0))}));
-  return `<div class="ls-toolbar"><div class="ls-toolbar-copy"><b>Jadwal Pelajaran</b><small>Tabel: sis_schedule</small></div>${lsCanSchoolEdit()?`<div class="ls-actions"><button class="ls-action primary" data-ls-add="schedule"><i data-lucide="plus"></i>Tambah Jadwal</button></div>`:""}</div>
-  <div class="ls-schedule">${days.map(d=>`<section class="ls-day"><h4>${d.day}</h4>${d.rows.length?d.rows.map(r=>{const c=lsCourseById(r.courseId);return `<div class="ls-period"><b>Jam ${Number(r.period)||1} · ${esc(c?.name||"Course")}</b><small>${esc(r.room||c?.room||"7 MIT")}${r.note?" · "+esc(r.note):""}</small>${lsCanSchoolEdit()?`<div class="cell-actions" style="margin-top:5px"><button class="mini-btn" data-ls-edit="schedule" data-ls-id="${r.id}"><i data-lucide="pencil"></i></button><button class="mini-btn danger" data-ls-delete="schedule" data-ls-id="${r.id}" data-ls-label="jadwal"><i data-lucide="trash-2"></i></button></div>`:""}</div>`}).join(""):'<div class="ls-period"><small>Belum ada jadwal</small></div>'}</section>`).join("")}</div>`
+  const X=v=>esc(String(v??"")),rows=lsRows("sisSchedule"),per=lsRows("schedulePeriods"),edit=lsCanSchoolEdit();
+  const keys=["0","1","2","3","4","5","6","Lunch","7","8"];
+  const slot=(day,k)=>per.find(p=>p.day===day&&p.period===k)||per.find(p=>p.day==="*"&&p.period===k)||null;
+  const base=k=>per.find(p=>p.day==="*"&&p.period===k)||{startsAt:"",endsAt:"",label:k};
+  const hue=s=>{let h=0;for(const c of String(s||""))h=(h*31+c.charCodeAt(0))%360;return h};
+  const names=["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"],now=new Date(),today=names[now.getDay()],nowMin=now.getHours()*60+now.getMinutes();
+  const mins=t=>{const m=/^(\d{1,2}):(\d{2})$/.exec(t||"");return m?(+m[1])*60+(+m[2]):null};
+  const segs=r=>{const ps=Number(r.periodStart??r.period)||0,pe=Number(r.periodEnd??ps)||ps;
+    if(r.startsAt||r.endsAt){return [[r.startsAt||slot(r.day,String(ps))?.startsAt||"",r.endsAt||slot(r.day,String(pe))?.endsAt||""]]}
+    const out=[];for(let p=ps;p<=pe;p++){const sl=slot(r.day,String(p));if(!sl)continue;const last=out[out.length-1];
+      if(last&&mins(sl.startsAt)!==null&&mins(last[1])!==null&&mins(sl.startsAt)<=mins(last[1])+15)last[1]=sl.endsAt;else out.push([sl.startsAt,sl.endsAt])}
+    return out};
+  const timeOf=r=>{const sg=segs(r);return {a:sg[0]?.[0]||"",b:sg[sg.length-1]?.[1]||"",text:sg.map(x=>x[0]+"–"+x[1]).join(" · ")}};
+  const live=r=>{if(r.day!==today)return false;return segs(r).some(([a,b])=>{const x=mins(a),y=mins(b);return x!==null&&y!==null&&nowMin>=x&&nowMin<y})};
+  const actions=r=>edit?`<span class="k7sch-act"><button class="mini-btn" data-ls-edit="schedule" data-ls-id="${X(r.id)}" aria-label="Edit jadwal"><i data-lucide="pencil"></i></button><button class="mini-btn danger" data-ls-delete="schedule" data-ls-id="${X(r.id)}" data-ls-label="jadwal" aria-label="Hapus jadwal"><i data-lucide="trash-2"></i></button></span>`:"";
+  const item=(r,withTime)=>{const t=timeOf(r),ps=Number(r.periodStart??r.period)||0,pe=Number(r.periodEnd??ps)||ps,custom=!!r.startsAt||(slot(r.day,String(ps))?.startsAt!==base(String(ps)).startsAt);
+    const who=[r.teacherCode||"",r.group?"":""].filter(Boolean).join("");
+    return `<div class="k7sch-item${live(r)?" is-live":""}" style="--h:${hue(r.subject)}"><b>${X(r.subject)}</b>${r.group?`<em>${X(r.group)}</em>`:""}<small>${X([r.room,r.teacherCode].filter(Boolean).join(" · "))}${r.note?" · "+X(r.note):""}</small>${withTime||custom?`<small class="k7sch-t">${X(t.text)}</small>`:""}${actions(r)}</div>`};
+  const head=`<div class="k7sch-h k7sch-corner"></div>`+keys.map(k=>{const b=base(k);return `<div class="k7sch-h${k==="Lunch"?" is-lunch":""}"><b>${X(b.label||k)}</b><small>${X(b.startsAt)}–${X(b.endsAt)}</small></div>`}).join("");
+  const col=k=>keys.indexOf(String(k))+2;
+  const grid=LS_DAYS.map((day,i)=>{
+    const mine=rows.filter(r=>r.day===day),groups=new Map();
+    mine.forEach(r=>{const key=(r.periodStart??r.period)+"-"+(r.periodEnd??r.period);(groups.get(key)||groups.set(key,[]).get(key)).push(r)});
+    const cells=[...groups.values()].map(g=>{const r=g[0],ps=Number(r.periodStart??r.period)||0,pe=Number(r.periodEnd??ps)||ps;
+      const c1=col(ps),c2=col(pe)+1;return `<div class="k7sch-cell${g.length>3?" multi many":g.length>1?" multi":""}" style="grid-column:${c1}/${c2};grid-row:${i+2}">${g.map(x=>item(x,false)).join("")}</div>`}).join("");
+    return `<div class="k7sch-day${day===today?" is-today":""}" style="grid-row:${i+2}">${X(day.slice(0,3))}<small>${X(day)}</small></div>${cells}`}).join("");
+  const lunch=`<div class="k7sch-lunch" style="grid-column:${col("Lunch")};grid-row:2/${LS_DAYS.length+2}"><span>Lunch Break</span></div>`;
+  const list=LS_DAYS.map(day=>{const mine=rows.filter(r=>r.day===day).sort((a,b)=>(a.periodStart??a.period)-(b.periodStart??b.period)||(a.sortOrder||0)-(b.sortOrder||0));
+    const lk=slot(day,"Lunch");let out="",done=false;
+    mine.forEach(r=>{if(!done&&lk&&(r.periodStart??r.period)>=7){out+=`<div class="k7sch-brk">Istirahat · ${X(lk.startsAt)}–${X(lk.endsAt)}</div>`;done=true}
+      const ps=Number(r.periodStart??r.period)||0,pe=Number(r.periodEnd??ps)||ps,t=timeOf(r);
+      out+=`<div class="k7sch-li${live(r)?" is-live":""}" style="--h:${hue(r.subject)}"><div class="k7sch-lt"><b>${ps===pe?"Jam "+ps:"Jam "+ps+"–"+pe}</b><small>${X(t.text)}</small></div><div class="k7sch-lb"><b>${X(r.subject)}${r.group?` <em>${X(r.group)}</em>`:""}</b><small>${X([r.room,r.teacherCode].filter(Boolean).join(" · "))}${r.note?" · "+X(r.note):""}</small></div>${actions(r)}</div>`});
+    return `<section class="k7sch-ld${day===today?" is-today":""}"><h4>${X(day)}${day===today?" <em>Hari ini</em>":""}</h4>${out||'<div class="k7sch-brk">Belum ada jadwal</div>'}</section>`}).join("");
+  const diffs=per.filter(p=>p.day!=="*").map(p=>`${X(p.day)}: ${p.kind==="break"?"Istirahat":"Jam ke-"+X(p.period)} ${X(p.startsAt)}–${X(p.endsAt)}`);
+  return `<div class="ls-toolbar"><div class="ls-toolbar-copy"><b>Jadwal Pelajaran</b><small>Tabel: kelas7mit_schedule · ${rows.length} sesi</small></div>${edit?`<div class="ls-actions"><button class="ls-action primary" data-ls-add="schedule"><i data-lucide="plus"></i>Tambah Jadwal</button></div>`:""}</div>
+  <div class="k7sch-wrap"><div class="k7sch-grid">${head}${grid}${lunch}</div></div>
+  <div class="k7sch-list">${list}</div>
+  ${diffs.length?`<p class="k7sch-note">Jadwal khusus: ${diffs.join(" · ")}</p>`:""}`
 }
 function lsFindRecord(type,id){
   const map={course:"lmsCourses",material:"lmsMaterials",assignment:"lmsAssignments",grade:"lmsGrades",attendance:"sisAttendance",schedule:"sisSchedule"};
@@ -28951,5 +28991,39 @@ html.k7-lite .cm3d-pop{animation:none}
 })();
 
 </script>
+<style id="k7-schedule-v148">
+/* ===== V148 · JADWAL PELAJARAN (kelas7mit_schedule) ===== */
+.k7sch-wrap{overflow-x:auto;border:1px solid var(--line,#e3e8f0);border-radius:20px;background:var(--surface,#fff);padding:10px;box-shadow:0 14px 34px rgba(15,23,42,.06)}
+.k7sch-grid{display:grid;grid-template-columns:54px repeat(7,minmax(104px,1fr)) minmax(54px,.5fr) repeat(2,minmax(104px,1fr));gap:6px;min-width:1040px}
+.k7sch-h{padding:6px 4px;text-align:center;border-radius:12px;background:var(--surface-2,#f1f5f9);grid-row:1}
+.k7sch-h b{display:block;font-size:13px}.k7sch-h small{display:block;font-size:10px;color:var(--muted,#667085);margin-top:2px;white-space:nowrap}
+.k7sch-h.is-lunch{background:color-mix(in srgb,#f59e0b 16%,transparent)}
+.k7sch-day{display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:12px;background:var(--surface-2,#f1f5f9);font-weight:900;font-size:15px;grid-column:1}
+.k7sch-day small{font-size:9px;font-weight:700;color:var(--muted,#667085)}
+.k7sch-day.is-today{background:var(--blue,#2563eb);color:#fff}.k7sch-day.is-today small{color:#e0e9ff}
+.k7sch-cell{display:flex;gap:5px;min-width:0}.k7sch-cell.multi{flex-direction:column}.k7sch-cell.many{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+.k7sch-item{position:relative;flex:1;min-width:0;padding:9px 10px;border-radius:12px;border:1px solid hsl(var(--h) 55% 78%);background:hsl(var(--h) 80% 95%);color:#172033;display:flex;flex-direction:column;gap:2px;justify-content:center}
+.k7sch-item b{font-size:12px;line-height:1.25}.k7sch-item em{font-style:normal;font-size:10px;font-weight:800;color:hsl(var(--h) 60% 30%)}
+.k7sch-item small{font-size:10px;color:#475569}.k7sch-t{font-weight:800}
+.k7sch-item.is-live,.k7sch-li.is-live{box-shadow:0 0 0 2px var(--blue,#2563eb)}
+.k7sch-lunch{display:flex;align-items:center;justify-content:center;border-radius:12px;background:color-mix(in srgb,#f59e0b 14%,transparent);border:1px dashed color-mix(in srgb,#f59e0b 50%,transparent)}
+.k7sch-lunch span{writing-mode:vertical-rl;transform:rotate(180deg);font-weight:900;letter-spacing:.08em;font-size:13px;color:#b45309}
+.k7sch-act{display:flex;gap:4px;margin-top:4px}.k7sch-act .mini-btn{padding:3px 7px}
+.k7sch-list{display:none}
+.k7sch-note{margin:10px 2px 0;font-size:11px;color:var(--muted,#667085);line-height:1.6}
+.k7sch-ld{border:1px solid var(--line,#e3e8f0);border-radius:18px;background:var(--surface,#fff);padding:12px;margin-bottom:10px}
+.k7sch-ld h4{margin:0 0 8px;font-size:14px;display:flex;gap:8px;align-items:center}.k7sch-ld h4 em{font-style:normal;font-size:10px;font-weight:900;background:var(--blue,#2563eb);color:#fff;border-radius:99px;padding:2px 9px}
+.k7sch-li{display:flex;gap:10px;align-items:center;padding:9px;border-radius:12px;background:hsl(var(--h) 80% 96%);border-left:4px solid hsl(var(--h) 60% 55%);margin-top:6px;color:#172033}
+.k7sch-lt{min-width:74px}.k7sch-lt b{display:block;font-size:12px}.k7sch-lt small{font-size:10px;color:#475569}
+.k7sch-lb{flex:1;min-width:0}.k7sch-lb b{display:block;font-size:13px}.k7sch-lb em{font-style:normal;font-size:10px;font-weight:800;color:hsl(var(--h) 60% 30%)}.k7sch-lb small{font-size:11px;color:#475569}
+.k7sch-brk{margin-top:8px;padding:6px 10px;border-radius:10px;background:color-mix(in srgb,#f59e0b 14%,transparent);font-size:11px;font-weight:800;color:#b45309}
+@media(max-width:860px){.k7sch-wrap{display:none}.k7sch-list{display:block}}
+:root[data-theme="dark"] .k7sch-item,:root[data-theme="dark"] .k7sch-li{background:hsl(var(--h) 35% 20%);border-color:hsl(var(--h) 35% 36%);color:#eef2ff}
+:root[data-theme="dark"] .k7sch-item small,:root[data-theme="dark"] .k7sch-lt small,:root[data-theme="dark"] .k7sch-lb small{color:#cbd5e1}
+:root[data-theme="dark"] .k7sch-item em,:root[data-theme="dark"] .k7sch-lb em{color:hsl(var(--h) 80% 78%)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .k7sch-item,:root:not([data-theme="light"]) .k7sch-li{background:hsl(var(--h) 35% 20%);border-color:hsl(var(--h) 35% 36%);color:#eef2ff}:root:not([data-theme="light"]) .k7sch-item small,:root:not([data-theme="light"]) .k7sch-lt small,:root:not([data-theme="light"]) .k7sch-lb small{color:#cbd5e1}:root:not([data-theme="light"]) .k7sch-item em,:root:not([data-theme="light"]) .k7sch-lb em{color:hsl(var(--h) 80% 78%)}}
+
+.ls-db-banner .ls-action{white-space:nowrap;flex:none}
+</style>
 </body>
 </html>
