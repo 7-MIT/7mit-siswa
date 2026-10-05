@@ -28192,7 +28192,7 @@ html:root body .current-card .current-subject{text-shadow:none!important}
 
 /* ---------- mobile ---------- */
 .k7-bnav{display:none}
-@media(max-width:900px){
+@media(max-width:767px){
   html:root body .app{display:block!important}
   html:root body{padding-top:0!important}
   html:root body main{padding:78px 16px calc(92px + env(safe-area-inset-bottom))!important}
@@ -28223,16 +28223,40 @@ html:root body .current-card .current-subject{text-shadow:none!important}
 
 /* label versi tidak menimpa profil */
 html:root body #k7PublicVersion{left:calc(var(--k7-side) + 14px)!important;bottom:10px!important;opacity:.7}
-@media(max-width:900px){html:root body #k7PublicVersion{left:10px!important;bottom:calc(74px + env(safe-area-inset-bottom))!important}}
+@media(max-width:767px){html:root body #k7PublicVersion{left:10px!important;bottom:calc(74px + env(safe-area-inset-bottom))!important}}
 
 html:root body .live-panel .live-left{display:flex;align-items:flex-start;gap:10px}
 html:root body .live-panel .live-dot{margin-top:6px;flex:0 0 auto}
 html:root body td .mini-btn,html:root body td .viewer-btn{white-space:nowrap}
 
 /* tombol AI mengambang tidak menutup navigasi bawah */
-@media(max-width:900px){html:root body #k7GeminiFab{bottom:calc(76px + env(safe-area-inset-bottom))!important}}
+@media(max-width:767px){html:root body #k7GeminiFab{bottom:calc(76px + env(safe-area-inset-bottom))!important}}
 /* saat modal terbuka, elemen mengambang disembunyikan */
 html:root body:has(.modal.open,.chat-media-modal.open,.dues-shell.open) :is(#k7GeminiFab,#k7PublicVersion,.k7-bnav){display:none!important}
+
+/* iPad & desktop (>=768px): antarmuka sidebar; HP (<768px): bilah atas + navigasi bawah */
+@media(min-width:768px){
+  html:root body .mobile-top,html:root body .sidebar-scrim,html:root body .k7-bnav{display:none!important}
+  html:root body .sidebar{transform:none!important}
+}
+@media(min-width:768px) and (max-width:1180px){
+  :root{--k7-side:232px}
+  html:root body main{padding:26px clamp(16px,2.4vw,28px) 56px!important}
+  html:root body .sidebar .nav>button,html:root body .sidebar .nav>a.portal-help-link{min-height:38px!important;padding:0 10px!important;font-size:13px!important}
+  html:root body .sidebar .brand-copy h1{font-size:16px!important}
+  html:root body .stats,html:root body .summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(min-width:768px) and (max-width:900px){
+  html:root body .topbar{flex-direction:row!important;align-items:flex-end!important}
+}
+/* tabel tidak boleh menghancurkan kolom di layar sedang: gulir horizontal saja */
+html:root body .table-wrap table{min-width:640px}
+html:root body .table-wrap td,html:root body .table-wrap th{overflow-wrap:normal;word-break:normal}
+html:root body .table-wrap td:has(.progress,.bar){min-width:130px}
+@media(max-width:767px){html:root body .table-wrap table{min-width:0}}
+html:root body .table-wrap td .progress{flex:1 1 70px;min-width:70px}
+html:root body .table-wrap td b{white-space:nowrap;flex:0 0 auto}
+html:root body .table-wrap td:has(.progress){min-width:150px}
 
 </style>
 <script id="k7-bnav-v150-js">
@@ -28240,7 +28264,7 @@ html:root body:has(.modal.open,.chat-media-modal.open,.dues-shell.open) :is(#k7G
 (()=>{
   'use strict';
   if(window.__k7Bnav)return;window.__k7Bnav=1;
-  const mq=matchMedia('(max-width:900px)');
+  const mq=matchMedia('(max-width:767px)');
   function build(){
     const nav=document.getElementById('nav');if(!nav||document.querySelector('.k7-bnav'))return;
     const src=[...nav.querySelectorAll('button[data-page]')].slice(0,4);if(src.length<3)return;
