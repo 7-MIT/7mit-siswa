@@ -1056,254 +1056,6 @@ th,td{vertical-align:top}
 }
 
 
-/* ===== NAVBAR FIXED + BRAND FULL TEXT ===== */
-
-/* Desktop: sidebar selalu diam saat halaman digulir */
-@media (min-width:901px){
-  .app{
-    display:block !important;
-    min-height:100vh;
-  }
-
-  .sidebar{
-    position:fixed !important;
-    top:0;
-    left:0;
-    bottom:0;
-    width:278px;
-    height:100dvh;
-    z-index:100;
-    overflow-y:auto;
-    overflow-x:hidden;
-    overscroll-behavior:contain;
-  }
-
-  main{
-    margin-left:278px !important;
-    width:calc(100% - 278px) !important;
-    max-width:none !important;
-  }
-
-  .mobile-top{
-    display:none !important;
-  }
-}
-
-@media (min-width:901px) and (max-width:1180px){
-  .sidebar{
-    width:248px;
-  }
-
-  main{
-    margin-left:248px !important;
-    width:calc(100% - 248px) !important;
-  }
-}
-
-/* Mobile/tablet: navbar atas selalu fixed */
-@media (max-width:900px){
-  .mobile-top{
-    position:fixed !important;
-    top:0 !important;
-    left:0 !important;
-    right:0 !important;
-    width:100% !important;
-    z-index:120 !important;
-  }
-
-  .sidebar{
-    position:fixed !important;
-    top:0 !important;
-    bottom:0 !important;
-  }
-}
-
-/* Nama brand tidak boleh dipotong menjadi siswa.7..., guru.7..., dll. */
-.brand{
-  min-width:0;
-}
-
-.brand-copy{
-  flex:1 1 auto;
-  min-width:0;
-  overflow:visible !important;
-}
-
-.brand-copy h1,
-.brand-copy small{
-  width:auto !important;
-  max-width:none !important;
-  overflow:visible !important;
-  text-overflow:clip !important;
-  white-space:normal !important;
-  word-break:normal !important;
-  overflow-wrap:normal !important;
-}
-
-.mobile-top b{
-  display:block;
-  min-width:0;
-  overflow:visible !important;
-  text-overflow:clip !important;
-  white-space:nowrap !important;
-  font-size:clamp(.92rem,4vw,1.05rem);
-  letter-spacing:-.01em;
-}
-
-/* Pastikan logo punya ruang cukup di navbar mobile */
-@media (max-width:900px){
-  .mobile-top{
-    grid-template-columns:44px minmax(max-content,1fr) 44px !important;
-  }
-}
-
-@media (max-width:390px){
-  .mobile-top{
-    grid-template-columns:40px minmax(max-content,1fr) 40px !important;
-    gap:6px !important;
-  }
-
-  .mobile-top b{
-    font-size:.9rem;
-  }
-
-  .mobile-top button{
-    width:40px !important;
-    height:40px !important;
-  }
-}
-
-
-/* ===== SIDEBAR FINAL: NO OVERLAP + LOGOUT ===== */
-.sidebar{
-  display:flex !important;
-  flex-direction:column !important;
-  overflow:hidden !important;
-}
-
-.sidebar .brand{
-  flex:0 0 auto;
-  padding-bottom:16px;
-}
-
-.sidebar .nav{
-  flex:1 1 auto !important;
-  min-height:0 !important;
-  max-height:none !important;
-  overflow-x:hidden !important;
-  overflow-y:auto !important;
-  padding:2px 4px 12px 0 !important;
-  margin:0 !important;
-  scrollbar-width:thin;
-  overscroll-behavior:contain;
-}
-
-.sidebar .nav button{
-  flex:0 0 auto;
-}
-
-.sidebar-footer{
-  position:relative;
-  z-index:3;
-  flex:0 0 auto;
-  display:grid;
-  gap:10px;
-  padding-top:12px;
-  border-top:1px solid rgba(255,255,255,.12);
-  background:linear-gradient(180deg,rgba(11,23,44,0),rgba(11,23,44,.96) 18%);
-}
-
-.sidebar .teacher{
-  position:static !important;
-  inset:auto !important;
-  width:100% !important;
-  margin:0 !important;
-  padding:12px 13px !important;
-  overflow:hidden;
-}
-
-.sidebar .teacher small,
-.sidebar .teacher b{
-  display:block;
-  max-width:100%;
-  overflow-wrap:anywhere;
-  word-break:normal;
-}
-
-.sidebar .teacher b{
-  line-height:1.32;
-}
-
-.sidebar-logout{
-  width:100%;
-  min-height:44px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:9px;
-  padding:10px 13px;
-  border:1px solid rgba(248,113,113,.42);
-  border-radius:13px;
-  color:#fecaca;
-  background:rgba(127,29,29,.18);
-  font-weight:850;
-  cursor:pointer;
-  transition:.18s ease;
-}
-
-.sidebar-logout:hover{
-  color:#fff;
-  background:rgba(185,28,28,.34);
-  border-color:rgba(252,165,165,.65);
-  transform:translateY(-1px);
-}
-
-.sidebar-logout svg{
-  width:18px;
-  height:18px;
-  flex:0 0 18px;
-}
-
-@media(max-width:900px){
-  .sidebar{
-    height:100dvh !important;
-    max-height:100dvh !important;
-  }
-
-  .sidebar .brand{
-    padding-bottom:13px;
-  }
-
-  .sidebar .nav{
-    padding-bottom:10px !important;
-  }
-
-  .sidebar-footer{
-    padding-bottom:max(2px,env(safe-area-inset-bottom));
-  }
-}
-
-@media(max-height:650px){
-  .sidebar .brand{
-    padding-bottom:10px;
-  }
-
-  .sidebar .teacher{
-    padding:9px 11px !important;
-  }
-
-  .sidebar-footer{
-    gap:7px;
-    padding-top:8px;
-  }
-
-  .sidebar-logout{
-    min-height:40px;
-    padding:8px 11px;
-  }
-}
-
-
 /* ===== BERITA KELAS ===== */
 .news-grid{
   display:grid;
@@ -9472,82 +9224,6 @@ html.k7-ai-open,body.k7-ai-open{overflow:hidden!important;overscroll-behavior:no
 
 </style>
 <style>.play-results-panel{margin:18px 0;padding:16px;border-radius:20px;background:linear-gradient(145deg,#2b225f,#17143c);color:#fff}.play-results-panel .quiz-subsection h4,.play-results-panel .quiz-subsection p{color:#fff}.play-results-panel .quiz-kicker{color:#d8d4ff}</style>
-<style id="k7-portal-polish-v39">
-:root{
-  --k7-radius-sm:14px;
-  --k7-radius-md:18px;
-  --k7-radius-lg:24px;
-  --k7-soft-shadow:0 8px 28px rgba(15,23,42,.07);
-  --k7-card-shadow:0 12px 36px rgba(15,23,42,.09);
-}
-.main,.content,.main-content{min-width:0}
-.page{padding-bottom:36px}
-.page>.topbar{margin-bottom:18px}
-.page>.topbar h1,.page>.topbar h2,.page-title h1,.page-title h2{letter-spacing:-.025em;line-height:1.08}
-.page>.topbar p,.page-title p{line-height:1.55;max-width:780px}
-.sidebar{border-right:1px solid rgba(255,255,255,.08);box-shadow:12px 0 32px rgba(15,23,42,.08)}
-.sidebar .brand{margin-bottom:18px}
-.sidebar .brand h1,.sidebar .brand strong{letter-spacing:-.02em}
-.sidebar nav,.sidebar .nav{gap:5px}
-.sidebar .nav-item,.sidebar nav a,.sidebar nav button{min-height:44px;border-radius:13px;transition:background .18s ease,transform .18s ease,color .18s ease}
-.sidebar .nav-item:hover,.sidebar nav a:hover,.sidebar nav button:hover{transform:translateX(2px)}
-.topbar{min-height:56px}
-.topbar .actions,.actions{gap:9px;align-items:center}
-.btn{border-radius:12px;min-height:40px;font-weight:750;letter-spacing:-.01em}
-.btn:not(:disabled):active{transform:translateY(1px)}
-.search-wrap{border-radius:14px}
-.search-wrap input{min-height:42px}
-.panel,.stat,.role-card,.list-card,.mobile-card,.summary-box,.current-card,.quiz-card,.social-card,.settings-card,.feature-card{border-radius:var(--k7-radius-md)}
-.panel,.stat,.role-card,.summary-box,.settings-card,.feature-card{box-shadow:var(--k7-soft-shadow)}
-.panel{padding:18px}.stat{padding:17px}.list{gap:11px}
-.list-card{padding:14px 15px;border:1px solid color-mix(in srgb,var(--line,#dbe3ee) 92%,transparent);box-shadow:0 4px 18px rgba(15,23,42,.045)}
-.list-card h4{line-height:1.3;letter-spacing:-.01em}.list-card p{line-height:1.55}
-.table-wrap{border-radius:16px;overflow:auto;border:1px solid var(--line,#dbe3ee);background:rgba(255,255,255,.82)}
-table{border-collapse:separate;border-spacing:0}
-thead th{position:sticky;top:0;z-index:2;backdrop-filter:blur(10px)}
-th,td{vertical-align:middle}
-tbody tr{transition:background .15s ease}
-tbody tr:hover{background:color-mix(in srgb,var(--accent-primary,#2563eb) 4%,transparent)}
-.field{gap:7px}.field label{font-weight:750;letter-spacing:-.01em}
-.field input,.field select,.field textarea,.role-card input,
-input[type="text"],input[type="search"],input[type="url"],input[type="number"],
-input[type="date"],input[type="time"],input[type="password"],select,textarea{border-radius:12px;min-height:42px}
-textarea{min-height:96px;line-height:1.55}
-.field input:focus,.field select:focus,.field textarea:focus,input:focus,select:focus,textarea:focus{
-  outline:none;box-shadow:0 0 0 3px color-mix(in srgb,var(--accent-primary,#2563eb) 14%,transparent)
-}
-.modal-card,.dialog-card,.sheet-card,.modal-content{border-radius:22px !important;box-shadow:0 28px 80px rgba(15,23,42,.22) !important}
-.modal-head,.dialog-head{padding-bottom:13px;border-bottom:1px solid var(--line,#e2e8f0)}
-.badge,.chip,.pill,.status-badge{border-radius:999px;font-weight:750}
-.current-card{box-shadow:0 18px 44px color-mix(in srgb,var(--accent-primary,#2563eb) 20%,rgba(15,23,42,.08))}
-.current-card h2,.current-card h3{letter-spacing:-.025em}
-.stats,.dashboard-grid,.role-grid,.settings-grid,.feature-grid{gap:14px}
-.dashboard-grid{align-items:start}
-.empty,.empty-state{padding:30px 20px;border:1px dashed color-mix(in srgb,var(--line,#dbe3ee) 85%,transparent);border-radius:16px;background:color-mix(in srgb,var(--accent-primary,#2563eb) 2%,#fff)}
-.chat-pro-shell,.social-shell,.social-panel,.chat-panel{border-radius:20px}
-.chat-pro-header,.social-header{gap:12px}
-.chat-message,.message-bubble,.social-post{border-radius:16px}
-.k7-moderation-ai-chip{box-shadow:0 4px 14px rgba(15,23,42,.05)}
-#k7AiDialog .k7-ai-panel,.k7-ai-dialog,.k7-ai-panel{border-radius:22px}
-.k7-ai-message,.k7-ai-bubble{line-height:1.6}
-@media (prefers-reduced-motion:no-preference){
-  .panel,.stat,.role-card,.list-card,.feature-card,.summary-box{transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}
-  .panel:hover,.feature-card:hover{transform:translateY(-1px);box-shadow:var(--k7-card-shadow)}
-}
-@media (max-width:1100px){.dashboard-grid{grid-template-columns:1fr}.topbar{align-items:flex-start}}
-@media (max-width:760px){
-  .page{padding-bottom:84px}.topbar{gap:12px}.topbar .actions,.actions{gap:7px}
-  .topbar .actions .btn,.actions .btn{min-height:42px}
-  .panel,.stat,.role-card{padding:14px;border-radius:15px}
-  .current-card{border-radius:18px}.list-card{padding:13px;border-radius:14px}
-  .modal-card,.dialog-card,.sheet-card,.modal-content{border-radius:18px !important}
-}
-@media (max-width:420px){
-  .topbar h1,.topbar h2{font-size:clamp(20px,7vw,26px)}
-  .btn{padding-left:11px;padding-right:11px}
-  .k7-moderation-ai-chip{max-width:100%;overflow:hidden;text-overflow:ellipsis}
-}
-</style>
 
 
 <style id="k7-email-beta-style">
@@ -11252,526 +10928,12 @@ main,.main-content{min-height:100svh!important}
 </style>
 
 
-<style id="k7-liquid-glass-design-v90">
-/* ===== 7 MIT · LIQUID GLASS WEB ADAPTATION V90 =====
-   Adapted from haider-nawaz/liquid-glass-skill principles for HTML/CSS:
-   glass belongs to navigation/controls, nearby controls share one sampling
-   surface, content remains readable/solid, and accessibility fallbacks exist. */
-:root{
-  --k7-lg-blur:22px;
-  --k7-lg-saturate:175%;
-  --k7-lg-brightness:1.05;
-  --k7-lg-radius:22px;
-  --k7-lg-control-radius:14px;
-  --k7-lg-border:rgba(255,255,255,.28);
-  --k7-lg-border-strong:rgba(255,255,255,.42);
-  --k7-lg-fill:rgba(255,255,255,.50);
-  --k7-lg-fill-soft:rgba(255,255,255,.20);
-  --k7-lg-fill-control:rgba(255,255,255,.16);
-  --k7-lg-shadow:0 18px 54px rgba(15,23,42,.16),inset 0 1px 0 rgba(255,255,255,.42);
-  --k7-lg-shadow-control:0 7px 22px rgba(15,23,42,.10),inset 0 1px 0 rgba(255,255,255,.26);
-  --k7-lg-spec-x:50%;
-  --k7-lg-spec-y:0%;
-  --k7-lg-tint:var(--accent-primary,#2563eb);
-  --k7-lg-tint-2:var(--accent-secondary,#22a6e8);
-}
-html[data-theme-resolved="dark"],html[data-theme="dark"]{
-  --k7-lg-border:rgba(255,255,255,.13);
-  --k7-lg-border-strong:rgba(255,255,255,.24);
-  --k7-lg-fill:rgba(13,25,43,.58);
-  --k7-lg-fill-soft:rgba(17,31,51,.30);
-  --k7-lg-fill-control:rgba(255,255,255,.075);
-  --k7-lg-shadow:0 20px 58px rgba(0,0,0,.32),inset 0 1px 0 rgba(255,255,255,.10);
-  --k7-lg-shadow-control:0 8px 24px rgba(0,0,0,.20),inset 0 1px 0 rgba(255,255,255,.10);
-}
-
-/* Background content stays content; only add subtle depth behind the navigation layer. */
-body{
-  background-image:
-    radial-gradient(900px 520px at -10% -10%,color-mix(in srgb,var(--k7-lg-tint) 10%,transparent),transparent 68%),
-    radial-gradient(760px 460px at 110% 10%,color-mix(in srgb,var(--k7-lg-tint-2) 9%,transparent),transparent 70%) !important;
-  background-attachment:fixed;
-}
-
-/* GlassEffectContainer analogue: one shared backdrop-filter per nearby control group. */
-:where(
-  .sidebar,.topbar,.mobile-top,.mobilebar,.top,
-  .actions,.priority-summary-actions,.news-controls,.news-view-toggle,
-  .board-view-controls,.board-draw-toolbar,.draw-floating-group,.float-card,.dock,
-  .modal-head,.modal-foot,.portal-account-chip,.sidebar-footer,
-  .access-form-panel,.student-gate-right,.account-password-actions,
-  .quiz-exam-top,.quiz-submit-bar,.social-profile-actions,.social-profile-toolbar,
-  .files-toolbar,.files-actions,.calendar-toolbar,.toolbar,.tool-group,.control-group
-){
-  position:relative;
-  isolation:isolate;
-  border-color:var(--k7-lg-border) !important;
-  background:
-    radial-gradient(circle at var(--k7-lg-spec-x) var(--k7-lg-spec-y),rgba(255,255,255,.34),transparent 28%),
-    linear-gradient(145deg,var(--k7-lg-fill),var(--k7-lg-fill-soft)) !important;
-  box-shadow:var(--k7-lg-shadow) !important;
-  -webkit-backdrop-filter:blur(var(--k7-lg-blur)) saturate(var(--k7-lg-saturate)) brightness(var(--k7-lg-brightness));
-  backdrop-filter:blur(var(--k7-lg-blur)) saturate(var(--k7-lg-saturate)) brightness(var(--k7-lg-brightness));
-}
-
-/* Keep sidebar/top bars visually continuous rather than turning every item into another blur layer. */
-:where(.sidebar,.topbar,.mobile-top,.mobilebar,.top,.dock)::after,
-:where(.board-view-controls,.board-draw-toolbar,.draw-floating-group,.float-card,.actions,.news-controls,.modal-head,.modal-foot)::after{
-  content:"";
-  position:absolute;
-  inset:0;
-  border-radius:inherit;
-  pointer-events:none;
-  z-index:-1;
-  background:linear-gradient(115deg,rgba(255,255,255,.16),transparent 30%,transparent 68%,rgba(255,255,255,.08));
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.20);
-}
-
-/* Navigation items and controls use glass-like tint, but no extra backdrop layer inside a glass group. */
-:where(
-  .nav button,.nav a,.navbtn,
-  .btn,.mini-btn,.icon-btn,.board-control-btn,.draw-floating-btn,.float-btn,.dock-btn,
-  .access-submit,.student-gate-submit,.account-password-action,.sidebar-logout,.portal-help-link,
-  .news-view-btn,.theme-choice,.ls-action,.social-follow-btn,.social-profile-follow,
-  .files-view-btn,.calendar-view-btn,.quiz-mode-switch button
-){
-  position:relative;
-  min-height:38px;
-  border:1px solid color-mix(in srgb,var(--k7-lg-border) 88%,transparent) !important;
-  border-radius:var(--k7-lg-control-radius) !important;
-  background:
-    linear-gradient(145deg,rgba(255,255,255,.20),rgba(255,255,255,.07)) !important;
-  box-shadow:var(--k7-lg-shadow-control) !important;
-  transition:transform .22s cubic-bezier(.2,.8,.2,1),box-shadow .22s ease,border-color .22s ease,background .22s ease,color .22s ease !important;
-  -webkit-tap-highlight-color:transparent;
-  touch-action:manipulation;
-}
-:where(.nav button,.nav a,.navbtn,.btn,.mini-btn,.icon-btn,.board-control-btn,.draw-floating-btn,.float-btn,.dock-btn,.account-password-action,.sidebar-logout,.portal-help-link,.news-view-btn,.theme-choice,.ls-action):hover{
-  transform:translateY(-1px);
-  border-color:var(--k7-lg-border-strong) !important;
-  background:
-    linear-gradient(145deg,rgba(255,255,255,.28),rgba(255,255,255,.11)) !important;
-  box-shadow:0 10px 28px rgba(15,23,42,.13),inset 0 1px 0 rgba(255,255,255,.32) !important;
-}
-:where(.nav button,.nav a,.navbtn,.btn,.mini-btn,.icon-btn,.board-control-btn,.draw-floating-btn,.float-btn,.dock-btn,.account-password-action,.sidebar-logout,.portal-help-link,.news-view-btn,.theme-choice,.ls-action):active{
-  transform:scale(.97);
-  transition-duration:.08s !important;
-}
-:where(.nav button,.nav a,.navbtn,.btn,.mini-btn,.icon-btn,.board-control-btn,.draw-floating-btn,.float-btn,.dock-btn,.account-password-action,.sidebar-logout,.portal-help-link,.news-view-btn,.theme-choice,.ls-action):focus-visible{
-  outline:3px solid color-mix(in srgb,var(--k7-lg-tint) 34%,transparent) !important;
-  outline-offset:2px;
-  border-color:color-mix(in srgb,var(--k7-lg-tint) 55%,white) !important;
-}
-
-/* Prominent actions use a tinted Liquid Glass treatment. */
-:where(.btn.primary,.access-submit,.student-gate-submit,.account-password-action.primary,.ls-action.primary){
-  color:#fff !important;
-  border-color:color-mix(in srgb,var(--k7-lg-tint) 48%,white) !important;
-  background:
-    radial-gradient(circle at 25% 0%,rgba(255,255,255,.32),transparent 38%),
-    linear-gradient(135deg,color-mix(in srgb,var(--k7-lg-tint) 82%,#0f172a),color-mix(in srgb,var(--k7-lg-tint-2) 82%,#0f172a)) !important;
-  box-shadow:0 12px 30px color-mix(in srgb,var(--k7-lg-tint) 22%,transparent),inset 0 1px 0 rgba(255,255,255,.32) !important;
-}
-
-/* Active navigation state morphs/tints instead of becoming a heavy solid block. */
-:where(.nav button.active,.nav a.active,.navbtn.active,.board-control-btn.active,.draw-floating-btn.active,.dock-btn.active,.news-view-btn.active,.theme-choice.active){
-  border-color:color-mix(in srgb,var(--k7-lg-tint) 44%,white) !important;
-  background:
-    radial-gradient(circle at 18% 0%,rgba(255,255,255,.30),transparent 42%),
-    linear-gradient(135deg,color-mix(in srgb,var(--k7-lg-tint) 24%,rgba(255,255,255,.16)),color-mix(in srgb,var(--k7-lg-tint-2) 18%,rgba(255,255,255,.08))) !important;
-  box-shadow:0 9px 26px color-mix(in srgb,var(--k7-lg-tint) 14%,transparent),inset 0 1px 0 rgba(255,255,255,.24) !important;
-}
-
-/* Search, form and selector controls behave like clear glass controls. */
-:where(
-  .news-search,.feature-search,.student-gate-select,.student-password-input,
-  .access-field input,.access-field select,.access-field textarea,
-  .password-input-wrap,input[type="search"],.toolbar input,.toolbar select,
-  .news-controls input,.news-controls select
-){
-  border-color:var(--k7-lg-border) !important;
-  background:color-mix(in srgb,var(--k7-lg-fill) 68%,transparent) !important;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.20),0 6px 18px rgba(15,23,42,.06) !important;
-  -webkit-backdrop-filter:blur(14px) saturate(145%);
-  backdrop-filter:blur(14px) saturate(145%);
-}
-
-/* Modal/sheet shell: glass belongs to the presentation surface; inner content remains unchanged. */
-:where(.modal,.sheet,.popover,.context-menu,.dropdown-menu){
-  border-color:var(--k7-lg-border) !important;
-  box-shadow:0 28px 90px rgba(15,23,42,.24),inset 0 1px 0 rgba(255,255,255,.24) !important;
-}
-
-/* Whiteboard: navigation-layer controls float over the canvas; canvas/content is not frosted. */
-.whiteboard-portal :where(.topbar,.board-view-controls,.board-draw-toolbar,.draw-floating-group,.float-card,.dock),
-body:has(.board-viewport) :where(.topbar,.board-view-controls,.board-draw-toolbar,.draw-floating-group,.float-card,.dock){
-  border-radius:18px;
-}
-
-/* Preserve the user-requested current lesson photo/glass hero from V89. */
-.current-card{
-  -webkit-backdrop-filter:blur(18px) saturate(165%) !important;
-  backdrop-filter:blur(18px) saturate(165%) !important;
-}
-
-/* Dark mode: retain translucency without washing out text. */
-html[data-theme-resolved="dark"] :where(.nav button,.nav a,.navbtn,.btn,.mini-btn,.icon-btn,.board-control-btn,.draw-floating-btn,.float-btn,.dock-btn,.account-password-action,.sidebar-logout,.portal-help-link,.news-view-btn,.theme-choice,.ls-action),
-html[data-theme="dark"] :where(.nav button,.nav a,.navbtn,.btn,.mini-btn,.icon-btn,.board-control-btn,.draw-floating-btn,.float-btn,.dock-btn,.account-password-action,.sidebar-logout,.portal-help-link,.news-view-btn,.theme-choice,.ls-action){
-  background:linear-gradient(145deg,rgba(255,255,255,.10),rgba(255,255,255,.035)) !important;
-}
-
-/* Browser fallback when backdrop-filter is unavailable. */
-@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
-  :where(.sidebar,.topbar,.mobile-top,.mobilebar,.top,.actions,.priority-summary-actions,.news-controls,.board-view-controls,.board-draw-toolbar,.draw-floating-group,.float-card,.dock,.modal-head,.modal-foot,.portal-account-chip,.sidebar-footer,.access-form-panel,.student-gate-right){
-    background:color-mix(in srgb,var(--surface,#fff) 94%,var(--k7-lg-tint) 6%) !important;
-  }
-}
-
-/* Accessibility parity with the skill's Reduced Transparency / Contrast / Motion guidance. */
-@media (prefers-reduced-transparency:reduce){
-  :root{--k7-lg-blur:0px;--k7-lg-saturate:100%;--k7-lg-fill:rgba(255,255,255,.94);--k7-lg-fill-soft:rgba(255,255,255,.90)}
-  html[data-theme-resolved="dark"],html[data-theme="dark"]{--k7-lg-fill:rgba(13,25,43,.96);--k7-lg-fill-soft:rgba(13,25,43,.92)}
-}
-@media (prefers-contrast:more){
-  :root{--k7-lg-border:rgba(15,23,42,.42);--k7-lg-border-strong:rgba(15,23,42,.66)}
-  html[data-theme-resolved="dark"],html[data-theme="dark"]{--k7-lg-border:rgba(255,255,255,.36);--k7-lg-border-strong:rgba(255,255,255,.62)}
-}
-@media (prefers-reduced-motion:reduce){
-  :where(.nav button,.nav a,.navbtn,.btn,.mini-btn,.icon-btn,.board-control-btn,.draw-floating-btn,.float-btn,.dock-btn,.account-password-action,.sidebar-logout,.portal-help-link,.news-view-btn,.theme-choice,.ls-action){transition:none !important;transform:none !important}
-}
-@media (forced-colors:active){
-  :where(.sidebar,.topbar,.mobile-top,.mobilebar,.top,.actions,.news-controls,.board-view-controls,.draw-floating-group,.float-card,.dock,.modal-head,.modal-foot){
-    forced-color-adjust:auto;
-    border:1px solid CanvasText !important;
-    background:Canvas !important;
-    box-shadow:none !important;
-    backdrop-filter:none !important;
-  }
-}
-
-</style>
 
 
-<style id="k7-liquid-glass-polish-v91">
-/* ===== 7 MIT · LIQUID GLASS POLISH V91 =====
-   Refines spacing, clipping and rounded glass edges across every portal. */
-:root{
-  --k7-lg-radius-xl:28px;
-  --k7-lg-radius:24px;
-  --k7-lg-radius-md:20px;
-  --k7-lg-control-radius:16px;
-  --k7-lg-control-radius-pill:999px;
-}
-
-/* Every glass sampling surface receives a clearly rounded, clipped edge. */
-:where(
-  .topbar,.mobile-top,.mobilebar,.top,
-  .actions,.priority-summary-actions,.news-controls,.news-view-toggle,
-  .board-view-controls,.board-draw-toolbar,.draw-floating-group,.float-card,.dock,
-  .modal-head,.modal-foot,.portal-account-chip,.sidebar-footer,
-  .access-form-panel,.student-gate-right,.account-password-actions,
-  .quiz-exam-top,.quiz-submit-bar,.social-profile-actions,.social-profile-toolbar,
-  .files-toolbar,.files-actions,.calendar-toolbar,.toolbar,.tool-group,.control-group
-){
-  border-radius:var(--k7-lg-radius) !important;
-  overflow:hidden;
-  background-clip:padding-box !important;
-}
-
-/* Desktop sidebar keeps its layout footprint while its exposed edge is rounded. */
-.sidebar{
-  border-radius:0 var(--k7-lg-radius-xl) var(--k7-lg-radius-xl) 0 !important;
-  overflow:hidden;
-  background-clip:padding-box !important;
-}
-
-/* Login/access glass shells read as deliberate floating panes. */
-:where(.student-gate-right,.access-form-panel){
-  border-radius:var(--k7-lg-radius-xl) !important;
-  padding:clamp(18px,2.4vw,28px) !important;
-}
-
-/* Modal sheets/popovers share one coherent corner language. */
-:where(.modal,.sheet,.popover,.context-menu,.dropdown-menu){
-  border-radius:var(--k7-lg-radius-xl) !important;
-  overflow:hidden;
-  background-clip:padding-box !important;
-}
-:where(.modal-head,.modal-foot){
-  border-radius:0 !important;
-  box-shadow:none !important;
-}
-
-/* Buttons/controls: round enough to feel like Liquid Glass, without becoming blobs. */
-:where(
-  .nav button,.nav a,.navbtn,
-  .btn,.mini-btn,.icon-btn,.board-control-btn,.draw-floating-btn,.float-btn,.dock-btn,
-  .access-submit,.student-gate-submit,.account-password-action,.sidebar-logout,.portal-help-link,
-  .news-view-btn,.theme-choice,.ls-action,.social-follow-btn,.social-profile-follow,
-  .files-view-btn,.calendar-view-btn,.quiz-mode-switch button
-){
-  border-radius:var(--k7-lg-control-radius) !important;
-  overflow:hidden;
-  background-clip:padding-box !important;
-}
-
-/* Compact icon-only controls become neat circular/pill glass controls. */
-:where(.icon-btn,.mini-btn,.board-control-btn,.draw-floating-btn,.float-btn,.dock-btn){
-  border-radius:16px !important;
-}
-
-/* Search and select controls align with the same rounded geometry. */
-:where(
-  .news-search,.feature-search,.student-gate-select,.student-password-input,
-  .access-field input,.access-field select,.access-field textarea,
-  .password-input-wrap,input[type="search"],.toolbar input,.toolbar select,
-  .news-controls input,.news-controls select
-){
-  border-radius:16px !important;
-  min-height:42px;
-}
-
-/* Inner glass rim makes the rounded edge visible on both light and dark backgrounds. */
-:where(
-  .topbar,.mobile-top,.mobilebar,.top,.actions,.priority-summary-actions,.news-controls,
-  .board-view-controls,.board-draw-toolbar,.draw-floating-group,.float-card,.dock,
-  .portal-account-chip,.sidebar-footer,.access-form-panel,.student-gate-right,
-  .quiz-exam-top,.quiz-submit-bar,.social-profile-actions,.social-profile-toolbar,
-  .files-toolbar,.files-actions,.calendar-toolbar,.toolbar,.tool-group,.control-group
-)::before{
-  content:"";
-  position:absolute;
-  inset:1px;
-  z-index:-1;
-  pointer-events:none;
-  border-radius:calc(var(--k7-lg-radius) - 2px);
-  box-shadow:inset 0 0 0 1px rgba(255,255,255,.08),inset 0 1px 0 rgba(255,255,255,.20);
-}
-
-/* Tidy spacing for grouped controls so the glass container does not look crowded. */
-:where(.actions,.priority-summary-actions,.news-controls,.news-view-toggle,.files-toolbar,.files-actions,.calendar-toolbar,.toolbar,.tool-group,.control-group,.social-profile-actions,.social-profile-toolbar){
-  gap:8px !important;
-}
-:where(.topbar,.mobile-top,.top){
-  gap:12px;
-}
-
-/* Current lesson hero: stronger rounded Liquid Glass frame, while retaining V89 day backgrounds. */
-.current-card{
-  border-radius:var(--k7-lg-radius-xl) !important;
-  overflow:hidden !important;
-  background-clip:padding-box !important;
-}
-.current-card::after{
-  border-radius:calc(var(--k7-lg-radius-xl) - 10px) !important;
-}
-.current-card .lesson-countdown{
-  border-radius:18px !important;
-  overflow:hidden;
-}
-.current-card .period-pill{
-  border-radius:var(--k7-lg-control-radius-pill) !important;
-}
-
-/* Whiteboard floating glass gets consistent rounded silhouettes. */
-.whiteboard-portal :where(.board-view-controls,.board-draw-toolbar,.draw-floating-group,.float-card,.dock),
-body:has(.board-viewport) :where(.board-view-controls,.board-draw-toolbar,.draw-floating-group,.float-card,.dock){
-  border-radius:22px !important;
-  overflow:hidden;
-}
-
-/* On smaller screens, keep glass detached from viewport edges where possible. */
-@media(max-width:900px){
-  .sidebar{border-radius:0 !important}
-  :where(.mobile-top,.mobilebar){
-    margin-left:8px !important;
-    margin-right:8px !important;
-    width:calc(100% - 16px) !important;
-    border-radius:22px !important;
-  }
-  .current-card{border-radius:24px !important}
-}
-
-@media(max-width:560px){
-  :root{--k7-lg-radius-xl:24px;--k7-lg-radius:20px;--k7-lg-control-radius:14px}
-  :where(.topbar,.actions,.news-controls,.files-toolbar,.calendar-toolbar,.toolbar){
-    border-radius:20px !important;
-  }
-  :where(.student-gate-right,.access-form-panel){padding:18px !important}
-}
-</style>
 
 
-<style id="k7-liquid-glass-priority-v92">
-/* ===== V92 · PRIORITY ANNOUNCEMENT + DASHBOARD GLASS ===== */
-.priority-summary-slider{
-  --priority-glass-radius:30px;
-  position:relative;
-  isolation:isolate;
-  overflow:hidden !important;
-  border-radius:var(--priority-glass-radius) !important;
-  border:1px solid rgba(255,255,255,.30) !important;
-  background:
-    radial-gradient(circle at 92% 2%,rgba(245,158,11,.18),transparent 34%),
-    radial-gradient(circle at 8% 92%,color-mix(in srgb,var(--accent-primary,#2563eb) 10%,transparent),transparent 34%),
-    linear-gradient(145deg,rgba(255,255,255,.58),rgba(255,255,255,.24)) !important;
-  box-shadow:
-    0 24px 64px rgba(15,23,42,.13),
-    inset 0 1px 0 rgba(255,255,255,.58),
-    inset 0 -1px 0 rgba(255,255,255,.10) !important;
-  -webkit-backdrop-filter:blur(22px) saturate(170%);
-  backdrop-filter:blur(22px) saturate(170%);
-}
-.priority-summary-slider::before{
-  content:"";
-  position:absolute;
-  inset:1px;
-  z-index:0;
-  border-radius:calc(var(--priority-glass-radius) - 2px);
-  pointer-events:none;
-  background:
-    linear-gradient(115deg,rgba(255,255,255,.28),transparent 28%,transparent 70%,rgba(255,255,255,.10));
-  box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);
-}
-.priority-summary-slider > *{position:relative;z-index:1}
-.priority-summary-head{
-  padding:2px 2px 0;
-}
-.priority-summary-actions{
-  padding:4px !important;
-  border-radius:18px !important;
-  border:1px solid rgba(255,255,255,.24) !important;
-  background:linear-gradient(145deg,rgba(255,255,255,.26),rgba(255,255,255,.08)) !important;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.24),0 8px 24px rgba(15,23,42,.08) !important;
-}
-.priority-summary-actions button{
-  border-radius:14px !important;
-  border-color:rgba(255,255,255,.30) !important;
-  background:linear-gradient(145deg,rgba(255,255,255,.42),rgba(255,255,255,.16)) !important;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.32),0 6px 16px rgba(15,23,42,.08) !important;
-}
-.priority-summary-viewport{
-  margin-top:15px;
-  border-radius:22px !important;
-  overflow:hidden !important;
-}
-.priority-summary-track{border-radius:inherit}
-.priority-summary-slide{
-  border-radius:22px !important;
-  border:1px solid rgba(255,255,255,.28) !important;
-  background:linear-gradient(145deg,rgba(255,255,255,.56),rgba(255,255,255,.24)) !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.42),
-    0 14px 30px rgba(15,23,42,.08) !important;
-  -webkit-backdrop-filter:blur(16px) saturate(150%);
-  backdrop-filter:blur(16px) saturate(150%);
-}
-.priority-summary-footer{
-  margin-top:12px;
-  padding:0 3px 2px;
-}
-.priority-summary-dot{
-  border-radius:999px !important;
-}
-
-/* The dashboard header itself should also read as a floating rounded glass pane. */
-.page.active > .topbar{
-  border-radius:28px !important;
-  overflow:hidden !important;
-  margin-bottom:18px;
-  border:1px solid rgba(255,255,255,.28) !important;
-  box-shadow:0 22px 58px rgba(15,23,42,.11),inset 0 1px 0 rgba(255,255,255,.38) !important;
-}
-
-html[data-theme-resolved="dark"] .priority-summary-slider,
-html[data-theme="dark"] .priority-summary-slider{
-  border-color:rgba(255,255,255,.13) !important;
-  background:
-    radial-gradient(circle at 92% 2%,rgba(245,158,11,.14),transparent 34%),
-    linear-gradient(145deg,rgba(13,25,43,.68),rgba(17,31,51,.34)) !important;
-  box-shadow:0 26px 70px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.10) !important;
-}
-html[data-theme-resolved="dark"] .priority-summary-slide,
-html[data-theme="dark"] .priority-summary-slide{
-  border-color:rgba(255,255,255,.11) !important;
-  background:linear-gradient(145deg,rgba(17,31,51,.58),rgba(13,25,43,.36)) !important;
-}
-@media(max-width:680px){
-  .priority-summary-slider{--priority-glass-radius:24px;padding:15px !important}
-  .priority-summary-viewport,.priority-summary-slide{border-radius:18px !important}
-  .page.active > .topbar{border-radius:22px !important}
-}
-</style>
 
 
-<style id="k7-liquid-glass-header-fix-v93">
-/* ===== V93 · TOPBAR GLASS HEADER CLIPPING FIX ===== */
-/* Give rounded glass headers their own internal breathing room so text never
-   intersects the curved clipping edge. */
-.page.active > .topbar,
-.page > .topbar{
-  box-sizing:border-box !important;
-  min-height:0 !important;
-  height:auto !important;
-  padding:16px 20px 17px !important;
-  align-items:center !important;
-  overflow:hidden !important;
-}
-.page > .topbar > :first-child,
-.page > .topbar > .title{
-  min-width:0;
-  flex:1 1 420px;
-  padding:1px 0 2px;
-}
-.page > .topbar h1,
-.page > .topbar h2{
-  margin-top:0 !important;
-  margin-bottom:5px !important;
-  line-height:1.12 !important;
-  overflow:visible !important;
-}
-.page > .topbar p{
-  margin-top:0 !important;
-  margin-bottom:0 !important;
-  padding-bottom:1px;
-  line-height:1.48 !important;
-  overflow:visible !important;
-}
-.page > .topbar .actions{
-  flex:0 0 auto;
-  margin:0 !important;
-  align-self:center;
-}
-
-/* The rounded rim stays inside the glass without sitting over the copy. */
-.page > .topbar::before{
-  inset:1px !important;
-  border-radius:calc(var(--k7-lg-radius,24px) - 2px) !important;
-}
-
-@media(max-width:900px){
-  .page.active > .topbar,
-  .page > .topbar{
-    padding:15px 16px 16px !important;
-    align-items:flex-start !important;
-  }
-  .page > .topbar > :first-child,
-  .page > .topbar > .title{flex-basis:auto}
-  .page > .topbar .actions{
-    width:100%;
-    align-self:stretch;
-  }
-}
-@media(max-width:560px){
-  .page.active > .topbar,
-  .page > .topbar{
-    padding:14px 14px 15px !important;
-  }
-  .page > .topbar h1,
-  .page > .topbar h2{line-height:1.15 !important}
-  .page > .topbar p{line-height:1.5 !important}
-}
-</style>
 
 <style>
 /* ===== BAYAR IURAN KELAS V96 ===== */
@@ -26506,44 +25668,6 @@ function telkomCreatePeer(remoteKey){
 
 
 
-<script id="k7-liquid-glass-runtime-v90" type="text/plain" data-k7-lazy-inline="v125">
-/* 7 MIT Liquid Glass Web V90 — shared specular response on navigation/control surfaces. */
-(() => {
-  const root=document.documentElement;
-  root.classList.add('k7-liquid-glass-ready');
-  const surfaceSelector=[
-    '.sidebar','.topbar','.mobile-top','.mobilebar','.top','.actions','.priority-summary-actions',
-    '.news-controls','.news-view-toggle','.board-view-controls','.board-draw-toolbar',
-    '.draw-floating-group','.float-card','.dock','.modal-head','.modal-foot','.portal-account-chip',
-    '.sidebar-footer','.access-form-panel','.student-gate-right','.account-password-actions',
-    '.quiz-exam-top','.quiz-submit-bar','.files-toolbar','.calendar-toolbar','.toolbar','.tool-group','.control-group'
-  ].join(',');
-  const fine=matchMedia('(pointer:fine)').matches;
-  const reduced=matchMedia('(prefers-reduced-motion:reduce)').matches||root.classList.contains('k7-reduce');
-  if(!fine||reduced) return;
-  let raf=0,last=null;
-  document.addEventListener('pointermove',event=>{
-    const surface=event.target.closest?.(surfaceSelector);
-    if(!surface)return;
-    last={surface,x:event.clientX,y:event.clientY};
-    if(raf)return;
-    raf=requestAnimationFrame(()=>{
-      raf=0;
-      if(!last)return;
-      const {surface,x,y}=last,rect=surface.getBoundingClientRect();
-      if(!rect.width||!rect.height)return;
-      surface.style.setProperty('--k7-lg-spec-x',`${Math.max(0,Math.min(100,(x-rect.left)/rect.width*100)).toFixed(1)}%`);
-      surface.style.setProperty('--k7-lg-spec-y',`${Math.max(0,Math.min(100,(y-rect.top)/rect.height*100)).toFixed(1)}%`);
-    });
-  },{passive:true});
-  document.addEventListener('pointerout',event=>{
-    const surface=event.target.closest?.(surfaceSelector);
-    if(!surface||surface.contains(event.relatedTarget))return;
-    surface.style.removeProperty('--k7-lg-spec-x');
-    surface.style.removeProperty('--k7-lg-spec-y');
-  },{passive:true});
-})();
-</script>
 
 
 
@@ -28947,5 +28071,208 @@ html.k7-lite .cm3d-pop{animation:none}
 .ls-db-banner .ls-action{white-space:nowrap;flex:none}
 .k7sch-brk.is-prayer{background:color-mix(in srgb,#10b981 14%,transparent);color:#047857}
 </style>
+<style id="k7-shell-v150">
+/* ===== V150 · DESAIN ULANG: SHELL · NAVIGASI · KARTU · TABEL · FORM · MOBILE ===== */
+:root{
+  --k7-side:268px;
+  --k7-r:16px;--k7-r-sm:12px;
+  --k7-ease:cubic-bezier(.22,.9,.28,1);
+  --k7-shadow:0 1px 2px rgba(16,24,40,.04),0 10px 28px -12px rgba(16,24,40,.12);
+  --k7-ring:0 0 0 3px color-mix(in srgb,var(--accent-primary,#2563eb) 22%,transparent);
+}
+html:root body{background:var(--theme-bg,#f4f7fb)!important;color:var(--theme-text,#0f172a);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+html:root body::before,html:root body::after{background:none!important}
+
+/* ---------- kerangka ---------- */
+html:root body .app{display:grid!important;grid-template-columns:var(--k7-side) minmax(0,1fr);min-height:100vh;gap:0!important;padding:0!important;max-width:none!important;margin:0!important}
+html:root body main{margin:0!important;width:auto!important;max-width:none!important;min-width:0;padding:30px clamp(20px,3.2vw,44px) 72px!important;background:none!important}
+html:root body main>.page{max-width:1240px;margin:0 auto}
+
+/* ---------- sidebar ---------- */
+html:root body .sidebar{position:sticky!important;top:0!important;left:auto!important;bottom:auto!important;width:auto!important;height:100dvh!important;max-height:100dvh!important;display:flex!important;flex-direction:column!important;gap:0!important;padding:16px 12px 12px!important;margin:0!important;background:var(--theme-surface,#fff)!important;border:0!important;border-right:1px solid var(--theme-line)!important;border-radius:0!important;box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;color:var(--theme-text)!important;transform:none!important;overflow:hidden!important;z-index:30!important}
+html:root body .sidebar::before,html:root body .sidebar::after{display:none!important}
+html:root body .sidebar .brand{display:flex!important;align-items:center;gap:12px;padding:4px 8px 14px!important;margin:0!important;background:none!important;border:0!important;box-shadow:none!important;border-radius:0!important;flex:0 0 auto}
+html:root body .sidebar .brand-logo{width:40px!important;height:40px!important;flex:0 0 40px;border-radius:12px!important;display:grid;place-items:center;color:#fff!important;background:linear-gradient(135deg,var(--accent-primary,#2563eb),var(--accent-secondary,#06b6d4))!important;border:0!important;box-shadow:0 8px 18px -6px color-mix(in srgb,var(--accent-primary,#2563eb) 60%,transparent)!important}
+html:root body .sidebar .brand-logo svg{width:21px;height:21px}
+html:root body .sidebar .brand-copy h1{margin:0!important;font-size:17px!important;line-height:1.15!important;font-weight:800!important;letter-spacing:-.01em;color:var(--theme-text)!important}
+html:root body .sidebar .brand-copy small{display:block;margin-top:2px;font-size:12px!important;color:var(--theme-muted)!important}
+html:root body .sidebar .nav{flex:1 1 auto!important;min-height:0!important;display:flex!important;flex-direction:column;gap:2px!important;margin:0!important;padding:4px 2px 8px!important;overflow-y:auto!important;overflow-x:hidden!important;scrollbar-width:thin;scrollbar-color:var(--theme-line) transparent;background:none!important;border:0!important}
+html:root body .sidebar .nav{-webkit-mask-image:linear-gradient(to bottom,#000 calc(100% - 26px),transparent);mask-image:linear-gradient(to bottom,#000 calc(100% - 26px),transparent)}
+html:root body .sidebar .nav>button,html:root body .sidebar .nav>a.portal-help-link{position:relative;display:flex!important;align-items:center;gap:12px!important;width:100%;min-height:40px!important;padding:0 12px!important;margin:0!important;border:0!important;border-radius:11px!important;background:transparent!important;box-shadow:none!important;backdrop-filter:none!important;color:var(--theme-muted)!important;font-family:inherit;font-weight:600;font-size:13.5px;line-height:1.25!important;text-align:left!important;text-decoration:none;white-space:normal;cursor:pointer;transform:none!important;transition:background .18s var(--k7-ease),color .18s var(--k7-ease)}
+html:root body .sidebar .nav>button:hover,html:root body .sidebar .nav>a.portal-help-link:hover{background:var(--theme-surface-3,#eef2f7)!important;color:var(--theme-text)!important}
+html:root body .sidebar .nav>button.active{background:color-mix(in srgb,var(--accent-primary,#2563eb) 12%,transparent)!important;color:var(--accent-primary,#2563eb)!important;font-weight:750!important}
+html:root body .sidebar .nav>button.active::before{content:"";position:absolute;left:-2px;top:9px;bottom:9px;width:3px;border-radius:3px;background:var(--accent-primary,#2563eb)}
+html:root body .sidebar .nav .nav-icon{width:20px!important;height:20px!important;flex:0 0 20px;display:grid!important;place-items:center;margin:0!important;padding:0!important;background:none!important;border:0!important;box-shadow:none!important;border-radius:0!important;color:inherit!important}
+html:root body .sidebar .nav .nav-icon svg{width:19px!important;height:19px!important}
+html:root body .sidebar-footer{position:relative!important;flex:0 0 auto;display:flex!important;align-items:center;gap:10px!important;margin:6px 0 0!important;padding:12px 6px 2px!important;border:0!important;border-top:1px solid var(--theme-line)!important;background:none!important;box-shadow:none!important}
+html:root body .sidebar .teacher{flex:1 1 auto;min-width:0;width:auto!important;margin:0!important;padding:0!important;background:none!important;border:0!important;box-shadow:none!important;backdrop-filter:none!important;color:var(--theme-text)!important;position:static!important}
+html:root body .sidebar .teacher small{display:block;font-size:11px!important;line-height:1.35;color:var(--theme-muted)!important;opacity:1!important}
+html:root body .sidebar .teacher small:nth-of-type(2){display:none}
+html:root body .sidebar .teacher b{display:block;font-size:13.5px!important;line-height:1.3;font-weight:750;color:var(--theme-text)!important;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+html:root body .sidebar .teacher .portal-account-sidebar{font-size:10.5px!important;opacity:.85}
+html:root body .sidebar-logout{flex:0 0 38px;width:38px!important;min-height:0!important;height:38px;padding:0!important;display:grid!important;place-items:center;border-radius:11px!important;border:1px solid var(--theme-line)!important;background:transparent!important;color:var(--theme-muted)!important;box-shadow:none!important;transform:none!important}
+html:root body .sidebar-logout span{display:none!important}
+html:root body .sidebar-logout:hover{background:rgba(239,68,68,.1)!important;color:#dc2626!important;border-color:rgba(239,68,68,.35)!important}
+
+/* ---------- header halaman ---------- */
+html:root body .page{padding:0!important;background:none!important}
+html:root body .topbar{display:flex!important;align-items:flex-end;justify-content:space-between;gap:16px;margin:0 0 22px!important;padding:0!important;background:none!important;border:0!important;border-radius:0!important;box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+html:root body .topbar::before,html:root body .topbar::after{display:none!important}
+html:root body .topbar .title{min-width:0}
+html:root body .topbar .title h2{margin:0!important;font-size:clamp(24px,2.3vw,30px)!important;line-height:1.15!important;font-weight:800!important;letter-spacing:-.02em;color:var(--theme-text)!important;background:none!important;-webkit-text-fill-color:currentColor!important}
+html:root body .topbar .title p{margin:6px 0 0!important;max-width:70ch;font-size:14px!important;line-height:1.55!important;color:var(--theme-muted)!important}
+html:root body .portal-account-chip{display:inline-flex;gap:6px;align-items:center;margin-top:10px;padding:4px 10px;border-radius:99px;border:1px solid var(--theme-line);background:var(--theme-surface);font-size:11.5px;color:var(--theme-muted)}
+html:root body .topbar .actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+
+/* ---------- kartu ---------- */
+html:root body .panel,html:root body .stat,html:root body .summary-box,html:root body .live-panel,html:root body .student-access-banner,html:root body .teacher-access-banner,html:root body .priority-summary-slider,html:root body .list-card,html:root body .beta-card,html:root body .readonly-note{background:var(--theme-surface,#fff)!important;border:1px solid var(--theme-line)!important;border-radius:var(--k7-r)!important;box-shadow:var(--k7-shadow)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+html:root body .panel{padding:20px!important;margin:0 0 20px!important}
+html:root body .panel-head{display:flex!important;justify-content:space-between;align-items:flex-start;gap:12px;margin:0 0 14px!important;padding:0!important;border:0!important}
+html:root body .panel-head h3{margin:0!important;font-size:17px!important;font-weight:750!important;letter-spacing:-.01em;color:var(--theme-text)}
+html:root body .panel-head p{margin:4px 0 0!important;font-size:13px!important;color:var(--theme-muted)!important}
+html:root body .readonly-note{display:flex;gap:8px;align-items:center;margin:0 0 16px!important;padding:10px 14px!important;font-size:13px!important;color:var(--accent-primary,#2563eb)!important;background:color-mix(in srgb,var(--accent-primary,#2563eb) 7%,var(--theme-surface))!important;box-shadow:none!important}
+html:root body .stats,html:root body .summary-grid{display:grid!important;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px!important;margin:0 0 20px!important}
+html:root body .stat,html:root body .summary-box{padding:18px 20px!important;margin:0!important}
+html:root body .stat-label{font-size:12.5px!important;font-weight:650;color:var(--theme-muted)!important;letter-spacing:.01em}
+html:root body .stat-value{margin-top:6px;font-size:clamp(24px,2.2vw,30px)!important;font-weight:800!important;letter-spacing:-.02em;color:var(--theme-text)}
+html:root body .stat-sub{margin-top:4px;font-size:12.5px!important;color:var(--theme-muted)!important}
+
+/* ---------- tabel ---------- */
+html:root body .table-wrap{border:1px solid var(--theme-line)!important;border-radius:14px!important;background:var(--theme-surface)!important;overflow:auto;box-shadow:none!important}
+html:root body .table-wrap table{width:100%;border-collapse:separate!important;border-spacing:0!important;font-size:14px}
+html:root body .table-wrap th{position:sticky;top:0;z-index:1;padding:12px 16px!important;text-align:left;font-size:11.5px!important;font-weight:750!important;letter-spacing:.06em;text-transform:uppercase;color:var(--theme-muted)!important;background:var(--theme-surface-2,#f8fafc)!important;border-bottom:1px solid var(--theme-line)!important;white-space:nowrap}
+html:root body .table-wrap td{padding:14px 16px!important;border-bottom:1px solid var(--theme-line)!important;color:var(--theme-text);vertical-align:middle;background:transparent!important}
+html:root body .table-wrap tr:last-child td{border-bottom:0!important}
+html:root body .table-wrap tbody tr{transition:background .15s}
+html:root body .table-wrap tbody tr:hover td{background:var(--theme-surface-2,#f8fafc)!important}
+
+/* ---------- tombol & form ---------- */
+html:root body .btn,html:root body .mini-btn,html:root body .icon-btn,html:root body .secondary{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:38px;padding:0 14px;border:1px solid var(--theme-line);border-radius:11px;background:var(--theme-surface);color:var(--theme-text);font-family:inherit;font-weight:600;font-size:13.5px;line-height:1;cursor:pointer;box-shadow:none;transition:background .15s,border-color .15s,transform .15s var(--k7-ease),box-shadow .15s}
+html:root body .mini-btn{min-height:32px;padding:0 10px;font-size:12.5px}
+html:root body .btn:hover,html:root body .mini-btn:hover,html:root body .icon-btn:hover,html:root body .secondary:hover{background:var(--theme-surface-3,#eef2f7);transform:translateY(-1px)}
+html:root body .btn.primary,html:root body button.primary,html:root body .ls-action.primary{border-color:transparent!important;color:#fff!important;background:linear-gradient(135deg,var(--accent-primary,#2563eb),var(--accent-secondary,#0ea5e9))!important;box-shadow:0 8px 18px -8px color-mix(in srgb,var(--accent-primary,#2563eb) 70%,transparent)!important}
+html:root body .btn.primary:hover,html:root body button.primary:hover{filter:brightness(1.06);transform:translateY(-1px)}
+html:root body .btn.danger,html:root body .mini-btn.danger{color:#dc2626;border-color:rgba(220,38,38,.28);background:rgba(220,38,38,.05)}
+html:root body .field label{display:block;margin:0 0 6px;font-size:13px;font-weight:650;color:var(--theme-muted)}
+html:root body .field input,html:root body .field select,html:root body .field textarea,html:root body .news-search input{width:100%;min-height:42px;padding:10px 14px;border:1px solid var(--theme-line);border-radius:12px;background:var(--theme-input,#fff);color:var(--theme-text);font-family:inherit;font-weight:500;font-size:14px;line-height:1.4;outline:0;box-shadow:none;transition:border-color .15s,box-shadow .15s}
+html:root body .field input:focus,html:root body .field select:focus,html:root body .field textarea:focus{border-color:var(--accent-primary,#2563eb);box-shadow:var(--k7-ring)}
+html:root body .form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+html:root body .form-grid .full,html:root body .form-grid .span-2{grid-column:1/-1}
+
+/* ---------- dashboard ---------- */
+html:root body #dashboard.page.active{display:grid!important;grid-template-columns:repeat(12,minmax(0,1fr));gap:20px;align-items:start}
+html:root body #dashboard>*{grid-column:1/-1;margin:0!important;min-width:0;order:7}
+html:root body #dashboard>.topbar{order:0;margin:0 0 4px!important}
+html:root body #dashboard>#stToday{order:1}
+html:root body #dashboard>.current-card{order:2;grid-column:span 8;align-self:stretch}
+html:root body #dashboard>.live-panel{order:3;grid-column:span 4;align-self:stretch}
+html:root body #dashboard>.priority-summary-slider{order:4}
+html:root body #dashboard>.student-access-banner{order:5}
+html:root body #dashboard>.stats{order:6}
+html:root body #dashboard .dashboard-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+html:root body #dashboard .dashboard-grid>.panel{margin:0!important}
+html:root body .live-panel{display:flex!important;flex-direction:column;justify-content:center;align-items:stretch!important;gap:14px;padding:20px!important}
+html:root body .live-panel>*{flex:0 0 auto!important;min-width:0}
+html:root body .live-panel .live-time{text-align:left!important}
+html:root body .live-panel .live-date{font-size:13px!important;color:var(--theme-muted)}
+html:root body .live-panel .live-clock{font-size:32px!important;line-height:1.1;font-weight:800;letter-spacing:-.02em}
+html:root body .live-panel .live-countdown{font-size:12.5px!important;color:var(--theme-muted)}
+html:root body .live-panel .live-sub{display:flex;flex-direction:column;gap:8px;align-items:flex-start}
+html:root body .student-access-banner{display:flex!important;align-items:center;justify-content:space-between;gap:14px;padding:12px 16px!important}
+html:root body .student-access-left{display:flex;align-items:center;gap:12px;min-width:0}
+html:root body .student-access-banner h3{margin:0;font-size:14.5px}
+html:root body .student-access-banner p{margin:2px 0 0;font-size:12.5px;color:var(--theme-muted)}
+html:root body .current-card{border-radius:20px!important}
+html:root body .current-card::before,html:root body .current-card::after{display:none!important}
+html:root body .current-card .current-subject{text-shadow:none!important}
+@media(max-width:1100px){
+  html:root body #dashboard>.current-card,html:root body #dashboard>.live-panel{grid-column:1/-1}
+  html:root body #dashboard .dashboard-grid{grid-template-columns:1fr}
+}
+
+/* ---------- mobile ---------- */
+.k7-bnav{display:none}
+@media(max-width:900px){
+  html:root body .app{display:block!important}
+  html:root body{padding-top:0!important}
+  html:root body main{padding:78px 16px calc(92px + env(safe-area-inset-bottom))!important}
+  html:root body .mobile-top{position:fixed!important;inset:0 0 auto 0!important;z-index:120!important;height:58px!important;min-height:0!important;display:grid!important;grid-template-columns:44px 1fr 44px!important;align-items:center;gap:6px!important;padding:0 10px!important;background:color-mix(in srgb,var(--theme-surface) 92%,transparent)!important;backdrop-filter:saturate(1.4) blur(14px)!important;-webkit-backdrop-filter:saturate(1.4) blur(14px)!important;border:0!important;border-bottom:1px solid var(--theme-line)!important;border-radius:0!important;box-shadow:none!important;color:var(--theme-text)!important}
+  html:root body .mobile-top b{text-align:center;font-size:16px!important;font-weight:800;color:var(--theme-text)!important}
+  html:root body .mobile-top button{width:40px!important;height:40px!important;display:grid;place-items:center;border:1px solid var(--theme-line)!important;border-radius:12px!important;background:var(--theme-surface)!important;color:var(--theme-text)!important;box-shadow:none!important}
+  html:root body .sidebar{position:fixed!important;top:0!important;bottom:0!important;left:0!important;width:min(86vw,320px)!important;height:100dvh!important;transform:translateX(-104%)!important;transition:transform .28s var(--k7-ease);box-shadow:none!important;z-index:140!important;padding-top:max(16px,env(safe-area-inset-top))!important}
+  html:root body .sidebar.open{transform:none!important;box-shadow:0 0 0 100vmax rgba(8,18,34,.0),24px 0 60px rgba(8,18,34,.28)!important}
+  html:root body .sidebar-scrim{z-index:130!important;background:rgba(8,18,34,.5)!important;backdrop-filter:none!important}
+  html:root body .topbar{margin-bottom:16px!important;flex-direction:column;align-items:stretch}
+  html:root body .topbar .title h2{font-size:24px!important}
+  html:root body .form-grid{grid-template-columns:1fr}
+  html:root body .panel{padding:16px!important;border-radius:14px!important}
+  html:root body .stats,html:root body .summary-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px!important}
+  html:root body #dashboard.page.active{gap:14px}
+  html:root body .live-panel .live-clock{font-size:26px!important}
+  .k7-bnav{position:fixed;left:0;right:0;bottom:0;z-index:110;display:grid;grid-template-columns:repeat(5,1fr);padding:6px 6px calc(6px + env(safe-area-inset-bottom));background:color-mix(in srgb,var(--theme-surface) 94%,transparent);backdrop-filter:saturate(1.4) blur(16px);-webkit-backdrop-filter:saturate(1.4) blur(16px);border-top:1px solid var(--theme-line)}
+  .k7-bnav.is-hidden{display:none}
+  .k7-bnav button{display:flex;flex-direction:column;align-items:center;gap:3px;min-height:52px;padding:6px 2px;border:0;border-radius:12px;background:none;color:var(--theme-muted);font-family:inherit;font-weight:650;font-size:10.5px;line-height:1.1;cursor:pointer;-webkit-tap-highlight-color:transparent}
+  .k7-bnav button svg{width:21px;height:21px}
+  .k7-bnav button span{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .k7-bnav button.on{color:var(--accent-primary,#2563eb);background:color-mix(in srgb,var(--accent-primary,#2563eb) 10%,transparent)}
+  html:root body.menu-open .k7-bnav{display:none}
+}
+@media(max-width:420px){
+  html:root body .stats,html:root body .summary-grid{grid-template-columns:1fr 1fr}
+}
+
+/* label versi tidak menimpa profil */
+html:root body #k7PublicVersion{left:calc(var(--k7-side) + 14px)!important;bottom:10px!important;opacity:.7}
+@media(max-width:900px){html:root body #k7PublicVersion{left:10px!important;bottom:calc(74px + env(safe-area-inset-bottom))!important}}
+
+html:root body .live-panel .live-left{display:flex;align-items:flex-start;gap:10px}
+html:root body .live-panel .live-dot{margin-top:6px;flex:0 0 auto}
+html:root body td .mini-btn,html:root body td .viewer-btn{white-space:nowrap}
+
+/* tombol AI mengambang tidak menutup navigasi bawah */
+@media(max-width:900px){html:root body #k7GeminiFab{bottom:calc(76px + env(safe-area-inset-bottom))!important}}
+/* saat modal terbuka, elemen mengambang disembunyikan */
+html:root body:has(.modal.open,.chat-media-modal.open,.dues-shell.open) :is(#k7GeminiFab,#k7PublicVersion,.k7-bnav){display:none!important}
+
+</style>
+<script id="k7-bnav-v150-js">
+/* V150 · Bilah navigasi bawah (HP): memakai tombol navigasi yang sudah ada, tanpa logika baru. */
+(()=>{
+  'use strict';
+  if(window.__k7Bnav)return;window.__k7Bnav=1;
+  const mq=matchMedia('(max-width:900px)');
+  function build(){
+    const nav=document.getElementById('nav');if(!nav||document.querySelector('.k7-bnav'))return;
+    const src=[...nav.querySelectorAll('button[data-page]')].slice(0,4);if(src.length<3)return;
+    const bar=document.createElement('nav');bar.className='k7-bnav';bar.setAttribute('aria-label','Navigasi cepat');
+    const mk=(page,icon,label)=>`<button type="button" data-bn="${page}" aria-label="${label}"><i data-lucide="${icon}"></i><span>${label}</span></button>`;
+    const short=t=>t.replace(/\s+/g,' ').trim().replace(/^Keuangan Kelas$/,'Keuangan').replace(/^Denah Kelas$/,'Denah').replace(/^Dashboard (Guru|Pengurus)$/,'Dashboard').replace(/^Struktur Organisasi$/,'Struktur');
+    bar.innerHTML=src.map(b=>mk(b.dataset.page,b.querySelector('[data-lucide]')?.getAttribute('data-lucide')||'circle',short(b.textContent))).join('')+mk('__menu','menu','Menu');
+    document.body.appendChild(bar);
+    try{window.lucide?.createIcons?.()}catch{}
+    bar.addEventListener('click',e=>{
+      const b=e.target.closest('[data-bn]');if(!b)return;
+      if(b.dataset.bn==='__menu'){document.getElementById('menuToggle')?.click();return}
+      nav.querySelector(`button[data-page="${b.dataset.bn}"]`)?.click();
+    });
+    sync();
+  }
+  function sync(){
+    const bar=document.querySelector('.k7-bnav');if(!bar)return;
+    const active=document.querySelector('#nav button.active')?.dataset.page||'';
+    bar.querySelectorAll('[data-bn]').forEach(b=>b.classList.toggle('on',b.dataset.bn===active));
+    bar.classList.toggle('is-hidden',active==='chats'||active==='telkom'||!mq.matches);
+  }
+  function boot(){
+    build();
+    const nav=document.getElementById('nav');
+    if(nav)new MutationObserver(sync).observe(nav,{subtree:true,attributes:true,attributeFilter:['class']});
+    (mq.addEventListener?mq.addEventListener('change',sync):mq.addListener(sync));
+    setInterval(()=>{if(!document.querySelector('.k7-bnav'))build();sync()},2500);
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
+})();
+
+</script>
 </body>
 </html>
