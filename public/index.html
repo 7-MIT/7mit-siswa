@@ -15642,9 +15642,13 @@ function setCurrentLessonSubject(value){
   }
   function renderFinance(){
     const totals=financeTotals();$("#financeIncome").textContent=money(totals.income);$("#financeExpense").textContent=money(totals.expense);$("#financeBalance").textContent=money(totals.balance);
-    const fs=[...state.finance].sort((a,b)=>(b.date+b.createdAt).localeCompare(a.date+a.createdAt));
-    $("#financeRows").innerHTML=fs.length?fs.map(x=>`<tr><td>${formatDate(x.date)}</td><td>${badge(x.type,x.type==="Pemasukan"?"green":"red")}</td><td><b>${esc(x.description)}</b></td><td class="money ${x.type==="Pemasukan"?"in":"out"}">${x.type==="Pengeluaran"?"−":"+"}${money(x.amount)}</td></tr>`).join(""):emptyRow(4);
-    $("#financeCards").innerHTML=fs.length?fs.map(x=>`<article class="mobile-card"><div class="mobile-card-head"><h4>${esc(x.description)}</h4>${badge(x.type,x.type==="Pemasukan"?"green":"red")}</div><p>${formatDate(x.date)}</p><b class="money ${x.type==="Pemasukan"?"in":"out"}">${x.type==="Pengeluaran"?"−":"+"}${money(x.amount)}</b></article>`).join(""):emptyCards();
+    const fs=k7FinRows().slice().sort((a,b)=>(b.date+b.createdAt).localeCompare(a.date+a.createdAt));
+    const cols=document.getElementById("financeRows")?.closest("table")?.querySelectorAll("thead th").length||4;
+    const sign=x=>x.type==="Pengeluaran"?"−":"+",cls=x=>x.type==="Pemasukan"?"in":"out";
+    const state0=K7_APBK&&K7_APBK.error&&!K7_APBK.loaded?"Gagal memuat dari server.7mit - APBK: "+K7_APBK.error:"Memuat data dari server.7mit - APBK…";
+    $("#financeRows").innerHTML=fs.length?fs.map(x=>`<tr><td>${formatDate(x.date)}</td><td>${badge(x.type,x.type==="Pemasukan"?"green":"red")}</td><td><b>${esc(x.description)}</b>${x.category?`<br><small>${esc(x.category)}</small>`:""}</td><td class="money ${cls(x)}">${sign(x)}${money(x.amount)}</td>${cols>4?`<td><span class="apbk-src">APBK</span>${x.reference?` <small>${esc(x.reference)}</small>`:""}</td>`:""}</tr>`).join(""):(K7_APBK&&K7_APBK.loaded?emptyRow(cols):`<tr><td colspan="${cols}">${esc(state0)}</td></tr>`);
+    $("#financeCards").innerHTML=fs.length?fs.map(x=>`<article class="mobile-card"><div class="mobile-card-head"><h4>${esc(x.description)}</h4>${badge(x.type,x.type==="Pemasukan"?"green":"red")}</div><p>${formatDate(x.date)}${x.category?" · "+esc(x.category):""}</p><b class="money ${cls(x)}">${sign(x)}${money(x.amount)}</b></article>`).join(""):emptyCards();
+    try{k7ApbkPanels()}catch(e){console.warn("APBK panel:",e)}
   }
   function filteredStudents(){
     const q=value("studentSearch").toLowerCase(), f=$("#studentFilter")?.value||"all";
@@ -21280,6 +21284,7 @@ document.addEventListener("click",e=>{const t=e.target.closest?.("[data-play-ans
         commit(type,record,{day:value("fDay"),group:value("fGroup"),members:value("fMembers")});
       });
     }else if(type==="finance"){
+      k7ApbkNotice();return;
       openModal(editing?"Edit Transaksi":"Tambah Transaksi",`<div class="form-grid">${field("fType","Jenis","select",record?.type||"Pemasukan",opts(["Pemasukan","Pengeluaran"]))}${field("fAmount","Nominal","number",record?.amount||"")}${field("fDate","Tanggal","date",record?.date||todayISO())}${field("fDescription","Keterangan","text",record?.description||"",[],true,"Contoh: Iuran kelas")}</div>`,()=>{
         if(!value("fAmount")||Number(value("fAmount"))<=0||!value("fDescription"))return toast("Nominal dan keterangan wajib diisi.");
         commit(type,record,{type:value("fType"),amount:Number(value("fAmount")),date:value("fDate"),description:value("fDescription"),createdAt:record?.createdAt||nowISO()});
@@ -21348,7 +21353,7 @@ document.addEventListener("click",e=>{const t=e.target.closest?.("[data-play-ans
       <button class="btn" data-modal-add="announcement"><i data-lucide="megaphone"></i> Pengumuman</button>
       <button class="btn" data-modal-add="agenda"><i data-lucide="calendar-plus"></i> Agenda</button>
       <button class="btn" data-modal-add="task"><i data-lucide="list-checks"></i> Tugas Pengurus</button>
-      <button class="btn" data-modal-add="finance"><i data-lucide="circle-dollar-sign"></i> Transaksi Kas</button>
+      <a class="btn" href="https://anggaran.7mit.org" target="_blank" rel="noopener noreferrer"><i data-lucide="database"></i> Kelola Keuangan (APBK)</a>
       <button class="btn" data-modal-add="student"><i data-lucide="user-plus"></i> Siswa</button></div>`,null,"",false);
     refreshLucideIcons();
     $$("[data-modal-add]",$("#modalBody")).forEach(b=>b.onclick=()=>addOrEdit(b.dataset.modalAdd));
@@ -21420,7 +21425,7 @@ document.addEventListener("click",e=>{const t=e.target.closest?.("[data-play-ans
     state.agenda.forEach(x=>rows.push(["Agenda",x.title,x.date,x.time,x.location]));
     state.tasks.forEach(x=>rows.push(["Tugas",x.title,x.owner,x.deadline,x.status]));
     state.duties.forEach(x=>rows.push(["Piket",x.group,x.day,x.members,""]));
-    state.finance.forEach(x=>rows.push(["Keuangan",x.description,x.type,x.amount,x.date]));
+    k7FinRows().forEach(x=>rows.push(["Keuangan",x.description,x.type,x.amount,x.date]));
     state.inventory.forEach(x=>rows.push(["Inventaris",x.item,x.quantity,x.condition,x.location]));
     state.students.forEach(x=>rows.push(["Siswa",x.name,studentScore(x)+"%",(x.notes||[]).length+" catatan",""]));
     state.documents.forEach(x=>rows.push(["Dokumen",x.title,x.type,x.url,""]));
@@ -21428,7 +21433,7 @@ document.addEventListener("click",e=>{const t=e.target.closest?.("[data-play-ans
     download(`data-pengurus-7MIT-${todayISO()}.csv`,rowsToCsv(rows),"text/csv;charset=utf-8");
   }
   function exportFinanceCsv(){
-    const rows=[["Tanggal","Jenis","Keterangan","Nominal"],...state.finance.map(x=>[x.date,x.type,x.description,x.amount])];
+    const rows=[["Tanggal","Jenis","Keterangan","Nominal"],...k7FinRows().map(x=>[x.date,x.type,x.description,x.amount])];
     download(`keuangan-7MIT-${todayISO()}.csv`,rowsToCsv(rows),"text/csv;charset=utf-8");
   }
 
@@ -21806,12 +21811,66 @@ document.addEventListener("click",e=>{const t=e.target.closest?.("[data-play-ans
   setInterval(renderClock,1000);
   setInterval(runStudentAutoSync,1500);
 
+  /* ===== Keuangan dari server.7mit - APBK (project Supabase terpisah, baca publik, tanpa state) ===== */
+  var K7_APBK=window.K7_APBK={url:"https://wntwahebryhonuqkqutz.supabase.co",key:"sb_publishable_-hRj0Kett5KqrOxajgVKwQ_4iOOCYoB",site:"https://anggaran.7mit.org",loaded:false,error:"",rows:[],allocations:[],report:null,sig:"",at:0};
+  function k7FinRows(){return K7_APBK&&K7_APBK.loaded?K7_APBK.rows:[]}
+  function k7ApbkNotice(){toast("Keuangan dikelola di server.7mit - APBK. Tambah atau ubah transaksi di anggaran.7mit.org.")}
+  async function k7ApbkGet(path){
+    const r=await fetch(`${K7_APBK.url}/rest/v1/${path}`,{headers:{apikey:K7_APBK.key,Authorization:`Bearer ${K7_APBK.key}`},cache:"no-store"});
+    if(!r.ok)throw new Error("HTTP "+r.status);
+    return r.json();
+  }
+  function k7ApbkApply(tx,al,st){
+    K7_APBK.rows=(Array.isArray(tx)?tx:[]).map(t=>({id:t.id,type:t.transaction_type==="Pendapatan"?"Pemasukan":"Pengeluaran",amount:Number(t.amount)||0,date:t.transaction_date,description:t.description,category:t.category,reference:t.reference_code,notes:t.notes||"",createdAt:t.created_at||"",updatedAt:t.updated_at||""}));
+    K7_APBK.allocations=Array.isArray(al)?al:[];
+    K7_APBK.report=(Array.isArray(st)&&st[0]?.setting_value)||null;
+    K7_APBK.loaded=true;K7_APBK.error="";K7_APBK.at=Date.now();
+  }
+  async function k7ApbkLoad(){
+    if(K7_APBK.busy)return;K7_APBK.busy=true;
+    try{
+      const [tx,al,st]=await Promise.all([
+        k7ApbkGet("apbk_transactions?select=*&is_published=eq.true&order=transaction_date.desc,created_at.desc"),
+        k7ApbkGet("apbk_budget_allocations?select=*&is_published=eq.true&order=sort_order"),
+        k7ApbkGet("apbk_portal_settings?select=*&setting_key=eq.current_report")
+      ]);
+      const sig=JSON.stringify([tx,al,st]);
+      if(sig!==K7_APBK.sig||!K7_APBK.loaded){
+        K7_APBK.sig=sig;k7ApbkApply(tx,al,st);
+        try{localStorage.setItem("k7-apbk-v1",JSON.stringify({tx,al,st}))}catch(e){}
+        try{renderFinance()}catch(e){}
+        try{renderDashboard()}catch(e){}
+      }
+    }catch(e){
+      K7_APBK.error=String(e?.message||e);
+      if(!K7_APBK.loaded){try{const c=JSON.parse(localStorage.getItem("k7-apbk-v1")||"null");if(c)k7ApbkApply(c.tx,c.al,c.st)}catch(x){}}
+      try{renderFinance()}catch(x){}
+    }finally{K7_APBK.busy=false}
+  }
+  function k7ApbkPanels(){
+    const table=document.getElementById("financeRows")?.closest("section.panel");if(!table)return;
+    let note=document.getElementById("apbkSource");
+    if(!note){note=document.createElement("div");note.id="apbkSource";note.className="readonly-note apbk-source";table.parentNode.insertBefore(note,table)}
+    const rep=K7_APBK.report||{};
+    note.innerHTML=`<i data-lucide="database"></i><span>Sumber data: <b>server.7mit - APBK</b>${rep.period?" · "+esc(rep.period):""} · ${K7_APBK.loaded?(K7_APBK.error?"Offline (data tersimpan)":"Online"):(K7_APBK.error?"Gagal memuat":"Memuat…")} · <a href="${K7_APBK.site}" target="_blank" rel="noopener noreferrer">anggaran.7mit.org</a></span>`;
+    let box=document.getElementById("apbkBudget");
+    if(!box){box=document.createElement("section");box.id="apbkBudget";box.className="panel apbk-budget";table.parentNode.insertBefore(box,table)}
+    const real={};
+    K7_APBK.rows.forEach(x=>{const c=x.category||(x.type==="Pemasukan"?"Pendapatan":"Pengeluaran Lain-lain");real[c]=(real[c]||0)+x.amount});
+    const items=K7_APBK.allocations.map(a=>{
+      const got=real[a.category]||0,tot=Number(a.allocated_amount)||0,pct=tot>0?Math.min(100,Math.round(got/tot*100)):0;
+      return `<div class="apbk-item"><div class="apbk-item-top"><b>${esc(a.category)}</b><span>${money(got)} <small>/ ${money(tot)}</small></span></div><div class="apbk-bar"><span style="width:${pct}%"></span></div>${a.description?`<small>${esc(a.description)}</small>`:""}</div>`;
+    }).join("");
+    box.innerHTML=`<div class="panel-head"><div><h3>Anggaran APBK${rep.period?" · "+esc(rep.period):""}</h3><p>Alokasi anggaran kelas dan realisasinya.</p></div></div>${items||'<div class="apbk-empty">Belum ada alokasi anggaran.</div>'}`;
+    try{window.lucide?.createIcons?.()}catch(e){}
+  }
+  setTimeout(k7ApbkLoad,300);setInterval(()=>{if(!document.hidden)k7ApbkLoad()},60000);
+  document.addEventListener("visibilitychange",()=>{if(!document.hidden)k7ApbkLoad()});window.addEventListener("online",k7ApbkLoad);
+
   function financeTotals(){
-    const rows=Array.isArray(state?.finance)?state.finance:[];
-    const income=rows.filter(item=>String(item.type||"").toLocaleLowerCase("id-ID")==="pemasukan")
-      .reduce((sum,item)=>sum+(Number(item.amount)||0),0);
-    const expense=rows.filter(item=>String(item.type||"").toLocaleLowerCase("id-ID")==="pengeluaran")
-      .reduce((sum,item)=>sum+(Number(item.amount)||0),0);
+    const rows=k7FinRows();
+    const income=rows.filter(item=>item.type==="Pemasukan").reduce((sum,item)=>sum+(Number(item.amount)||0),0);
+    const expense=rows.filter(item=>item.type==="Pengeluaran").reduce((sum,item)=>sum+(Number(item.amount)||0),0);
     return {income,expense,balance:income-expense};
   }
 
@@ -21828,7 +21887,7 @@ document.addEventListener("click",e=>{const t=e.target.closest?.("[data-play-ans
   }
   const collections=["announcements","agenda","news","tasks","duties","finance","inventory","documents","polls","classGoals","appreciations","lostFound","achievements"];
 
-  const splitSyncKeys=[...collections,"students","roles"];
+  const splitSyncKeys=[...collections.filter(k=>k!=="finance"),"students","roles"];
 
   function splitSyncJsonEqual(a,b){
     if(a===b)return true;
@@ -22641,6 +22700,7 @@ document.addEventListener("click",e=>{const t=e.target.closest?.("[data-play-ans
     if(type==="agenda"&&!data.title)throw new Error("Nama agenda wajib tersedia.");
     if(type==="task"&&!data.title)throw new Error("Nama tugas wajib tersedia.");
     if(type==="duty"&&(!data.group||!data.members))throw new Error("Kelompok dan anggota piket wajib tersedia.");
+    if(type==="finance")throw new Error("Keuangan dikelola di server.7mit - APBK (anggaran.7mit.org). Ubah data di sana.");
     if(type==="finance"&&(!data.description||!(data.amount>0)))throw new Error("Keterangan dan nominal transaksi wajib valid.");
     if(type==="inventory"&&!data.item)throw new Error("Nama inventaris wajib tersedia.");
     if(type==="document"&&!data.title)throw new Error("Nama dokumen wajib tersedia.");
@@ -23294,7 +23354,7 @@ document.addEventListener("click",e=>{const t=e.target.closest?.("[data-play-ans
     ".panel,.stat,.news-card,.beta-card,.org-card,.teacher-tool"
   );
 
-  if ("IntersectionObserver" in window) {
+  if ("IntersectionObserver" in window && !(window.matchMedia("(prefers-reduced-motion: reduce)").matches || (function(){try{return localStorage.getItem("k7-motion")==="reduce"}catch(e){return false}})())) {
     const observer = new IntersectionObserver(entries => {
       entries.forEach(entry => {
         if (!entry.isIntersecting) return;
@@ -23314,7 +23374,7 @@ document.addEventListener("click",e=>{const t=e.target.closest?.("[data-play-ans
 
   document.addEventListener("pointermove", event => {
     const target = event.target.closest(".news-card.clickable,.teacher-tool,.stat");
-    if (!target || window.matchMedia("(max-width: 900px)").matches) return;
+    if (!target || window.matchMedia("(max-width: 900px)").matches || window.matchMedia("(prefers-reduced-motion: reduce)").matches || document.documentElement.classList.contains("k7-reduce")) return;
 
     const rect = target.getBoundingClientRect();
     const x = (event.clientX - rect.left) / rect.width - 0.5;
@@ -27485,7 +27545,7 @@ html.k7-reduce .k7-tap{display:none!important}
   /* ---------- reveal saat scroll (hanya untuk kartu di bawah layar) ---------- */
   const REV='.panel,.stat,.list-card,.news-card,.document-card,.achievement-card,.finance-card,.inventory-card,.poll-card,.target-card,.appreciation-card,.st-card';
   let io=null,pending=new Set(),safety=0;
-  function finishAll(){pending.forEach(el=>{el.classList.add('k7-in')});pending.clear();document.querySelectorAll('.k7-rv').forEach(el=>el.classList.remove('k7-rv','k7-in'))}
+  function finishAll(){pending.forEach(el=>{el.classList.add('k7-in')});pending.clear();document.querySelectorAll('.k7-rv').forEach(el=>el.classList.remove('k7-rv','k7-in'));document.querySelectorAll('.panel,.stat,.news-card,.beta-card,.org-card,.teacher-tool').forEach(el=>{if(el.style.opacity==='0'){el.style.opacity='1';el.style.transform='none'}})}
   function observer(){
     if(io||!('IntersectionObserver' in window))return io;
     io=new IntersectionObserver(es=>{
@@ -28298,5 +28358,22 @@ html:root body .table-wrap td:has(.progress){min-width:150px}
 })();
 
 </script>
+<style id="k7-apbk-v151">
+/* ===== V151 · Keuangan dari server.7mit - APBK ===== */
+html:root body .apbk-source{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+html:root body .apbk-source a{color:inherit;font-weight:700;text-decoration:underline}
+html:root body .apbk-budget{margin-bottom:20px}
+html:root body .apbk-item{padding:12px 0;border-bottom:1px solid var(--theme-line)}
+html:root body .apbk-item:last-child{border-bottom:0}
+html:root body .apbk-item-top{display:flex;justify-content:space-between;gap:12px;align-items:baseline;margin-bottom:8px}
+html:root body .apbk-item-top b{font-size:14px}
+html:root body .apbk-item-top span{font-weight:750;font-size:14px;font-variant-numeric:tabular-nums}
+html:root body .apbk-item-top small{font-weight:500;color:var(--theme-muted)}
+html:root body .apbk-bar{height:8px;border-radius:99px;background:var(--theme-surface-3,#eef2f7);overflow:hidden}
+html:root body .apbk-bar span{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--accent-primary,#2563eb),var(--accent-secondary,#06b6d4));transition:width .5s var(--k7-ease,ease)}
+html:root body .apbk-item small{display:block;margin-top:6px;color:var(--theme-muted);font-size:12px}
+html:root body .apbk-src{display:inline-block;padding:2px 8px;border-radius:99px;font-size:11px;font-weight:800;color:var(--accent-primary,#2563eb);background:color-mix(in srgb,var(--accent-primary,#2563eb) 12%,transparent)}
+html:root body .apbk-empty{padding:12px 0;color:var(--theme-muted);font-size:13px}
+</style>
 </body>
 </html>
