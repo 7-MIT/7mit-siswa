@@ -11989,7 +11989,7 @@ html[data-theme-resolved="dark"] .quiz-choice-note-v141{
       <button data-page="files"><span class="nav-icon"><i data-lucide="folder-open"></i></span>Files</button>
       <button data-page="notes"><span class="nav-icon"><i data-lucide="notebook-pen"></i></span>Catatan</button>
       
-      <button data-page="pricing"><span class="nav-icon"><i data-lucide="badge-dollar-sign"></i></span>Pricing</button>
+      <button data-page="pricing"><span class="nav-icon"><i data-lucide="ban"></i></span>Pricing</button>
 <button data-page="news"><span class="nav-icon"><i data-lucide="newspaper"></i></span>Berita Kelas</button>
       <button data-page="announcements"><span class="nav-icon"><i data-lucide="megaphone"></i></span>Pengumuman & Kalender</button>
       <button data-page="tasks"><span class="nav-icon"><i data-lucide="list-checks"></i></span>Tugas & Piket</button>
@@ -13008,38 +13008,14 @@ html[data-theme-resolved="dark"] .quiz-choice-note-v141{
 
 <section class="page" id="pricing">
   <header class="topbar">
-    <div class="title">
-      <h2>Pricing</h2>
-      <p>Free dapat digunakan langsung secara terbatas. Siswa dan Pengurus selain Presiden/Wakil Presiden dapat memilih pembayaran per minggu atau per bulan dengan Cash atau QRIS serta mencoba Free Trial 4 hari satu kali; Presiden, Wakil Presiden, dan Guru mendapat Pro+ gratis tanpa limit dan Pricing menjadi POS.</p>
-    </div>
-  <div class="actions"><button class="tx-launch-btn" type="button" data-tx-open="mine"><i data-lucide="receipt-text"></i> Pusat Transaksi</button></div></header>
-  <div class="pricing-page-shell">
-    <section class="pricing-hero">
-      <div class="pricing-hero-row">
-        <div class="pricing-hero-icon"><i data-lucide="badge-dollar-sign"></i></div>
-        <div class="pricing-hero-copy">
-          <h3>Plan & Cloud Files 7 MIT</h3>
-          <p>Free tersedia tanpa pembayaran. Go, Plus, Pro, dan Pro+ dapat memakai periode mingguan atau bulanan; harga, diskon, dan Free Trial dapat dikelola dari POS Pricing.</p>
-        </div>
-        <div class="pricing-current" id="pricingCurrent">
-          <small>Plan saat ini</small>
-          <b>Memuat…</b>
-          <span>—</span>
-        </div>
-      </div>
-    </section>
-    <div id="pricingRoot"><div class="pricing-empty">Memuat Pricing…</div></div>
-  </div>
-
-  <div class="pricing-modal" id="pricingPaymentModal" aria-hidden="true">
-    <div class="pricing-modal-card" role="dialog" aria-modal="true" aria-labelledby="pricingModalTitle">
-      <div class="pricing-modal-head">
-        <span class="icon"><i data-lucide="banknote"></i></span>
-        <b id="pricingModalTitle">Pembayaran Plan</b>
-        <button class="pricing-modal-close" id="pricingModalClose" type="button" aria-label="Tutup"><i data-lucide="x"></i></button>
-      </div>
-      <div class="pricing-modal-body" id="pricingModalBody"></div>
-    </div>
+    <div class="title"><h2>Pricing</h2><p>Layanan Pricing sudah tidak tersedia.</p></div>
+  </header>
+  <div class="k7-pricing-closed" role="status" aria-live="polite">
+    <div class="k7pc-icon" aria-hidden="true"><i data-lucide="ban"></i></div>
+    <h3>Pricing Resmi Ditutup</h3>
+    <p>Fitur Pricing telah resmi ditutup pada <b>6 Oktober 2026</b>. Semua fitur sekarang tanpa batas, tidak perlu paket maupun pembayaran lagi.</p>
+    <span class="k7pc-note"><i data-lucide="infinity"></i> Semua fitur tanpa batas</span>
+    <button class="btn-link secondary k7pc-back" type="button" data-go="dashboard"><i data-lucide="arrow-left"></i> Kembali ke Ringkasan</button>
   </div>
 </section>
 
@@ -13190,14 +13166,7 @@ html[data-theme-resolved="dark"] .quiz-choice-note-v141{
         <i data-lucide="clipboard-pen-line"></i> Form Reset Password
       </a>
     </div>
-  
-    <div class="password-settings-box">
-      <h4>Plan &amp; Pricing</h4>
-      <p>Buka Pricing untuk membeli plan dengan Cash. Untuk Presiden, Wakil Presiden, dan Guru, Pricing menjadi POS dan Pro+ aktif gratis.</p>
-      <button class="btn-link secondary" type="button" data-go="pricing">
-        <i data-lucide="badge-dollar-sign"></i> Buka Pricing
-      </button>
-    </div>
+
 
     <div class="password-settings-box google-account-settings">
       <div class="google-settings-head">
@@ -14810,7 +14779,6 @@ window.supabase={createClient:(u,k)=>new S(u,k)};
     if(id==="announcements")setTimeout(()=>agendaCalendarInit(false,false),0);
     if(id==="classMap")setTimeout(()=>classMapInit(false,false),0);
     if(id==="files")setTimeout(()=>filesLoad(filesState.folderId,{silent:filesState.loaded}),0);
-    if(id==="pricing")setTimeout(()=>pricingInit(false),0);
     if(id==="email")setTimeout(()=>emailInit({silent:false}),0);
     if(id==="telkom")setTimeout(()=>telkomInit(),0);
   }
@@ -28528,6 +28496,51 @@ html:root[data-theme-resolved="dark"] body .unsaved-notice-copy span{color:#fcd3
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
 })();
 
+</script>
+<style id="k7-pricing-closed-v153">
+/* ===== V153 · PRICING RESMI DITUTUP · SEMUA FITUR TANPA BATAS ===== */
+html:root body #pricing .k7-pricing-closed{max-width:560px;margin:8vh auto 0;padding:44px 32px 36px;text-align:center;border:1px solid var(--theme-line,#e2e8f0);border-radius:24px;background:var(--theme-surface,#fff);box-shadow:var(--k7-shadow,0 10px 28px -12px rgba(16,24,40,.14))}
+html:root body #pricing .k7pc-icon{width:92px;height:92px;margin:0 auto 22px;border-radius:50%;display:grid;place-items:center;color:#dc2626;background:rgba(239,68,68,.10);border:2px solid rgba(239,68,68,.28)}
+html:root body #pricing .k7pc-icon svg{width:48px;height:48px;stroke-width:2.1}
+html:root body #pricing .k7-pricing-closed h3{margin:0 0 10px;font-size:24px;font-weight:800;letter-spacing:-.015em;color:var(--theme-text,#0f172a)}
+html:root body #pricing .k7-pricing-closed p{margin:0 auto;max-width:440px;font-size:15px;line-height:1.65;color:var(--theme-muted,#64748b)}
+html:root body #pricing .k7-pricing-closed p b{color:var(--theme-text,#0f172a)}
+html:root body #pricing .k7pc-note{display:inline-flex;align-items:center;gap:8px;margin-top:22px;padding:9px 16px;border-radius:999px;font-size:13px;font-weight:700;color:#15803d;background:rgba(34,197,94,.12)}
+html:root body #pricing .k7pc-note svg{width:16px;height:16px}
+html:root body #pricing .k7pc-back{display:block;width:max-content;margin:22px auto 0}
+html:root[data-theme-resolved="dark"] body #pricing .k7pc-icon{color:#f87171;background:rgba(239,68,68,.16);border-color:rgba(248,113,113,.35)}
+html:root[data-theme-resolved="dark"] body #pricing .k7pc-note{color:#4ade80;background:rgba(34,197,94,.16)}
+/* tanpa paket: panel kuota/plan disembunyikan, warna aksen tidak terkunci */
+html:root body :is(.files-quota-panel,.files-plan-pill,.plan-accent-note,.k7-plan-ai-note,.quiz-plan-history,.telkom-host-plan-badge){display:none!important}
+html:root body .interface-color-choice.plan-locked{opacity:1!important;filter:none!important;pointer-events:auto!important}
+html:root body .interface-color-choice.plan-locked::after{display:none!important}
+</style>
+<script id="k7-unlimited-v153-js">
+/* V153: Pricing ditutup 6 Okt 2026 — semua akun tanpa batas plan */
+(()=>{
+ const ACC=['blue','indigo','emerald','rose','amber','violet'];
+ const force=d=>{
+  d=(d&&typeof d==='object')?d:{};
+  const ent=Object.assign({},d.entitlements||{});
+  Object.assign(ent,{storage_bytes:null,ai_daily:null,ai_unlimited:true,email_weekly:null,conference_max:null,conference_unlimited:true,share_seconds:null,share_unlimited:true,social_media_max_bytes:null,office_edit_max_bytes:null,file_versions:null,quiz_history:null,all_features_unlimited:true,accents:ACC});
+  const u=Object.assign({},d.usage||{});
+  u.ai=Object.assign({},u.ai||{},{limit:null,remaining:null,unlimited:true});
+  u.email=Object.assign({},u.email||{},{limit:null,remaining:null,unlimited:true});
+  return Object.assign({},d,{plan:'pro+',plan_label:'Tanpa Batas',staff_unlimited:true,restrictions_suspended:true,pricing_open:false,entitlements:ent,usage:u});
+ };
+ const wire=()=>{
+  const P=window.K7Plan;if(!P||P.__k7Unlimited)return !!P;
+  P.__k7Unlimited=true;
+  P.data=force(P.data);
+  const adopt=P.adopt&&P.adopt.bind(P),load=P.load&&P.load.bind(P);
+  P.adopt=function(d){if(d&&typeof d==='object')d=force(d);return adopt?adopt(d):undefined};
+  P.load=async function(f){const r=await load(f);this.data=force(this.data);try{this.render&&this.render()}catch(e){}return this.data};
+  const ai=P.consumeAI&&P.consumeAI.bind(P);
+  if(ai)P.consumeAI=async function(){try{const r=await ai();this.data=force(this.data);return r}catch(e){if(/limit|habis/i.test(String(e&&e.message)))return{ok:true,unlimited:true,limit:null};throw e}};
+  return true;
+ };
+ if(!wire()){let n=0;const t=setInterval(()=>{if(wire()||++n>80)clearInterval(t)},150)}
+})();
 </script>
 </body>
 </html>
