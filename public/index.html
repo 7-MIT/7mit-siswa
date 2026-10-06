@@ -28131,6 +28131,160 @@ html.k7-lite .cm3d-pop{animation:none}
 .ls-db-banner .ls-action{white-space:nowrap;flex:none}
 .k7sch-brk.is-prayer{background:color-mix(in srgb,#10b981 14%,transparent);color:#047857}
 </style>
+<style id="k7-apbk-v151">
+/* ===== V151 · Keuangan dari server.7mit - APBK ===== */
+html:root body .apbk-source{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+html:root body .apbk-source a{color:inherit;font-weight:700;text-decoration:underline}
+html:root body .apbk-budget{margin-bottom:20px}
+html:root body .apbk-item{padding:12px 0;border-bottom:1px solid var(--theme-line)}
+html:root body .apbk-item:last-child{border-bottom:0}
+html:root body .apbk-item-top{display:flex;justify-content:space-between;gap:12px;align-items:baseline;margin-bottom:8px}
+html:root body .apbk-item-top b{font-size:14px}
+html:root body .apbk-item-top span{font-weight:750;font-size:14px;font-variant-numeric:tabular-nums}
+html:root body .apbk-item-top small{font-weight:500;color:var(--theme-muted)}
+html:root body .apbk-bar{height:8px;border-radius:99px;background:var(--theme-surface-3,#eef2f7);overflow:hidden}
+html:root body .apbk-bar span{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--accent-primary,#2563eb),var(--accent-secondary,#06b6d4));transition:width .5s var(--k7-ease,ease)}
+html:root body .apbk-item small{display:block;margin-top:6px;color:var(--theme-muted);font-size:12px}
+html:root body .apbk-src{display:inline-block;padding:2px 8px;border-radius:99px;font-size:11px;font-weight:800;color:var(--accent-primary,#2563eb);background:color-mix(in srgb,var(--accent-primary,#2563eb) 12%,transparent)}
+html:root body .apbk-empty{padding:12px 0;color:var(--theme-muted);font-size:13px}
+</style>
+<style id="k7-sessions-v152">
+/* ===== V152 · Sesi Akun ===== */
+html:root body .k7s{grid-column:1/-1}
+html:root body .k7s .panel-head{flex-wrap:wrap}
+html:root body .k7s-head-act{display:flex;gap:8px;flex-wrap:wrap}
+html:root body .k7s-list{display:flex;flex-direction:column;gap:10px}
+html:root body .k7s-item{display:flex;align-items:center;gap:14px;padding:14px;border:1px solid var(--theme-line);border-radius:14px;background:var(--theme-surface-2,#f8fafc)}
+html:root body .k7s-item.is-current{border-color:color-mix(in srgb,var(--accent-primary,#2563eb) 45%,var(--theme-line));background:color-mix(in srgb,var(--accent-primary,#2563eb) 7%,var(--theme-surface))}
+html:root body .k7s-item.is-off{opacity:.62}
+html:root body .k7s-ic{width:42px;height:42px;flex:0 0 42px;display:grid;place-items:center;border-radius:12px;background:var(--theme-surface-3,#eef2f7);color:var(--accent-primary,#2563eb)}
+html:root body .k7s-ic svg{width:21px;height:21px}
+html:root body .k7s-body{flex:1 1 auto;min-width:0}
+html:root body .k7s-body b{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:14.5px}
+html:root body .k7s-body small{display:block;margin-top:4px;font-size:12.5px;line-height:1.5;color:var(--theme-muted)}
+html:root body .k7s-badge{display:inline-block;padding:2px 9px;border-radius:99px;font-size:11px;font-weight:800;letter-spacing:.02em}
+html:root body .k7s-badge.now{background:var(--accent-primary,#2563eb);color:#fff}
+html:root body .k7s-badge.on{background:rgba(16,185,129,.14);color:#047857}
+html:root body .k7s-badge.off{background:var(--theme-surface-3,#eef2f7);color:var(--theme-muted)}
+html:root body .k7s-act{display:flex;gap:8px;flex:0 0 auto}
+html:root body .k7s-empty{padding:18px;text-align:center;color:var(--theme-muted);font-size:13.5px}
+html:root body .k7s-empty.err{color:#dc2626}
+@media(max-width:767px){html:root body .k7s-item{flex-wrap:wrap}html:root body .k7s-act{width:100%}html:root body .k7s-act .mini-btn{flex:1}}
+.k7s-toast{position:fixed;left:50%;bottom:calc(88px + env(safe-area-inset-bottom));transform:translate(-50%,12px);z-index:2147483000;max-width:min(92vw,420px);padding:11px 16px;border-radius:12px;background:#0f172a;color:#fff;font-size:13.5px;font-weight:600;box-shadow:0 14px 34px rgba(15,23,42,.35);opacity:0;pointer-events:none;transition:opacity .2s,transform .2s}
+.k7s-toast.on{opacity:1;transform:translate(-50%,0)}
+@media(min-width:768px){.k7s-toast{bottom:28px}}
+
+</style>
+<script id="k7-sessions-v152-js">
+/* V152 · Sesi Akun: lihat perangkat yang masuk, keluarkan / hapus sesi (dikelola lewat akun.7mit / akun-auth). */
+(()=>{
+  'use strict';
+  if(window.__k7Sessions)return;window.__k7Sessions=1;
+  const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const token=()=>{try{return String(window.K7Session?.read?.()?.token||'')}catch(e){return ''}};
+  const api=p=>window.akunAuthRequest({...p,token:token()});
+  const toastMsg=m=>{
+    try{
+      let t=document.getElementById('k7sToast');
+      if(!t){t=document.createElement('div');t.id='k7sToast';t.className='k7s-toast';t.setAttribute('role','status');t.setAttribute('aria-live','polite');document.body.appendChild(t)}
+      t.textContent=String(m||'');t.classList.add('on');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('on'),3200);
+    }catch(e){}
+  };
+  const ago=iso=>{const t=new Date(iso).getTime();if(!Number.isFinite(t))return '—';const s=Math.max(0,(Date.now()-t)/1000);
+    if(s<90)return 'baru saja';if(s<3600)return Math.round(s/60)+' menit lalu';if(s<86400)return Math.round(s/3600)+' jam lalu';return Math.round(s/86400)+' hari lalu'};
+  const ICON={desktop:'monitor',mobile:'smartphone',tablet:'tablet'};
+  const METHOD={password:'sandi',google:'Google'};
+  const S={items:[],loading:false,error:'',loaded:false,busy:false};
+
+  function forceLogout(reason){
+    try{window.K7Session?.clear?.()}catch(e){}
+    try{sessionStorage.clear()}catch(e){}
+    toastMsg(reason||'Sesi ini sudah dikeluarkan. Silakan login kembali.');
+    setTimeout(()=>{try{location.replace(window.K7PortalAuth?.homeUrl||location.pathname)}catch(e){location.reload()}},600);
+  }
+
+  function panel(){
+    const page=document.getElementById('settings');if(!page)return null;
+    let box=document.getElementById('k7Sessions');
+    if(!box){
+      box=document.createElement('section');box.id='k7Sessions';box.className='panel k7s';
+      const host=page.querySelector('.settings-grid')||page;
+      const pw=host.querySelector('.password-settings-panel');
+      if(pw&&pw.nextSibling)host.insertBefore(box,pw.nextSibling);else host.appendChild(box);
+    }
+    return box;
+  }
+
+  function render(){
+    const box=panel();if(!box)return;
+    const act=S.items.filter(x=>x.active).length;
+    const rows=S.items.map(x=>{
+      const method=METHOD[x.method]?` · via ${METHOD[x.method]}`:'';
+      const badge=x.current?'<span class="k7s-badge now">Perangkat ini</span>':(x.active?'<span class="k7s-badge on">Aktif</span>':'<span class="k7s-badge off">Sudah keluar</span>');
+      const btns=[];
+      if(x.active)btns.push(`<button type="button" class="mini-btn" data-k7s="revoke" data-id="${esc(x.id)}"><i data-lucide="log-out"></i>${x.current?'Keluar':'Keluarkan'}</button>`);
+      if(!x.current)btns.push(`<button type="button" class="mini-btn danger" data-k7s="delete" data-id="${esc(x.id)}"><i data-lucide="trash-2"></i>Hapus</button>`);
+      return `<div class="k7s-item${x.current?' is-current':''}${x.active?'':' is-off'}"><div class="k7s-ic"><i data-lucide="${ICON[x.device_kind]||'monitor'}"></i></div><div class="k7s-body"><b>${esc(x.device)} ${badge}</b><small>${esc(x.account_label||'')}${x.ip?' · '+esc(x.ip):''}${method} · masuk ${esc(ago(x.created_at))} · aktif ${esc(ago(x.last_seen_at))}</small></div><div class="k7s-act">${btns.join('')}</div></div>`;
+    }).join('');
+    const body=S.loading&&!S.loaded?'<div class="k7s-empty">Memuat sesi…</div>':S.error?`<div class="k7s-empty err">${esc(S.error)}</div>`:(rows||'<div class="k7s-empty">Belum ada sesi.</div>');
+    box.innerHTML=`<div class="panel-head"><div><h3>Sesi Akun</h3><p>Perangkat yang masuk dengan akun.7mit-mu${S.loaded?` · ${act} aktif`:''}. Sesi juga bisa diatur lewat akun.7mit.</p></div><div class="k7s-head-act"><button type="button" class="btn" data-k7s="reload"><i data-lucide="refresh-cw"></i>Muat ulang</button>${act>1?'<button type="button" class="btn" data-k7s="others"><i data-lucide="log-out"></i>Keluar dari perangkat lain</button>':''}</div></div><div class="k7s-list">${body}</div>`;
+    try{window.lucide?.createIcons?.()}catch(e){}
+  }
+
+  async function load(){
+    if(S.loading)return;S.loading=true;if(!S.loaded)render();
+    try{
+      const r=await api({action:'sessions_list'});
+      S.items=Array.isArray(r?.sessions)?r.sessions:[];S.error='';S.loaded=true;
+    }catch(e){
+      if(e?.status===401||e?.status===403)return forceLogout();
+      S.error=e?.network?'Tidak dapat menjangkau akun.7mit.':String(e?.message||'Sesi tidak dapat dimuat.');
+    }finally{S.loading=false;render()}
+  }
+
+  async function run(action,extra,okMsg){
+    if(S.busy)return;S.busy=true;
+    try{
+      const r=await api({action,...extra});
+      if(r?.current){forceLogout('Kamu keluar dari perangkat ini.');return}
+      toastMsg(okMsg);
+    }catch(e){
+      if(e?.status===401||e?.status===403)return forceLogout();
+      toastMsg(String(e?.message||'Aksi sesi gagal.'));
+    }finally{S.busy=false}
+    load();
+  }
+
+  document.addEventListener('click',e=>{
+    const b=e.target.closest?.('#k7Sessions [data-k7s]');if(!b)return;
+    const id=b.dataset.id,kind=b.dataset.k7s;
+    if(kind==='reload')return load();
+    if(kind==='others'){if(confirm('Keluarkan semua perangkat lain? Perangkat itu harus login ulang.'))run('sessions_revoke_others',{},'Perangkat lain sudah dikeluarkan.');return}
+    if(kind==='revoke'){const cur=S.items.find(x=>x.id===id)?.current;if(confirm(cur?'Keluar dari perangkat ini?':'Keluarkan perangkat ini? Perangkat itu harus login ulang.'))run('session_revoke',{session_id:id},'Sesi dikeluarkan.');return}
+    if(kind==='delete'){if(confirm('Hapus sesi ini? Jika masih aktif, perangkat itu otomatis keluar.'))run('session_delete',{session_id:id},'Sesi dihapus.')}
+  });
+
+  /* Muat saat halaman Pengaturan dibuka */
+  function onSettings(){panel();render();load()}
+  document.addEventListener('click',e=>{if(e.target.closest?.('#nav [data-page="settings"],[data-go="settings"]'))setTimeout(onSettings,150)},true);
+  const mo=new MutationObserver(()=>{const p=document.getElementById('settings');if(p&&p.classList.contains('active')&&!p.dataset.k7sOpen){p.dataset.k7sOpen='1';onSettings()}else if(p&&!p.classList.contains('active'))delete p.dataset.k7sOpen});
+  function boot(){const p=document.getElementById('settings');if(p)mo.observe(p,{attributes:true,attributeFilter:['class']});if(p?.classList.contains('active'))onSettings()}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
+
+  /* Jika sesi ini dikeluarkan/dihapus dari perangkat lain atau akun.7mit, portal ikut logout */
+  let last=0;
+  async function heartbeat(){
+    const t=token();if(!t||document.hidden||Date.now()-last<20000)return;last=Date.now();
+    try{await window.akunAuthRequest({action:'session',token:t})}
+    catch(e){if(e?.status===401||e?.status===403)forceLogout('Sesi ini dikeluarkan dari akun.7mit. Silakan login kembali.')}
+  }
+  setInterval(heartbeat,60000);
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)heartbeat()});
+  window.addEventListener('focus',heartbeat);
+  window.k7Sessions={reload:load};
+})();
+
+</script>
 <style id="k7-shell-v150">
 /* ===== V150 · DESAIN ULANG: SHELL · NAVIGASI · KARTU · TABEL · FORM · MOBILE ===== */
 :root{
@@ -28297,7 +28451,8 @@ html:root body:has(.modal.open,.chat-media-modal.open,.dues-shell.open) :is(#k7G
 /* iPad & desktop (>=768px): antarmuka sidebar; HP (<768px): bilah atas + navigasi bawah */
 @media(min-width:768px){
   html:root body .mobile-top,html:root body .sidebar-scrim,html:root body .k7-bnav{display:none!important}
-  html:root body .sidebar{transform:none!important}
+  html:root body .app{display:block!important;padding-left:var(--k7-side)!important}
+  html:root body .sidebar{position:fixed!important;top:0!important;left:0!important;bottom:0!important;width:var(--k7-side)!important;height:100vh!important;height:100dvh!important;max-height:none!important;transform:none!important}
 }
 @media(min-width:768px) and (max-width:1180px){
   :root{--k7-side:232px}
@@ -28317,6 +28472,22 @@ html:root body .table-wrap td:has(.progress,.bar){min-width:130px}
 html:root body .table-wrap td .progress{flex:1 1 70px;min-width:70px}
 html:root body .table-wrap td b{white-space:nowrap;flex:0 0 auto}
 html:root body .table-wrap td:has(.progress){min-width:150px}
+
+/* ---------- bilah "Belum Disimpan" (sinkron manual): tersembunyi sampai ada perubahan ---------- */
+html:root body .unsaved-notice{position:fixed!important;right:auto;left:calc(var(--k7-side) + 22px);bottom:56px;z-index:400;width:min(390px,calc(100vw - 28px));padding:14px;border:1px solid #f59e0b!important;border-radius:18px;background:rgba(255,251,235,.98);box-shadow:0 18px 50px rgba(146,64,14,.24)!important;display:flex;align-items:center;gap:12px;transform:translateY(140%);opacity:0;visibility:hidden;pointer-events:none;transition:transform .22s var(--k7-ease),opacity .22s ease,visibility 0s linear .22s}
+html:root body .unsaved-notice.show{transform:none;opacity:1;visibility:visible;pointer-events:auto;transition:transform .22s var(--k7-ease),opacity .22s ease}
+html:root body .unsaved-notice-icon{width:42px;height:42px;flex:0 0 42px;display:grid;place-items:center;border-radius:14px;color:#92400e;background:#fde68a}
+html:root body .unsaved-notice-copy{min-width:0;flex:1 1 auto}
+html:root body .unsaved-notice-copy strong{display:block;color:#78350f;font-size:14px}
+html:root body .unsaved-notice-copy span{display:block;margin-top:3px;color:#92400e;font-size:12px;line-height:1.4}
+html:root body .unsaved-sync-btn{flex:0 0 auto;min-height:40px;padding:9px 14px;border:0;border-radius:12px;color:#fff;background:#d97706;font:inherit;font-weight:800;cursor:pointer}
+html:root body .unsaved-sync-btn:disabled{opacity:.65;cursor:wait}
+html:root[data-theme-resolved="dark"] body .unsaved-notice{background:rgba(48,32,8,.97);border-color:#b45309!important}
+html:root[data-theme-resolved="dark"] body .unsaved-notice-copy strong{color:#fde68a}
+html:root[data-theme-resolved="dark"] body .unsaved-notice-copy span{color:#fcd34d}
+@media(max-width:767px){
+  html:root body .unsaved-notice{left:12px;right:12px;bottom:calc(76px + env(safe-area-inset-bottom));width:auto}
+}
 
 </style>
 <script id="k7-bnav-v150-js">
@@ -28355,160 +28526,6 @@ html:root body .table-wrap td:has(.progress){min-width:150px}
     setInterval(()=>{if(!document.querySelector('.k7-bnav'))build();sync()},2500);
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
-})();
-
-</script>
-<style id="k7-apbk-v151">
-/* ===== V151 · Keuangan dari server.7mit - APBK ===== */
-html:root body .apbk-source{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-html:root body .apbk-source a{color:inherit;font-weight:700;text-decoration:underline}
-html:root body .apbk-budget{margin-bottom:20px}
-html:root body .apbk-item{padding:12px 0;border-bottom:1px solid var(--theme-line)}
-html:root body .apbk-item:last-child{border-bottom:0}
-html:root body .apbk-item-top{display:flex;justify-content:space-between;gap:12px;align-items:baseline;margin-bottom:8px}
-html:root body .apbk-item-top b{font-size:14px}
-html:root body .apbk-item-top span{font-weight:750;font-size:14px;font-variant-numeric:tabular-nums}
-html:root body .apbk-item-top small{font-weight:500;color:var(--theme-muted)}
-html:root body .apbk-bar{height:8px;border-radius:99px;background:var(--theme-surface-3,#eef2f7);overflow:hidden}
-html:root body .apbk-bar span{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--accent-primary,#2563eb),var(--accent-secondary,#06b6d4));transition:width .5s var(--k7-ease,ease)}
-html:root body .apbk-item small{display:block;margin-top:6px;color:var(--theme-muted);font-size:12px}
-html:root body .apbk-src{display:inline-block;padding:2px 8px;border-radius:99px;font-size:11px;font-weight:800;color:var(--accent-primary,#2563eb);background:color-mix(in srgb,var(--accent-primary,#2563eb) 12%,transparent)}
-html:root body .apbk-empty{padding:12px 0;color:var(--theme-muted);font-size:13px}
-</style>
-<style id="k7-sessions-v152">
-/* ===== V152 · Sesi Akun ===== */
-html:root body .k7s{grid-column:1/-1}
-html:root body .k7s .panel-head{flex-wrap:wrap}
-html:root body .k7s-head-act{display:flex;gap:8px;flex-wrap:wrap}
-html:root body .k7s-list{display:flex;flex-direction:column;gap:10px}
-html:root body .k7s-item{display:flex;align-items:center;gap:14px;padding:14px;border:1px solid var(--theme-line);border-radius:14px;background:var(--theme-surface-2,#f8fafc)}
-html:root body .k7s-item.is-current{border-color:color-mix(in srgb,var(--accent-primary,#2563eb) 45%,var(--theme-line));background:color-mix(in srgb,var(--accent-primary,#2563eb) 7%,var(--theme-surface))}
-html:root body .k7s-item.is-off{opacity:.62}
-html:root body .k7s-ic{width:42px;height:42px;flex:0 0 42px;display:grid;place-items:center;border-radius:12px;background:var(--theme-surface-3,#eef2f7);color:var(--accent-primary,#2563eb)}
-html:root body .k7s-ic svg{width:21px;height:21px}
-html:root body .k7s-body{flex:1 1 auto;min-width:0}
-html:root body .k7s-body b{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:14.5px}
-html:root body .k7s-body small{display:block;margin-top:4px;font-size:12.5px;line-height:1.5;color:var(--theme-muted)}
-html:root body .k7s-badge{display:inline-block;padding:2px 9px;border-radius:99px;font-size:11px;font-weight:800;letter-spacing:.02em}
-html:root body .k7s-badge.now{background:var(--accent-primary,#2563eb);color:#fff}
-html:root body .k7s-badge.on{background:rgba(16,185,129,.14);color:#047857}
-html:root body .k7s-badge.off{background:var(--theme-surface-3,#eef2f7);color:var(--theme-muted)}
-html:root body .k7s-act{display:flex;gap:8px;flex:0 0 auto}
-html:root body .k7s-empty{padding:18px;text-align:center;color:var(--theme-muted);font-size:13.5px}
-html:root body .k7s-empty.err{color:#dc2626}
-@media(max-width:767px){html:root body .k7s-item{flex-wrap:wrap}html:root body .k7s-act{width:100%}html:root body .k7s-act .mini-btn{flex:1}}
-.k7s-toast{position:fixed;left:50%;bottom:calc(88px + env(safe-area-inset-bottom));transform:translate(-50%,12px);z-index:2147483000;max-width:min(92vw,420px);padding:11px 16px;border-radius:12px;background:#0f172a;color:#fff;font-size:13.5px;font-weight:600;box-shadow:0 14px 34px rgba(15,23,42,.35);opacity:0;pointer-events:none;transition:opacity .2s,transform .2s}
-.k7s-toast.on{opacity:1;transform:translate(-50%,0)}
-@media(min-width:768px){.k7s-toast{bottom:28px}}
-
-</style>
-<script id="k7-sessions-v152-js">
-/* V152 · Sesi Akun: lihat perangkat yang masuk, keluarkan / hapus sesi (dikelola lewat akun.7mit / akun-auth). */
-(()=>{
-  'use strict';
-  if(window.__k7Sessions)return;window.__k7Sessions=1;
-  const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  const token=()=>{try{return String(window.K7Session?.read?.()?.token||'')}catch(e){return ''}};
-  const api=p=>window.akunAuthRequest({...p,token:token()});
-  const toastMsg=m=>{
-    try{
-      let t=document.getElementById('k7sToast');
-      if(!t){t=document.createElement('div');t.id='k7sToast';t.className='k7s-toast';t.setAttribute('role','status');t.setAttribute('aria-live','polite');document.body.appendChild(t)}
-      t.textContent=String(m||'');t.classList.add('on');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('on'),3200);
-    }catch(e){}
-  };
-  const ago=iso=>{const t=new Date(iso).getTime();if(!Number.isFinite(t))return '—';const s=Math.max(0,(Date.now()-t)/1000);
-    if(s<90)return 'baru saja';if(s<3600)return Math.round(s/60)+' menit lalu';if(s<86400)return Math.round(s/3600)+' jam lalu';return Math.round(s/86400)+' hari lalu'};
-  const ICON={desktop:'monitor',mobile:'smartphone',tablet:'tablet'};
-  const METHOD={password:'sandi',google:'Google'};
-  const S={items:[],loading:false,error:'',loaded:false,busy:false};
-
-  function forceLogout(reason){
-    try{window.K7Session?.clear?.()}catch(e){}
-    try{sessionStorage.clear()}catch(e){}
-    toastMsg(reason||'Sesi ini sudah dikeluarkan. Silakan login kembali.');
-    setTimeout(()=>{try{location.replace(window.K7PortalAuth?.homeUrl||location.pathname)}catch(e){location.reload()}},600);
-  }
-
-  function panel(){
-    const page=document.getElementById('settings');if(!page)return null;
-    let box=document.getElementById('k7Sessions');
-    if(!box){
-      box=document.createElement('section');box.id='k7Sessions';box.className='panel k7s';
-      const host=page.querySelector('.settings-grid')||page;
-      const pw=host.querySelector('.password-settings-panel');
-      if(pw&&pw.nextSibling)host.insertBefore(box,pw.nextSibling);else host.appendChild(box);
-    }
-    return box;
-  }
-
-  function render(){
-    const box=panel();if(!box)return;
-    const act=S.items.filter(x=>x.active).length;
-    const rows=S.items.map(x=>{
-      const method=METHOD[x.method]?` · via ${METHOD[x.method]}`:'';
-      const badge=x.current?'<span class="k7s-badge now">Perangkat ini</span>':(x.active?'<span class="k7s-badge on">Aktif</span>':'<span class="k7s-badge off">Sudah keluar</span>');
-      const btns=[];
-      if(x.active)btns.push(`<button type="button" class="mini-btn" data-k7s="revoke" data-id="${esc(x.id)}"><i data-lucide="log-out"></i>${x.current?'Keluar':'Keluarkan'}</button>`);
-      if(!x.current)btns.push(`<button type="button" class="mini-btn danger" data-k7s="delete" data-id="${esc(x.id)}"><i data-lucide="trash-2"></i>Hapus</button>`);
-      return `<div class="k7s-item${x.current?' is-current':''}${x.active?'':' is-off'}"><div class="k7s-ic"><i data-lucide="${ICON[x.device_kind]||'monitor'}"></i></div><div class="k7s-body"><b>${esc(x.device)} ${badge}</b><small>${esc(x.account_label||'')}${x.ip?' · '+esc(x.ip):''}${method} · masuk ${esc(ago(x.created_at))} · aktif ${esc(ago(x.last_seen_at))}</small></div><div class="k7s-act">${btns.join('')}</div></div>`;
-    }).join('');
-    const body=S.loading&&!S.loaded?'<div class="k7s-empty">Memuat sesi…</div>':S.error?`<div class="k7s-empty err">${esc(S.error)}</div>`:(rows||'<div class="k7s-empty">Belum ada sesi.</div>');
-    box.innerHTML=`<div class="panel-head"><div><h3>Sesi Akun</h3><p>Perangkat yang masuk dengan akun.7mit-mu${S.loaded?` · ${act} aktif`:''}. Sesi juga bisa diatur lewat akun.7mit.</p></div><div class="k7s-head-act"><button type="button" class="btn" data-k7s="reload"><i data-lucide="refresh-cw"></i>Muat ulang</button>${act>1?'<button type="button" class="btn" data-k7s="others"><i data-lucide="log-out"></i>Keluar dari perangkat lain</button>':''}</div></div><div class="k7s-list">${body}</div>`;
-    try{window.lucide?.createIcons?.()}catch(e){}
-  }
-
-  async function load(){
-    if(S.loading)return;S.loading=true;if(!S.loaded)render();
-    try{
-      const r=await api({action:'sessions_list'});
-      S.items=Array.isArray(r?.sessions)?r.sessions:[];S.error='';S.loaded=true;
-    }catch(e){
-      if(e?.status===401||e?.status===403)return forceLogout();
-      S.error=e?.network?'Tidak dapat menjangkau akun.7mit.':String(e?.message||'Sesi tidak dapat dimuat.');
-    }finally{S.loading=false;render()}
-  }
-
-  async function run(action,extra,okMsg){
-    if(S.busy)return;S.busy=true;
-    try{
-      const r=await api({action,...extra});
-      if(r?.current){forceLogout('Kamu keluar dari perangkat ini.');return}
-      toastMsg(okMsg);
-    }catch(e){
-      if(e?.status===401||e?.status===403)return forceLogout();
-      toastMsg(String(e?.message||'Aksi sesi gagal.'));
-    }finally{S.busy=false}
-    load();
-  }
-
-  document.addEventListener('click',e=>{
-    const b=e.target.closest?.('#k7Sessions [data-k7s]');if(!b)return;
-    const id=b.dataset.id,kind=b.dataset.k7s;
-    if(kind==='reload')return load();
-    if(kind==='others'){if(confirm('Keluarkan semua perangkat lain? Perangkat itu harus login ulang.'))run('sessions_revoke_others',{},'Perangkat lain sudah dikeluarkan.');return}
-    if(kind==='revoke'){const cur=S.items.find(x=>x.id===id)?.current;if(confirm(cur?'Keluar dari perangkat ini?':'Keluarkan perangkat ini? Perangkat itu harus login ulang.'))run('session_revoke',{session_id:id},'Sesi dikeluarkan.');return}
-    if(kind==='delete'){if(confirm('Hapus sesi ini? Jika masih aktif, perangkat itu otomatis keluar.'))run('session_delete',{session_id:id},'Sesi dihapus.')}
-  });
-
-  /* Muat saat halaman Pengaturan dibuka */
-  function onSettings(){panel();render();load()}
-  document.addEventListener('click',e=>{if(e.target.closest?.('#nav [data-page="settings"],[data-go="settings"]'))setTimeout(onSettings,150)},true);
-  const mo=new MutationObserver(()=>{const p=document.getElementById('settings');if(p&&p.classList.contains('active')&&!p.dataset.k7sOpen){p.dataset.k7sOpen='1';onSettings()}else if(p&&!p.classList.contains('active'))delete p.dataset.k7sOpen});
-  function boot(){const p=document.getElementById('settings');if(p)mo.observe(p,{attributes:true,attributeFilter:['class']});if(p?.classList.contains('active'))onSettings()}
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
-
-  /* Jika sesi ini dikeluarkan/dihapus dari perangkat lain atau akun.7mit, portal ikut logout */
-  let last=0;
-  async function heartbeat(){
-    const t=token();if(!t||document.hidden||Date.now()-last<20000)return;last=Date.now();
-    try{await window.akunAuthRequest({action:'session',token:t})}
-    catch(e){if(e?.status===401||e?.status===403)forceLogout('Sesi ini dikeluarkan dari akun.7mit. Silakan login kembali.')}
-  }
-  setInterval(heartbeat,60000);
-  document.addEventListener('visibilitychange',()=>{if(!document.hidden)heartbeat()});
-  window.addEventListener('focus',heartbeat);
-  window.k7Sessions={reload:load};
 })();
 
 </script>
