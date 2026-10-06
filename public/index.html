@@ -14090,57 +14090,19 @@ window.supabase={createClient:(u,k)=>new S(u,k)};
   }
 
   function collectLocalRecoveryCandidates(){
+    // Hanya dua sumber lokal yang sah: cache terakhir perangkat ini dan perubahan yang benar-benar belum tersimpan.
+    // Cadangan/snapshot lama TIDAK dipakai, supaya data yang sudah dihapus tidak muncul lagi.
     const candidates=[];
-    const add=(label,data)=>{
+    const add=(label,data,score)=>{
       const decoded=decodeDataPayload(data);
       if(!looksLikeClassData(decoded))return;
-      candidates.push({label,data:decoded,score:recoveryDataScore(decoded)});
+      candidates.push({label,data:decoded,score});
     };
-
-    const knownKeys=[
-      typeof STORAGE_KEY!=="undefined"?STORAGE_KEY:"",
-      typeof LEGACY_STORAGE_KEY!=="undefined"?LEGACY_STORAGE_KEY:"",
-      typeof UNSYNCED_STORAGE_KEY!=="undefined"?UNSYNCED_STORAGE_KEY:"",
-      typeof UNSYNCED_BACKUP_KEY!=="undefined"?UNSYNCED_BACKUP_KEY:""
-    ].filter(Boolean);
-
-    knownKeys.forEach(key=>{
-      try{add(key,parseStoredData(window.K7Storage.getItem(key)))}catch(error){}
-    });
-
     try{
-      for(let index=0;index<window.K7Storage.length;index++){
-        const key=window.K7Storage.key(index);
-        if(!key||!key.startsWith("kelas7mit_"))continue;
-
-        const raw=window.K7Storage.getItem(key);
-        if(key.endsWith("_snapshots")){
-          try{
-            const snapshots=JSON.parse(raw||"[]");
-            if(Array.isArray(snapshots)){
-              snapshots.forEach((snapshot,snapshotIndex)=>{
-                add(`${key}[${snapshotIndex}]`,snapshot?.data);
-              });
-            }
-          }catch(error){}
-          continue;
-        }
-
-        if(
-          key.includes("_notification_")||
-          key.includes("_theme_")||
-          key.includes("_language_")||
-          key.includes("_news_ui")||
-          key.includes("_achievement_ui")||
-          key.includes("_realtime_ping")
-        )continue;
-
-        add(key,parseStoredData(raw));
-      }
-    }catch(error){
-      console.warn("Pemindaian pemulihan lokal gagal:",error);
-    }
-
+      const unsynced=parseStoredData(window.K7Storage.getItem(UNSYNCED_STORAGE_KEY));
+      if(unsynced&&unsynced.meta&&unsynced.meta.dirty===true)add("unsynced",unsynced,2);
+    }catch(error){}
+    try{add("cache",parseStoredData(window.K7Storage.getItem(STORAGE_KEY)),1)}catch(error){}
     return candidates.sort((a,b)=>b.score-a.score);
   }
 
@@ -14220,25 +14182,10 @@ window.supabase={createClient:(u,k)=>new S(u,k)};
   }
 
   function mergeRecoveredData(remoteRaw,localRaw){
+    // Server adalah sumber kebenaran: tidak ada penggabungan (union) dengan data lokal.
     const remote=normalizePortalData(decodeDataPayload(remoteRaw));
     const local=normalizePortalData(decodeDataPayload(localRaw));
-
-    const merged={
-      ...local,
-      ...remote,
-      meta:{...local.meta,...remote.meta},
-      roles:{...local.roles,...remote.roles}
-    };
-
-    RECOVERY_COLLECTION_KEYS.forEach(key=>{
-      merged[key]=mergeRecoveryCollection(local[key],remote[key]);
-    });
-
-    merged.students=mergeRecoveryStudents(local.students,remote.students);
-    merged.meta.dirty=false;
-    merged.meta.changeSetId="";
-    merged.meta.dirtySince="";
-    return normalizePortalData(merged);
+    return local.meta&&local.meta.dirty===true?local:remote;
   }
 
   function safelyRenderAllData(){
@@ -14278,14 +14225,14 @@ window.supabase={createClient:(u,k)=>new S(u,k)};
 
   function restoreVisibleDataFromEverySource(){
     try{
-      const recovered=recoverRichestLocalData();
-      portalData=mergeRecoveredData(portalData,recovered);
-      if(typeof saveLocalOnly==="function")saveLocalOnly();
+      // Hanya menampilkan ulang data yang sedang dipakai. Tidak menggabungkan dengan cache/cadangan apa pun
+      // dan tidak menulis apa pun ke penyimpanan lokal.
+      if(!portalData||!looksLikeClassData(portalData))portalData=recoverRichestLocalData();
       safelyRenderAllData();
       if(typeof renderClock==="function")renderClock();
       return true;
     }catch(error){
-      console.error("Pemulihan semua data gagal:",error);
+      console.error("Menampilkan data gagal:",error);
       return false;
     }
   }
@@ -14332,25 +14279,12 @@ window.supabase={createClient:(u,k)=>new S(u,k)};
     }
   }
   function mergeCollection(remoteList=[],localList=[]){
-    const merged=new Map();
-    remoteList.forEach(item=>merged.set(item.id||JSON.stringify(item),item));
-    localList.forEach(item=>merged.set(item.id||JSON.stringify(item),item));
-    return [...merged.values()];
+    return Array.isArray(remoteList)?[...remoteList]:[];
   }
   function mergeAppData(remoteRaw,localRaw){
     const remote=normalizePortalData(remoteRaw);
     const local=normalizePortalData(localRaw);
-    const merged={...remote,meta:{...remote.meta},roles:{...remote.roles}};
-    ["announcements","agenda","tasks","duties","finance","inventory","documents","polls","classGoals","appreciations","lostFound","achievements"].forEach(key=>{
-      merged[key]=mergeCollection(remote[key],local[key]);
-    });
-    Object.keys(local.roles||{}).forEach(key=>{
-      if(String(local.roles[key]||"").trim()) merged.roles[key]=local.roles[key];
-    });
-    merged.students=local.students;
-    merged.meta.localUpdatedAt=local.meta.localUpdatedAt||nowISO();
-    merged.meta.dirty=true;
-    return merged;
+    return local.meta&&local.meta.dirty===true?local:remote;
   }
   function applyRemoteData(remote){
     const cachedStudents=portalData.students;
