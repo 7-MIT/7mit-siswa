@@ -12084,7 +12084,27 @@ html[data-theme-resolved="dark"] .quiz-choice-note-v141{
         <article class="stat my-seat-stat" id="mySeatCard" aria-live="polite"><div class="stat-label">Kursi Kamu</div><div class="stat-value" id="mySeatNumber">—</div><div class="stat-sub" id="mySeatName">Memuat data denah kelas…</div></article></div>
 
 
-      <section class="som-card" id="studentOfMonthCard" aria-live="polite"><div class="som-portrait"><span class="som-initials" id="somInitials">—</span><span class="som-medal"><i data-lucide="trophy"></i></span></div><div class="som-copy"><div class="som-eyebrow"><i data-lucide="sparkles"></i> Student of the Month <span class="som-month" id="somMonth">Bulan ini</span></div><h3 class="som-name" id="somName">Memuat Student of the Month…</h3><p class="som-reason" id="somReason">Pilihan bulanan dari Guru Kelas.</p><div class="som-meta" id="somMeta"><span><i data-lucide="shield-check"></i> Hanya dapat diatur oleh Guru</span></div></div><button class="som-manage" id="somManageBtn" type="button" hidden><i data-lucide="settings-2"></i> Atur</button></section>
+      <section class="som-card som-v2" id="studentOfMonthCard" aria-live="polite">
+  <div class="som-top">
+    <div class="som-portrait"><span class="som-initials" id="somInitials">—</span><span class="som-medal"><i data-lucide="trophy"></i></span></div>
+    <div class="som-copy">
+      <div class="som-eyebrow"><i data-lucide="sparkles"></i> Student of the Month <span class="som-month" id="somMonth">Bulan ini</span></div>
+      <h3 class="som-name" id="somName">Memuat Student of the Month…</h3>
+      <p class="som-reason" id="somReason">Pilihan bulanan dari Guru Kelas.</p>
+      <div class="som-meta" id="somMeta"></div>
+    </div>
+    <div class="som-tools">
+      <div class="som-nav" role="group" aria-label="Pilih bulan">
+        <button type="button" class="som-nav-btn" id="somPrev" aria-label="Bulan sebelumnya"><i data-lucide="chevron-left"></i></button>
+        <select id="somMonthSelect" aria-label="Pilih bulan"></select>
+        <button type="button" class="som-nav-btn" id="somNext" aria-label="Bulan berikutnya"><i data-lucide="chevron-right"></i></button>
+      </div>
+      <button class="som-manage" id="somManageBtn" type="button" hidden><i data-lucide="settings-2"></i> Atur Top 5</button>
+    </div>
+  </div>
+  <div class="som-top5-head"><b>Top 5 Siswa</b><span id="somTop5Month"></span></div>
+  <ol class="som-top5" id="somTop5" aria-label="Top 5 siswa"></ol>
+</section>
 
       <div class="dashboard-grid">
         <section class="panel">
@@ -25882,10 +25902,161 @@ async function load(){
 <script id="advancedTransactionCenterV107" type="text/plain" data-k7-lazy-inline="v125">(()=>{const API=()=>`${window.SUPABASE_URL||'https://lajzrempjyoqkubkumhb.supabase.co'}/functions/v1/transaction-center-api`,$=s=>document.querySelector(s),$$=s=>Array.from(document.querySelectorAll(s)),esc=s=>String(s??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c])),money=n=>`Rp${Math.round(Number(n)||0).toLocaleString('id-ID')}`,dt=v=>{if(!v)return'—';try{return new Intl.DateTimeFormat('id-ID',{dateStyle:'medium',timeStyle:'short'}).format(new Date(v))}catch{return String(v)}};const currentStatus={mode:'mine',scope:'all',status:'all',search:'',rows:[],summary:{},permissions:{},selected:null,timer:null,loading:false};async function api(action,payload={}){const token=await window.K7Session?.getToken?.();if(!token)throw new Error('Sesi akun tidak tersedia.');const anon=window.SUPABASE_ANON_KEY||'',ctrl=new AbortController(),timer=setTimeout(()=>ctrl.abort(),18000);try{const r=await fetch(API(),{method:'POST',headers:{'Content-Type':'application/json','apikey':anon,'Authorization':anon?`Bearer ${anon}`:'','x-7mit-session':token},body:JSON.stringify({action,...payload}),cache:'no-store',signal:ctrl.signal}),raw=await r.text();let d={};try{d=raw?JSON.parse(raw):{}}catch{}if(!r.ok||d?.ok===false)throw new Error(d?.message||raw||`HTTP ${r.status}`);return d}catch(e){if(e?.name==='AbortError')throw new Error('Transaction Center terlalu lama merespons.');throw e}finally{clearTimeout(timer)}}function cat(s){if(['approved','paid'].includes(s))return'completed';if(s==='rejected')return'rejected';if(s==='cancelled')return'cancelled';return'processing'}function sm(s){const c=cat(s);if(c==='completed')return{c,l:'Selesai',i:'circle-check-big'};if(c==='rejected')return{c,l:'Ditolak',i:'circle-x'};if(c==='cancelled')return{c,l:'Dibatalkan',i:'ban'};return{c,l:s==='awaiting_redeem'?'Menunggu Redeem':s==='pending_review'?'Menunggu Review':'Diproses',i:'clock-3'}}function mh(m){return m==='qris'?'<span class="tx-method"><i data-lucide="qr-code"></i>QRIS</span>':'<span class="tx-method"><i data-lucide="banknote"></i>Cash</span>'}function exp(v,s){if(!v||!['pending','awaiting_redeem','pending_review'].includes(s))return'';const ms=new Date(v)-Date.now();if(ms<=0)return'<span class="tx-expiry expired">Kedaluwarsa</span>';const h=Math.floor(ms/36e5),m=Math.floor(ms%36e5/6e4);return`<span class="tx-expiry">Sisa ${h}j ${m}m</span>`}function filtered(){const q=currentStatus.search.trim().toLowerCase();return currentStatus.rows.filter(r=>(currentStatus.status==='all'||cat(r.status)===currentStatus.status)&&(!q||[r.transaction_ref,r.receipt_no,r.title,r.subtitle,r.payment_code,r.method,r.status].some(v=>String(v||'').toLowerCase().includes(q))))}function kpis(){const s=currentStatus.summary||{};$('#txKpis').innerHTML=`<div class="tx-kpi"><span>Total Transaksi</span><b>${Number(s.total||0)}</b><small>Iuran + Pricing</small></div><div class="tx-kpi"><span>Diproses</span><b>${Number(s.pending||0)}</b><small>Menunggu pembayaran/review</small></div><div class="tx-kpi"><span>Selesai</span><b>${Number(s.completed||0)}</b><small>${money(s.total_completed_amount||0)} tercatat</small></div><div class="tx-kpi risk"><span>Perlu Perhatian</span><b>${Number(s.high_risk||0)}</b><small>Risk tinggi / reject signal</small></div>`}function list(){const rows=filtered(),el=$('#txList');if(!rows.length){el.innerHTML='<div class="tx-empty">Tidak ada transaksi yang sesuai filter.</div>';return}el.innerHTML=rows.map(r=>{const s=sm(r.status),a=currentStatus.selected?.id===r.id&&currentStatus.selected?.scope===r.scope;return`<article class="tx-item ${a?'active':''}" data-tx-detail="${esc(r.id)}" data-scope="${esc(r.scope)}"><span class="tx-item-icon"><i data-lucide="${r.scope==='dues'?'hand-coins':'badge-dollar-sign'}"></i></span><div class="tx-item-copy"><b>${esc(r.title)} · ${mh(r.method)}</b><small>${esc(r.transaction_ref||'ID diproses')} · ${esc(r.subtitle||'')}</small><small>${dt(r.created_at)} ${exp(r.expires_at,r.status)}</small></div><div class="tx-item-amount"><b>${money(r.amount)}</b><small><span class="tx-status ${s.c}"><i data-lucide="${s.i}"></i>${esc(s.l)}</span></small></div></article>`}).join('');window.lucide?.createIcons?.()}function em(e){return({created:['Transaksi dibuat','plus-circle'],snapshot:['Status awal','circle-dot'],status_changed:['Status berubah','repeat-2'],proof_submitted:['Bukti dikirim','upload-cloud'],intellegence_updated:['Analisis intellegence.7mit','brain-circuit'],reviewed:['Ditinjau petugas','shield-check']})[e.event_type]||[e.event_type||'Aktivitas','activity']}function ai(t){const x=t?.intellegence_result||{};return x.reason||x.raw_text||x.text||x.error||''}function detail(t){currentStatus.selected=t;list();const s=sm(t.status),level=String(t?.risk?.level||'unknown').toLowerCase(),decision=String(t?.risk?.decision||'review').toLowerCase(),label=level==='low'?'Risiko Rendah':level==='medium'?'Perlu Review':level==='high'?'Risiko Tinggi':level==='critical'?'Risiko Kritis':'Belum Dinilai',timeline=(t.timeline||[]).map(e=>{const [l,i]=em(e);return`<div class="tx-timeline-item"><span class="tx-timeline-dot"><i data-lucide="${i}"></i></span><div class="tx-timeline-copy"><b>${esc(l)}</b><small>${dt(e.created_at)}${e.actor_name?` · ${esc(e.actor_name)}`:''}</small>${e.old_status!==e.new_status&&e.new_status?`<small>${esc(e.old_status||'—')} → ${esc(e.new_status)}</small>`:''}</div></div>`}).join('')||'<div class="tx-empty">Belum ada timeline.</div>',done=['approved','paid'].includes(t.status);$('#txDetail').innerHTML=`<div class="tx-detail-card"><section class="tx-detail-hero"><span class="eyebrow">${esc(t.transaction_ref||'TRANSAKSI')}</span><h4>${esc(t.title)}</h4><div class="amount">${money(t.amount)}</div><div class="meta">${mh(t.method)}<span class="tx-status ${s.c}"><i data-lucide="${s.i}"></i>${esc(s.l)}</span>${t.plan?`<span class="tx-meta-chip"><i data-lucide="layers-3"></i>${esc(String(t.plan).toUpperCase())} · ${esc(t.billing_cycle||'')}</span>`:''}</div></section><div class="tx-info-grid"><div class="tx-info"><span>ID Transaksi</span><b>${esc(t.transaction_ref||'—')}</b></div><div class="tx-info"><span>Receipt</span><b>${esc(t.receipt_no||'Belum tersedia')}</b></div><div class="tx-info"><span>Dibuat</span><b>${dt(t.created_at)}</b></div><div class="tx-info"><span>Kedaluwarsa</span><b>${t.expires_at?dt(t.expires_at):'—'} ${exp(t.expires_at,t.status)}</b></div><div class="tx-info"><span>Pembayar</span><b>${esc(t.display_name||'—')}</b></div><div class="tx-info"><span>Kode Pembayaran</span><b>${esc(t.payment_code||'—')}</b></div>${t.activated_until?`<div class="tx-info"><span>Plan aktif sampai</span><b>${dt(t.activated_until)}</b></div>`:''}<div class="tx-info"><span>Diproses oleh</span><b>${esc(t.reviewed_by_name||'—')}</b></div></div><div class="tx-risk-box"><span class="tx-risk-icon ${level}"><i data-lucide="${level==='low'?'shield-check':level==='high'||level==='critical'?'shield-alert':'shield-question'}"></i></span><div><b>${esc(label)} · Score ${Number(t.risk?.score||0)}/100</b><small>Rekomendasi intellegence.7mit: ${esc(decision==='approve'?'Setujui':decision==='reject'?'Tolak':'Review Manual')} · ${esc(t.intellegence_status||'—')}</small>${ai(t)?`<div class="tx-ai-note">${esc(ai(t))}</div>`:''}</div></div>${t.status_reason||t.review_note?`<div class="tx-info"><span>Catatan</span><b>${esc(t.status_reason||t.review_note)}</b></div>`:''}<div class="tx-detail-actions"><button type="button" data-tx-copy="${esc(t.transaction_ref||'')}"><i data-lucide="copy"></i>Copy ID</button>${t.proof_url?`<a href="${esc(t.proof_url)}" target="_blank" rel="noopener"><i data-lucide="image"></i>Lihat Bukti</a>`:''}${done?`<button class="primary" type="button" data-tx-print><i data-lucide="printer"></i>Receipt</button>`:''}</div><div class="tx-section-title">Audit Trail</div><div class="tx-timeline">${timeline}</div></div>`;window.lucide?.createIcons?.()}async function ld(scope,id){try{$('#txDetail').innerHTML='<div class="tx-detail-empty"><div><span><i data-lucide="loader-circle"></i></span><b>Memuat detail…</b></div></div>';window.lucide?.createIcons?.();const d=await api('detail',{scope,id});detail(d.transaction)}catch(e){$('#txDetail').innerHTML=`<div class="tx-empty">${esc(e.message||'Detail gagal dimuat.')}</div>`}}async function load(){if(currentStatus.loading)return;currentStatus.loading=true;$('#txRefresh')?.classList.add('loading');try{const [s,l]=await Promise.all([api('summary',{mode:currentStatus.mode}),api('list',{mode:currentStatus.mode,scope:currentStatus.scope,status:'all',limit:100})]);currentStatus.summary=s.summary||{};currentStatus.permissions=s.permissions||l.permissions||{};currentStatus.rows=l.rows||[];const pos=!!(currentStatus.permissions.dues_pos||currentStatus.permissions.pricing_pos);$$('[data-tx-mode="pos"]').forEach(x=>x.hidden=!pos);if(currentStatus.mode==='pos'&&!pos)currentStatus.mode='mine';kpis();list();window.lucide?.createIcons?.()}catch(e){$('#txList').innerHTML=`<div class="tx-empty">${esc(e.message||'Transaksi gagal dimuat.')}</div>`}finally{currentStatus.loading=false;$('#txRefresh')?.classList.remove('loading')}}async function open(mode='mine'){currentStatus.mode=mode==='pos'?'pos':'mine';$('#transactionCenter').classList.add('open');$('#transactionCenter').setAttribute('aria-hidden','false');document.body.classList.add('dues-modal-open');$$('[data-tx-mode]').forEach(x=>x.classList.toggle('active',x.dataset.txMode===currentStatus.mode));await load();clearInterval(currentStatus.timer);currentStatus.timer=setInterval(()=>$('#transactionCenter')?.classList.contains('open')&&load(),30000)}function close(){$('#transactionCenter')?.classList.remove('open');$('#transactionCenter')?.setAttribute('aria-hidden','true');document.body.classList.remove('dues-modal-open');clearInterval(currentStatus.timer);currentStatus.timer=null}function printReceipt(){const t=currentStatus.selected;if(!t)return;const s=sm(t.status),w=window.open('','_blank','width=620,height=760');if(!w){window.toast?.('Popup receipt diblokir browser.');return}w.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>${esc(t.receipt_no||t.transaction_ref)}</title><style>body{font-family:Arial,sans-serif;color:#17233a;padding:32px}.muted{color:#64748b}.box{border:1px solid #dbe3ec;border-radius:16px;padding:18px;margin:18px 0}.row{display:flex;justify-content:space-between;gap:20px;padding:7px 0;border-bottom:1px solid #eef2f7}.amount{font-size:30px;font-weight:800}.stamp{display:inline-block;padding:7px 10px;border-radius:999px;background:#ecfdf5;color:#047857;font-weight:700;font-size:12px}</style></head><body><h2>7 MIT · Receipt Transaksi</h2><p class="muted">Bukti pencatatan sistem transaksi 7 MIT</p><div class="box"><div class="amount">${money(t.amount)}</div><p><span class="stamp">${esc(s.l)}</span></p><div class="row"><span>Receipt</span><b>${esc(t.receipt_no||'—')}</b></div><div class="row"><span>ID Transaksi</span><b>${esc(t.transaction_ref||'—')}</b></div><div class="row"><span>Jenis</span><b>${esc(t.title)}</b></div><div class="row"><span>Metode</span><b>${esc(String(t.method||'').toUpperCase())}</b></div><div class="row"><span>Pembayar</span><b>${esc(t.display_name||'—')}</b></div><div class="row"><span>Selesai</span><b>${dt(t.completed_at)}</b></div></div><button onclick="window.print()">Print</button></body></html>`);w.document.close()}document.addEventListener('click',e=>{const o=e.target.closest?.('[data-tx-open]');if(o){open(o.dataset.txOpen||'mine');return}if(e.target.closest?.('[data-tx-close]'))return close();const m=e.target.closest?.('[data-tx-mode]');if(m){currentStatus.mode=m.dataset.txMode;$$('[data-tx-mode]').forEach(x=>x.classList.toggle('active',x===m));currentStatus.selected=null;load();return}const s=e.target.closest?.('[data-tx-scope]');if(s){currentStatus.scope=s.dataset.txScope;$$('[data-tx-scope]').forEach(x=>x.classList.toggle('active',x===s));currentStatus.selected=null;load();return}const r=e.target.closest?.('[data-tx-detail]');if(r){ld(r.dataset.scope,r.dataset.txDetail);return}if(e.target.closest?.('#txRefresh'))return load();const c=e.target.closest?.('[data-tx-copy]');if(c){navigator.clipboard?.writeText(c.dataset.txCopy||'').catch(()=>{});window.toast?.('ID transaksi disalin.');return}if(e.target.closest?.('[data-tx-print]'))return printReceipt()});document.addEventListener('input',e=>{if(e.target?.id==='txSearch'){currentStatus.search=e.target.value||'';list()}});document.addEventListener('change',e=>{if(e.target?.id==='txStatus'){currentStatus.status=e.target.value||'all';list()}});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('#transactionCenter')?.classList.contains('open'))close()})})();</script>
 
 
-<div class="som-modal" id="somModal" aria-hidden="true"><div class="som-modal-backdrop" data-som-close></div><div class="som-modal-card" role="dialog" aria-modal="true" aria-labelledby="somModalTitle"><header class="som-modal-head"><div class="som-modal-title"><span class="som-modal-icon"><i data-lucide="trophy"></i></span><div><h3 id="somModalTitle">Atur Student of the Month</h3><p>Hanya Guru yang dapat menetapkan atau mengubah pilihan bulanan.</p></div></div><button class="som-close" type="button" data-som-close aria-label="Tutup"><i data-lucide="x"></i></button></header><div class="som-modal-body"><div class="som-form-grid"><div class="som-field"><label for="somPeriod">Bulan</label><input id="somPeriod" type="month"></div><div class="som-field"><label for="somStudent">Siswa</label><select id="somStudent"><option value="">Memuat siswa…</option></select></div><div class="som-field span-2"><label for="somReasonInput">Alasan / apresiasi</label><textarea id="somReasonInput" maxlength="700" placeholder="Contoh: Konsisten, aktif membantu teman, disiplin, dan menunjukkan perkembangan yang sangat baik bulan ini."></textarea></div></div><div class="som-form-note"><i data-lucide="info"></i> Pilihan tampil di Ringkasan Guru, Pengurus, dan Siswa. Setiap bulan memiliki satu Student of the Month.</div><div class="som-actions"><button class="danger" id="somClearBtn" type="button"><i data-lucide="trash-2"></i> Hapus Bulan Ini</button><button class="secondary" type="button" data-som-close>Batal</button><button class="primary" id="somSaveBtn" type="button"><i data-lucide="save"></i> Simpan</button></div><section class="som-history"><div class="som-history-head"><b>Riwayat 12 Bulan</b><small>Pilih untuk mengedit bulan tersebut.</small></div><div class="som-history-list" id="somHistory"><div class="som-loading">Memuat riwayat…</div></div></section></div></div></div>
+<div class="som-modal" id="somModal" aria-hidden="true"><div class="som-modal-backdrop" data-som-close></div><div class="som-modal-card" role="dialog" aria-modal="true" aria-labelledby="somModalTitle"><header class="som-modal-head"><div class="som-modal-title"><span class="som-modal-icon"><i data-lucide="trophy"></i></span><div><h3 id="somModalTitle">Atur Top 5 Student of the Month</h3><p>Hanya Guru yang dapat menetapkan atau mengubah peringkat bulanan.</p></div></div><button class="som-close" type="button" data-som-close aria-label="Tutup"><i data-lucide="x"></i></button></header><div class="som-modal-body"><div class="som-form-grid"><div class="som-field span-2"><label for="somPeriod">Bulan</label><input id="somPeriod" type="month"></div></div><div class="som-rank-rows" id="somRankRows"></div><div class="som-form-note"><i data-lucide="info"></i> Peringkat 1 menjadi Student of the Month. Satu siswa hanya boleh di satu peringkat; peringkat yang dikosongkan tidak ditampilkan. Semua siswa dan pengurus dapat melihat bulan-bulan sebelumnya.</div><div class="som-actions"><button class="danger" id="somClearBtn" type="button"><i data-lucide="trash-2"></i> Hapus Bulan Ini</button><button class="secondary" type="button" data-som-close>Batal</button><button class="primary" id="somSaveBtn" type="button"><i data-lucide="save"></i> Simpan</button></div></div></div></div>
 
+<script id="studentOfMonthV109" type="text/plain" data-k7-lazy-inline="v125">(()=>{
+const API=()=>`${window.SUPABASE_URL||'https://lajzrempjyoqkubkumhb.supabase.co'}/functions/v1/student-of-month-api`;
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+const store={profile:null,students:null,loading:false,retries:0,month:null};
+async function api(action,payload={}){
+  const token=await window.K7Session?.getToken?.();if(!token)throw new Error('Sesi akun belum tersedia.');
+  const anon=window.SUPABASE_ANON_KEY||'',ctrl=new AbortController(),timer=setTimeout(()=>ctrl.abort(),14000);
+  try{
+    const r=await fetch(API(),{method:'POST',headers:{'Content-Type':'application/json','apikey':anon,'Authorization':anon?`Bearer ${anon}`:'','x-7mit-session':token},body:JSON.stringify({action,...payload}),cache:'no-store',signal:ctrl.signal});
+    const raw=await r.text();let d={};try{d=raw?JSON.parse(raw):{}}catch{}
+    if(!r.ok||d?.ok===false)throw new Error(d?.message||raw||`HTTP ${r.status}`);
+    return d;
+  }catch(e){if(e?.name==='AbortError')throw new Error('Student of the Month terlalu lama merespons.');throw e}
+  finally{clearTimeout(timer)}
+}
+function nowMonth(){const p=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Jakarta',year:'numeric',month:'2-digit'}).formatToParts(new Date());return`${p.find(x=>x.type==='year')?.value}-${p.find(x=>x.type==='month')?.value}`}
+function monthLabel(v){if(!v)return'Bulan ini';try{return new Intl.DateTimeFormat('id-ID',{month:'long',year:'numeric',timeZone:'Asia/Jakarta'}).format(new Date(`${String(v).slice(0,7)}-01T12:00:00+07:00`))}catch{return String(v).slice(0,7)}}
+function initials(n){return String(n||'').trim().split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]?.toUpperCase()||'').join('')||'—'}
+function fmtDate(v){if(!v)return'—';try{return new Intl.DateTimeFormat('id-ID',{dateStyle:'medium',timeStyle:'short',timeZone:'Asia/Jakarta'}).format(new Date(v))}catch{return String(v)}}
+const icons=()=>{try{window.lucide?.createIcons?.()}catch(e){}};
 
-<script id="studentOfMonthV109" type="text/plain" data-k7-lazy-inline="v125">(()=>{const API=()=>`${window.SUPABASE_URL||'https://lajzrempjyoqkubkumhb.supabase.co'}/functions/v1/student-of-month-api`,$=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c])),currentStatus={profile:null,students:null,loading:false,retries:0};async function api(action,payload={}){const token=await window.K7Session?.getToken?.();if(!token)throw new Error('Sesi akun belum tersedia.');const anon=window.SUPABASE_ANON_KEY||'',ctrl=new AbortController(),timer=setTimeout(()=>ctrl.abort(),14000);try{const r=await fetch(API(),{method:'POST',headers:{'Content-Type':'application/json','apikey':anon,'Authorization':anon?`Bearer ${anon}`:'','x-7mit-session':token},body:JSON.stringify({action,...payload}),cache:'no-store',signal:ctrl.signal}),raw=await r.text();let d={};try{d=raw?JSON.parse(raw):{}}catch{}if(!r.ok||d?.ok===false)throw new Error(d?.message||raw||`HTTP ${r.status}`);return d}catch(e){if(e?.name==='AbortError')throw new Error('Student of the Month terlalu lama merespons.');throw e}finally{clearTimeout(timer)}}function currentMonth(){const p=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Jakarta',year:'numeric',month:'2-digit'}).formatToParts(new Date()),y=p.find(x=>x.type==='year')?.value,m=p.find(x=>x.type==='month')?.value;return`${y}-${m}`}function monthLabel(v){if(!v)return'Bulan ini';try{return new Intl.DateTimeFormat('id-ID',{month:'long',year:'numeric',timeZone:'Asia/Jakarta'}).format(new Date(`${String(v).slice(0,7)}-01T12:00:00+07:00`))}catch{return String(v).slice(0,7)}}function initials(n){return String(n||'').trim().split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]?.toUpperCase()||'').join('')||'—'}function fmtDate(v){if(!v)return'—';try{return new Intl.DateTimeFormat('id-ID',{dateStyle:'medium',timeStyle:'short',timeZone:'Asia/Jakarta'}).format(new Date(v))}catch{return String(v)}}function renderCard(){const p=currentStatus.profile||{},a=p.current,manage=$('#somManageBtn');if(manage){manage.hidden=true;manage.remove()}$('#somMonth').textContent=monthLabel(p.current_month||currentMonth());if(a){$('#somInitials').textContent=initials(a.student_name);$('#somName').textContent=a.student_name;$('#somReason').textContent=a.reason||'Dipilih sebagai Student of the Month oleh Guru Kelas.';$('#somMeta').innerHTML=`<span><i data-lucide="award"></i> Student of the Month</span><span><i data-lucide="user-check"></i> Diatur oleh ${esc(a.updated_by_name||'Guru')}</span><span><i data-lucide="clock-3"></i> ${esc(fmtDate(a.updated_at))}</span>`}else{$('#somInitials').textContent='—';$('#somName').textContent='Belum ditetapkan';$('#somReason').textContent='Guru Kelas belum menetapkan Student of the Month untuk bulan ini.';$('#somMeta').innerHTML='<span><i data-lucide="shield-check"></i> Hanya dapat diatur oleh Guru</span>'}window.lucide?.createIcons?.()}function renderHistory(){const el=$('#somHistory');if(!el)return;const rows=currentStatus.profile?.history||[];if(!rows.length){el.innerHTML='<div class="som-loading">Belum ada riwayat Student of the Month.</div>';return}el.innerHTML=rows.map(x=>`<button class="som-history-row" type="button" data-som-history="${esc(String(x.period_month).slice(0,7))}"><span class="som-history-badge"><i data-lucide="award"></i></span><span><b>${esc(x.student_name)} · ${esc(monthLabel(x.period_month))}</b><small>${esc(x.reason||'Tanpa catatan')} · ${esc(x.updated_by_name||'Guru')}</small></span></button>`).join('');window.lucide?.createIcons?.()}async function load(force=false){if(currentStatus.loading)return;if(currentStatus.profile&&!force){renderCard();return}currentStatus.loading=true;try{currentStatus.profile=await api('profile');renderCard();renderHistory();currentStatus.retries=0}catch(e){if(!currentStatus.profile){$('#somName').textContent='Student of the Month';$('#somReason').textContent='Data akan dimuat setelah sesi portal siap.'}if(currentStatus.retries<8){currentStatus.retries++;setTimeout(()=>load(true),1500*currentStatus.retries)}}finally{currentStatus.loading=false}}async function loadStudents(){if(currentStatus.students)return currentStatus.students;const d=await api('students');currentStatus.students=d.students||[];const sel=$('#somStudent');sel.innerHTML='<option value="">Pilih siswa…</option>'+currentStatus.students.map(s=>`<option value="${esc(s.account_key)}">${esc(s.display_name)}</option>`).join('');return currentStatus.students}function applyMonth(month){const row=(currentStatus.profile?.history||[]).find(x=>String(x.period_month).slice(0,7)===month);$('#somPeriod').value=month;$('#somStudent').value=row?.student_account_key||'';$('#somReasonInput').value=row?.reason||'';$('#somClearBtn').disabled=!row}async function open(){if(!currentStatus.profile?.can_manage){window.toast?.('Hanya Guru yang dapat mengatur Student of the Month.');return}const root=$('#somModal');root.classList.add('open');root.setAttribute('aria-hidden','false');document.body.classList.add('dues-modal-open');try{await Promise.all([load(true),loadStudents()]);applyMonth(currentStatus.profile?.current_month||currentMonth());renderHistory()}catch(e){window.toast?.(e.message||'Student of the Month gagal dimuat.')}window.lucide?.createIcons?.()}function close(){const root=$('#somModal');root?.classList.remove('open');root?.setAttribute('aria-hidden','true');document.body.classList.remove('dues-modal-open')}async function save(){const month=$('#somPeriod').value,student_account_key=$('#somStudent').value,reason=$('#somReasonInput').value.trim(),btn=$('#somSaveBtn');if(!student_account_key){window.toast?.('Pilih siswa terlebih dahulu.');return}btn.disabled=true;btn.textContent='Menyimpan…';try{await api('save',{month,student_account_key,reason});currentStatus.profile=null;await load(true);window.toast?.('Student of the Month berhasil disimpan.');close()}catch(e){window.toast?.(e.message||'Gagal menyimpan Student of the Month.')}finally{btn.disabled=false;btn.innerHTML='<i data-lucide="save"></i> Simpan';window.lucide?.createIcons?.()}}async function clearMonth(){const month=$('#somPeriod').value;if(!confirm(`Hapus Student of the Month untuk ${monthLabel(month)}?`))return;const btn=$('#somClearBtn');btn.disabled=true;try{await api('clear',{month});currentStatus.profile=null;await load(true);applyMonth(month);renderHistory();window.toast?.('Student of the Month bulan tersebut dihapus.')}catch(e){window.toast?.(e.message||'Gagal menghapus Student of the Month.')}finally{btn.disabled=false}}document.addEventListener('click',e=>{if(e.target.closest?.('[data-som-close]')){close();return}if(e.target.closest?.('#somSaveBtn')){save();return}if(e.target.closest?.('#somClearBtn')){clearMonth();return}const h=e.target.closest?.('[data-som-history]');if(h){applyMonth(h.dataset.somHistory);return}if(e.target.closest?.('[data-page="dashboard"]'))setTimeout(()=>load(true),250)});document.addEventListener('change',e=>{if(e.target?.id==='somPeriod')applyMonth(e.target.value)});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('#somModal')?.classList.contains('open'))close()});setTimeout(()=>load(true),900);setInterval(()=>{if(!document.hidden)load(true)},60000)})();</script>
+function selectedMonth(){return store.profile?.month||store.month||nowMonth()}
+function render(){
+  const p=store.profile;if(!p)return;
+  const month=p.month,ranking=Array.isArray(p.ranking)?p.ranking:[],top=ranking.find(r=>Number(r.rank)===1)||null;
+  $('#somMonth').textContent=monthLabel(month);
+  const nameEl=$('#somName');
+  if(top){
+    $('#somInitials').textContent=initials(top.student_name);
+    nameEl.textContent=top.student_name;
+    $('#somReason').textContent=top.reason||'Dipilih sebagai Student of the Month oleh Guru Kelas.';
+    $('#somMeta').innerHTML=`<span><i data-lucide="award"></i> Student of the Month ${esc(monthLabel(month))}</span><span><i data-lucide="user-check"></i> Diatur oleh ${esc(top.updated_by_name||'Guru')}</span><span><i data-lucide="clock-3"></i> ${esc(fmtDate(top.updated_at))}</span>`;
+  }else{
+    $('#somInitials').textContent='—';nameEl.textContent='Belum ditetapkan';
+    $('#somReason').textContent=month===p.current_month?'Guru Kelas belum menetapkan Student of the Month untuk bulan ini.':'Tidak ada Student of the Month yang tercatat untuk bulan ini.';
+    $('#somMeta').innerHTML='<span><i data-lucide="shield-check"></i> Hanya dapat diatur oleh Guru</span>';
+  }
+  // pemilih bulan
+  const months=[...new Set([...(p.months||[]),month])].sort().reverse();
+  const sel=$('#somMonthSelect');
+  sel.innerHTML=months.map(m=>`<option value="${esc(m)}"${m===month?' selected':''}>${esc(monthLabel(m))}${m===p.current_month?' (bulan ini)':''}</option>`).join('');
+  const i=months.indexOf(month);
+  $('#somPrev').disabled=i>=months.length-1;   // lebih lama
+  $('#somNext').disabled=i<=0;                 // lebih baru
+  // Top 5
+  $('#somTop5Month').textContent=monthLabel(month);
+  const byRank=new Map(ranking.map(r=>[Number(r.rank),r]));
+  $('#somTop5').innerHTML=[1,2,3,4,5].map(n=>{const r=byRank.get(n);
+    return r?`<li class="som-rank r${n}"><span class="som-rank-badge">${n}</span><span class="som-rank-body"><b>${esc(r.student_name)}</b><small>${esc(r.reason||'Tanpa catatan')}</small></span>${n===1?'<i data-lucide="crown" class="som-rank-crown"></i>':''}</li>`
+      :`<li class="som-rank empty"><span class="som-rank-badge">${n}</span><span class="som-rank-body"><b>Belum ditetapkan</b></span></li>`}).join('');
+  const manage=$('#somManageBtn');if(manage)manage.hidden=!p.can_manage;
+  icons();
+}
+async function load(month,force=false){
+  if(store.loading&&!force)return;
+  store.loading=true;
+  try{
+    const want=month||store.month||null;
+    store.profile=await api('profile',want?{month:want}:{});
+    store.month=store.profile.month;
+    render();store.retries=0;
+  }catch(e){
+    if(!store.profile){$('#somName').textContent='Student of the Month';$('#somReason').textContent='Data akan dimuat setelah sesi portal siap.'}
+    if(store.retries<8){store.retries++;setTimeout(()=>load(month,true),1500*store.retries)}
+  }finally{store.loading=false}
+}
+// ----- pengaturan Top 5 (Guru) -----
+function rankRowsHtml(){
+  return [1,2,3,4,5].map(n=>`<div class="som-rank-row"><span class="som-rank-badge r${n}">${n}</span><select class="som-rank-student" data-rank="${n}" aria-label="Siswa peringkat ${n}"><option value="">— kosong —</option></select><input class="som-rank-reason" data-rank="${n}" maxlength="700" placeholder="${n===1?'Alasan / apresiasi (tampil di kartu utama)':'Catatan singkat (opsional)'}"></div>`).join('');
+}
+function fillStudents(){
+  const list=store.students||[];
+  document.querySelectorAll('.som-rank-student').forEach(sel=>{const cur=sel.value;sel.innerHTML='<option value="">— kosong —</option>'+list.map(s=>`<option value="${esc(s.account_key)}">${esc(s.display_name)}</option>`).join('');sel.value=cur});
+  syncChoices();
+}
+function syncChoices(){
+  const taken=new Set([...document.querySelectorAll('.som-rank-student')].map(s=>s.value).filter(Boolean));
+  document.querySelectorAll('.som-rank-student').forEach(sel=>{[...sel.options].forEach(o=>{o.disabled=!!o.value&&taken.has(o.value)&&o.value!==sel.value})});
+}
+function applyRanking(rows){
+  const by=new Map((rows||[]).map(r=>[Number(r.rank),r]));
+  document.querySelectorAll('.som-rank-student').forEach(sel=>{const r=by.get(Number(sel.dataset.rank));sel.value=r?.student_account_key||''});
+  document.querySelectorAll('.som-rank-reason').forEach(inp=>{const r=by.get(Number(inp.dataset.rank));inp.value=r?.reason||''});
+  $('#somClearBtn').disabled=!(rows&&rows.length);
+  syncChoices();
+}
+async function loadStudents(){
+  if(store.students)return store.students;
+  const d=await api('students');store.students=d.students||[];fillStudents();return store.students;
+}
+async function open(){
+  if(!store.profile?.can_manage){window.toast?.('Hanya Guru yang dapat mengatur Student of the Month.');return}
+  const root=$('#somModal');
+  if(!$('#somRankRows').children.length)$('#somRankRows').innerHTML=rankRowsHtml();
+  root.classList.add('open');root.setAttribute('aria-hidden','false');document.body.classList.add('dues-modal-open');
+  try{
+    await loadStudents();
+    const m=selectedMonth();$('#somPeriod').value=m;
+    applyRanking(store.profile.ranking||[]);
+  }catch(e){window.toast?.(e.message||'Student of the Month gagal dimuat.')}
+  icons();
+}
+function close(){const root=$('#somModal');root?.classList.remove('open');root?.setAttribute('aria-hidden','true');document.body.classList.remove('dues-modal-open')}
+async function changeModalMonth(m){
+  if(!/^\d{4}-\d{2}$/.test(m||''))return;
+  try{const d=await api('profile',{month:m});applyRanking(d.ranking||[])}catch(e){window.toast?.(e.message||'Gagal memuat bulan tersebut.')}
+}
+function collect(){
+  return [...document.querySelectorAll('.som-rank-student')].map(sel=>({rank:Number(sel.dataset.rank),student_account_key:sel.value,reason:(document.querySelector(`.som-rank-reason[data-rank="${sel.dataset.rank}"]`)?.value||'').trim()})).filter(r=>r.student_account_key);
+}
+async function save(){
+  const month=$('#somPeriod').value,ranks=collect(),btn=$('#somSaveBtn');
+  if(!month){window.toast?.('Pilih bulan terlebih dahulu.');return}
+  if(!ranks.length){window.toast?.('Pilih minimal satu siswa.');return}
+  btn.disabled=true;btn.textContent='Menyimpan…';
+  try{await api('save',{month,ranks});await load(month,true);window.toast?.('Top 5 Student of the Month berhasil disimpan.');close()}
+  catch(e){window.toast?.(e.message||'Gagal menyimpan Student of the Month.')}
+  finally{btn.disabled=false;btn.innerHTML='<i data-lucide="save"></i> Simpan';icons()}
+}
+async function clearMonth(){
+  const month=$('#somPeriod').value;
+  if(!confirm(`Hapus seluruh Top 5 untuk ${monthLabel(month)}?`))return;
+  const btn=$('#somClearBtn');btn.disabled=true;
+  try{await api('clear',{month});await load(month,true);applyRanking([]);window.toast?.('Top 5 bulan tersebut dihapus.')}
+  catch(e){window.toast?.(e.message||'Gagal menghapus.')}
+  finally{btn.disabled=false}
+}
+function step(delta){
+  const p=store.profile;if(!p)return;
+  const months=[...new Set([...(p.months||[]),p.month])].sort().reverse();
+  const i=months.indexOf(p.month),j=i+delta;
+  if(j>=0&&j<months.length)load(months[j],true);
+}
+document.addEventListener('click',e=>{
+  if(e.target.closest?.('[data-som-close]')){close();return}
+  if(e.target.closest?.('#somSaveBtn')){save();return}
+  if(e.target.closest?.('#somClearBtn')){clearMonth();return}
+  if(e.target.closest?.('#somManageBtn')){open();return}
+  if(e.target.closest?.('#somPrev')){step(1);return}   // indeks lebih besar = bulan lebih lama
+  if(e.target.closest?.('#somNext')){step(-1);return}
+  if(e.target.closest?.('[data-page="dashboard"]'))setTimeout(()=>load(store.month,true),250);
+});
+document.addEventListener('change',e=>{
+  if(e.target?.id==='somMonthSelect'){load(e.target.value,true);return}
+  if(e.target?.id==='somPeriod'){changeModalMonth(e.target.value);return}
+  if(e.target?.classList?.contains('som-rank-student'))syncChoices();
+});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('#somModal')?.classList.contains('open'))close()});
+setTimeout(()=>load(null,true),900);
+setInterval(()=>{if(!document.hidden&&!$('#somModal')?.classList.contains('open'))load(store.month,true)},60000);
+})();
+</script>
 
 
 <div class="note-modal" id="noteEditorModal" aria-hidden="true"><div class="note-modal-backdrop" data-note-close></div><div class="note-editor-shell" id="noteEditorShell"><header class="note-editor-head"><input class="note-editor-title" id="noteTitle" maxlength="180" placeholder="Judul"><span class="note-editor-status" id="noteSaveStatus">Belum disimpan</span><button class="note-editor-close" type="button" data-note-close aria-label="Tutup"><i data-lucide="x"></i></button></header><div class="note-formatbar" id="noteFormatbar"><button type="button" data-note-cmd="undo" title="Undo"><i data-lucide="undo-2"></i></button><button type="button" data-note-cmd="redo" title="Redo"><i data-lucide="redo-2"></i></button><span class="note-format-sep"></span><select id="noteBlockStyle" title="Gaya teks"><option value="p">Normal</option><option value="h1">Judul Besar</option><option value="h2">Judul</option><option value="h3">Subjudul</option><option value="blockquote">Kutipan</option><option value="pre">Kode</option></select><button type="button" data-note-cmd="bold" title="Bold"><i data-lucide="bold"></i></button><button type="button" data-note-cmd="italic" title="Italic"><i data-lucide="italic"></i></button><button type="button" data-note-cmd="underline" title="Underline"><i data-lucide="underline"></i></button><button type="button" data-note-cmd="strikeThrough" title="Coret"><i data-lucide="strikethrough"></i></button><span class="note-format-sep"></span><button type="button" data-note-cmd="insertUnorderedList" title="Bullet"><i data-lucide="list"></i></button><button type="button" data-note-cmd="insertOrderedList" title="Nomor"><i data-lucide="list-ordered"></i></button><button type="button" data-note-check title="Checklist"><i data-lucide="list-checks"></i></button><button type="button" data-note-link title="Link"><i data-lucide="link"></i></button><button type="button" data-note-highlight title="Highlight"><i data-lucide="highlighter"></i></button><button type="button" data-note-cmd="removeFormat" title="Hapus format"><i data-lucide="eraser"></i></button></div><div class="note-editor-scroll"><section class="note-editor-advanced" id="noteAdvancedFields" hidden><div class="note-adv-field"><label>Folder</label><input id="noteFolder" maxlength="80" list="notesFolderDatalist" placeholder="Mis. Rapat Kelas"><datalist id="notesFolderDatalist"></datalist></div><div class="note-adv-field"><label>Prioritas</label><select id="notePriority"><option value="normal">Normal</option><option value="low">Rendah</option><option value="high">Tinggi</option><option value="urgent">Urgent</option></select></div><div class="note-adv-field"><label>Jatuh tempo</label><input id="noteDue" type="datetime-local"></div><div class="note-adv-field"><label>Jenis</label><select id="noteTypeAdvanced"><option value="note">Catatan</option><option value="checklist">Checklist</option><option value="minutes">Notulen</option><option value="agenda">Agenda</option><option value="decision">Decision Log</option><option value="memo">Memo</option><option value="draft">Draft</option><option value="meeting">Rapat</option></select></div></section><div class="note-content" id="noteContent" contenteditable="true" spellcheck="true" data-placeholder="Mulai menulis catatan…"></div></div><footer class="note-editor-foot"><div class="note-color-picker" id="noteColorPicker"><button class="note-color-dot active" type="button" data-note-color="default" title="Default"></button><button class="note-color-dot" type="button" data-note-color="yellow" title="Kuning"></button><button class="note-color-dot" type="button" data-note-color="green" title="Hijau"></button><button class="note-color-dot" type="button" data-note-color="blue" title="Biru"></button><button class="note-color-dot" type="button" data-note-color="purple" title="Ungu"></button><button class="note-color-dot" type="button" data-note-color="pink" title="Pink"></button><button class="note-color-dot" type="button" data-note-color="orange" title="Oranye"></button><button class="note-color-dot" type="button" data-note-color="gray" title="Abu"></button></div><input class="note-label-input" id="noteLabelsInput" placeholder="Label, pisahkan dengan koma"><div class="note-foot-actions"><button type="button" data-note-pin><i data-lucide="pin"></i><span>Pin</span></button><button type="button" data-note-archive><i data-lucide="archive"></i><span>Arsip</span></button><button type="button" id="noteRevisionsBtn" hidden><i data-lucide="history"></i>Versi</button><button type="button" id="noteDuplicateBtn" hidden><i data-lucide="copy-plus"></i>Duplikat</button><button type="button" id="notePrintBtn" hidden><i data-lucide="printer"></i>Print</button><button class="danger" type="button" data-note-trash><i data-lucide="trash-2"></i></button><button class="primary" type="button" data-note-save><i data-lucide="save"></i>Simpan</button></div></footer><aside class="note-revisions" id="noteRevisions"><header class="note-revisions-head"><b>Riwayat Versi</b><button class="note-editor-close" type="button" data-note-revisions-close><i data-lucide="x"></i></button></header><div class="note-revisions-list" id="noteRevisionsList"></div></aside></div></div>
@@ -28376,5 +28547,54 @@ html:root body .interface-color-choice.plan-locked::after{display:none!important
   window.addEventListener('focus',heartbeat);
 })();
 </script>
+<style id="k7-som-top5-v155">
+/* ===== V155 · STUDENT OF THE MONTH · TOP 5 + RIWAYAT BULAN ===== */
+html:root body .som-card.som-v2{display:block;padding:20px 22px 18px}
+html:root body .som-card.som-v2 .som-top{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:18px;align-items:center}
+html:root body .som-card.som-v2 .som-tools{display:flex;flex-direction:column;align-items:flex-end;gap:10px}
+.som-nav{display:inline-flex;align-items:center;gap:6px;padding:4px;border:1px solid rgba(245,158,11,.32);border-radius:14px;background:rgba(255,255,255,.7)}
+.som-nav select{appearance:none;-webkit-appearance:none;border:0;background:transparent;font:inherit;font-weight:750;font-size:13px;color:inherit;padding:6px 8px;min-width:150px;text-align:center;cursor:pointer;border-radius:10px}
+.som-nav select:focus-visible{outline:2px solid rgba(245,158,11,.6);outline-offset:1px}
+.som-nav-btn{width:34px;height:34px;display:grid;place-items:center;border:0;border-radius:10px;background:rgba(245,158,11,.14);color:#b45309;cursor:pointer}
+.som-nav-btn:hover:not(:disabled){background:rgba(245,158,11,.28)}
+.som-nav-btn:disabled{opacity:.35;cursor:not-allowed}
+.som-nav-btn svg{width:18px;height:18px}
+.som-top5-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin:18px 2px 10px;padding-top:14px;border-top:1px dashed rgba(245,158,11,.35)}
+.som-top5-head b{font-size:14px;letter-spacing:-.01em}
+.som-top5-head span{font-size:12px;color:var(--theme-muted,#64748b)}
+.som-top5{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.som-rank{position:relative;display:flex;align-items:flex-start;gap:10px;padding:12px;border:1px solid rgba(245,158,11,.22);border-radius:16px;background:rgba(255,255,255,.65);min-width:0}
+.som-rank.r1{background:linear-gradient(145deg,#fff7db,#fde68a);border-color:rgba(217,119,6,.45)}
+.som-rank.empty{opacity:.55;border-style:dashed}
+.som-rank-badge{flex:0 0 28px;width:28px;height:28px;display:grid;place-items:center;border-radius:50%;font-weight:800;font-size:13px;color:#fff;background:#94a3b8}
+.som-rank.r1 .som-rank-badge,.som-rank-badge.r1{background:linear-gradient(135deg,#f59e0b,#d97706)}
+.som-rank.r2 .som-rank-badge,.som-rank-badge.r2{background:linear-gradient(135deg,#94a3b8,#64748b)}
+.som-rank.r3 .som-rank-badge,.som-rank-badge.r3{background:linear-gradient(135deg,#d6935a,#b4692f)}
+.som-rank.r4 .som-rank-badge,.som-rank.r5 .som-rank-badge,.som-rank-badge.r4,.som-rank-badge.r5{background:#7c8aa0}
+.som-rank-body{min-width:0;display:flex;flex-direction:column;gap:2px}
+.som-rank-body b{font-size:13px;line-height:1.3;overflow-wrap:anywhere}
+.som-rank-body small{font-size:11px;line-height:1.35;color:var(--theme-muted,#64748b);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.som-rank-crown{position:absolute;right:9px;top:9px;width:16px;height:16px;color:#d97706}
+@media(max-width:1100px){.som-top5{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:700px){
+  html:root body .som-card.som-v2 .som-top{grid-template-columns:auto minmax(0,1fr)}
+  html:root body .som-card.som-v2 .som-tools{grid-column:1/-1;flex-direction:row;align-items:center;justify-content:space-between;flex-wrap:wrap}
+  .som-nav{flex:1 1 220px}.som-nav select{flex:1;min-width:0}
+  .som-top5{grid-template-columns:1fr}
+}
+@media(max-width:480px){html:root body .som-card.som-v2{text-align:left}html:root body .som-card.som-v2 .som-top{grid-template-columns:1fr;text-align:center}html:root body .som-card.som-v2 .som-tools{justify-content:center}}
+html[data-theme-resolved="dark"] .som-nav{background:rgba(15,29,49,.7);border-color:rgba(245,158,11,.28)}
+html[data-theme-resolved="dark"] .som-nav select{color:#f8fafc}
+html[data-theme-resolved="dark"] .som-nav select option{color:#0f172a}
+html[data-theme-resolved="dark"] .som-rank{background:rgba(15,29,49,.6);border-color:rgba(245,158,11,.2)}
+html[data-theme-resolved="dark"] .som-rank.r1{background:linear-gradient(145deg,rgba(245,158,11,.22),rgba(245,158,11,.1));border-color:rgba(245,158,11,.45)}
+/* modal Guru */
+.som-rank-rows{display:grid;gap:10px;margin:14px 0 6px}
+.som-rank-row{display:grid;grid-template-columns:30px minmax(0,1fr);gap:8px 10px;align-items:center}
+.som-rank-row .som-rank-badge{grid-row:1/3;align-self:start;margin-top:6px}
+.som-rank-row select,.som-rank-row input{width:100%;min-height:40px;padding:8px 10px;border:1px solid var(--theme-line,#e2e8f0);border-radius:10px;background:var(--theme-surface,#fff);color:inherit;font:inherit;font-size:13px}
+@media(min-width:720px){.som-rank-row{grid-template-columns:30px minmax(0,1fr) minmax(0,1.3fr)}.som-rank-row .som-rank-badge{grid-row:auto;margin-top:0}}
+.som-manage[hidden],.som-modal:not(.open){display:none!important}
+</style>
 </body>
 </html>
