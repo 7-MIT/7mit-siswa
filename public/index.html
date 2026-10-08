@@ -29037,7 +29037,14 @@ const esc=s=>String(s??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const SURAH=[["Al-Fatihah",7],["Al-Baqarah",286],["Ali 'Imran",200],["An-Nisa'",176],["Al-Ma'idah",120],["Al-An'am",165],["Al-A'raf",206],["Al-Anfal",75],["At-Taubah",129],["Yunus",109],["Hud",123],["Yusuf",111],["Ar-Ra'd",43],["Ibrahim",52],["Al-Hijr",99],["An-Nahl",128],["Al-Isra'",111],["Al-Kahf",110],["Maryam",98],["Taha",135],["Al-Anbiya'",112],["Al-Hajj",78],["Al-Mu'minun",118],["An-Nur",64],["Al-Furqan",77],["Ash-Shu'ara'",227],["An-Naml",93],["Al-Qasas",88],["Al-'Ankabut",69],["Ar-Rum",60],["Luqman",34],["As-Sajdah",30],["Al-Ahzab",73],["Saba'",54],["Fatir",45],["Ya-Sin",83],["As-Saffat",182],["Sad",88],["Az-Zumar",75],["Ghafir",85],["Fussilat",54],["Ash-Shura",53],["Az-Zukhruf",89],["Ad-Dukhan",59],["Al-Jathiyah",37],["Al-Ahqaf",35],["Muhammad",38],["Al-Fath",29],["Al-Hujurat",18],["Qaf",45],["Adh-Dhariyat",60],["At-Tur",49],["An-Najm",62],["Al-Qamar",55],["Ar-Rahman",78],["Al-Waqi'ah",96],["Al-Hadid",29],["Al-Mujadilah",22],["Al-Hashr",24],["Al-Mumtahanah",13],["As-Saff",14],["Al-Jumu'ah",11],["Al-Munafiqun",11],["At-Taghabun",18],["At-Talaq",12],["At-Tahrim",12],["Al-Mulk",30],["Al-Qalam",52],["Al-Haqqah",52],["Al-Ma'arij",44],["Nuh",28],["Al-Jinn",28],["Al-Muzzammil",20],["Al-Muddaththir",56],["Al-Qiyamah",40],["Al-Insan",31],["Al-Mursalat",50],["An-Naba'",40],["An-Nazi'at",46],["'Abasa",42],["At-Takwir",29],["Al-Infitar",19],["Al-Mutaffifin",36],["Al-Inshiqaq",25],["Al-Buruj",22],["At-Tariq",17],["Al-A'la",19],["Al-Ghashiyah",26],["Al-Fajr",30],["Al-Balad",20],["Ash-Shams",15],["Al-Layl",21],["Ad-Duha",11],["Ash-Sharh",8],["At-Tin",8],["Al-'Alaq",19],["Al-Qadr",5],["Al-Bayyinah",8],["Az-Zalzalah",8],["Al-'Adiyat",11],["Al-Qari'ah",11],["At-Takathur",8],["Al-'Asr",3],["Al-Humazah",9],["Al-Fil",5],["Quraysh",4],["Al-Ma'un",7],["Al-Kawthar",3],["Al-Kafirun",6],["An-Nasr",3],["Al-Masad",5],["Al-Ikhlas",4],["Al-Falaq",5],["An-Nas",6]];
 const LEVELS=['Sekolah','Kecamatan','Kota/Kabupaten','Provinsi','Nasional','Internasional','Online'];
 const BSTAT=['Ingin dibaca','Sedang dibaca','Selesai'];
-const QLEVEL=['Dasar (Tahu Huruf)','Iqra 1','Iqra 2','Iqra 3','Iqra 4','Iqra 5','Iqra 6','Tajwid / Tahsin','Al-Quran Lancar'];
+const QLEVEL=['1. None (Tidak Bisa)','2. Dasar (Tahu Huruf)','3. Lancar Tanpa Tajwid','4. Lancar dan Tahu Tajwid Sedikit','5. Bagus dan Tahu Tajwid'];
+const FIRST_YEAR=2026;
+/* Daftar tahun ajaran: paling awal 2026/2027, sampai satu tahun setelah tahun terjauh yang dipakai */
+function yearOpts(...sel){
+  const start=s=>{const m=/^(\d{4})\//.exec(s||'');return m?+m[1]:FIRST_YEAR};
+  const last=Math.max(FIRST_YEAR,start(store.active?.academic_year||store.active?.year),...sel.map(start))+1;
+  const out=[];for(let y=FIRST_YEAR;y<=last;y++)out.push(`${y}/${y+1}`);return out;
+}
 const MSTAT=[{v:'In Progress',t:'In Progress'},{v:'Done',t:'Done'}];
 const TITLE={achievement:'Kompetisi',book:'Buku',quran:'Catatan Quran'};
 const QSEC={reading:'Quran Reading',memorization:'Quran Memorization'};
@@ -29132,7 +29139,7 @@ function filterHtml(kind,d){
   const mgr=d.can_manage;
   const head=kind==='achievement'?'Target Kompetisi Semester':kind==='book'?'Target Book Reading':'Target Quran';
   const t=d.target,desc=kind==='achievement'?`${mgr?'Setiap siswa wajib':'Kamu wajib'} mengikuti minimal <b>${t.target} kompetisi</b> pada setiap semester.`:kind==='book'?`Target: minimal <b>${t.target} ${esc(t.unit)}</b> per semester.`:`Target: minimal <b>${t.target} catatan</b> per semester (gabungan Quran Reading dan Quran Memorization).`;
-  return`<section class="trk-hero"><div class="trk-hero-text"><h3>${head}</h3><p>${desc}</p>${activeNote(d)}</div><div class="trk-filters"><label>Semester<select data-trk-semester><option${store.filter.semester==='Semester 1'?' selected':''}>Semester 1</option><option${store.filter.semester==='Semester 2'?' selected':''}>Semester 2</option></select></label><label>Tahun Ajaran<input type="text" data-trk-year value="${esc(store.filter.year)}" placeholder="2026/2027" maxlength="9"></label>${mgr?`<label class="trk-search">Cari siswa<input type="search" data-trk-search value="${esc(store.query)}" placeholder="Nama siswa…"></label>`:''}</div></section>`;
+  return`<section class="trk-hero"><div class="trk-hero-text"><h3>${head}</h3><p>${desc}</p>${activeNote(d)}</div><div class="trk-filters"><label>Semester<select data-trk-semester><option${store.filter.semester==='Semester 1'?' selected':''}>Semester 1</option><option${store.filter.semester==='Semester 2'?' selected':''}>Semester 2</option></select></label><label>Tahun Ajaran<select data-trk-year>${yearOpts(store.filter.year).map(y=>`<option${y===store.filter.year?' selected':''}>${y}</option>`).join('')}</select></label>${mgr?`<label class="trk-search">Cari siswa<input type="search" data-trk-search value="${esc(store.query)}" placeholder="Nama siswa…"></label>`:''}</div></section>`;
 }
 function statsHtml(kind,d){
   const card=(l,v)=>`<article class="achievement-stat"><small>${l}</small><b>${v}</b></article>`;
@@ -29206,7 +29213,7 @@ let form={kind:null,edit:null};
 function syFields(d,e){
   const f=store.filter,lock=d.can_set_year?'':' disabled title="Hanya Presiden, Wakil Presiden, atau Guru yang dapat mengubah tahun ajaran"';
   const act=store.active||{semester:f.semester,academic_year:f.year};
-  return fld('trkSemester','Semester','select',e.semester||(d.can_set_year?f.semester:act.semester),{opts:['Semester 1','Semester 2'],attrs:lock})+fld('trkYear','Tahun ajaran','text',e.academic_year||(d.can_set_year?f.year:act.academic_year),{ph:'2026/2027',attrs:'maxlength="9"'+lock});
+  return fld('trkSemester','Semester','select',e.semester||(d.can_set_year?f.semester:act.semester),{opts:['Semester 1','Semester 2'],attrs:lock})+fld('trkYear','Tahun ajaran','select',e.academic_year||(d.can_set_year?f.year:act.academic_year),{opts:yearOpts(e.academic_year,f.year,act.academic_year),attrs:lock});
 }
 function openForm(kind,{edit=null,student=null,section=null}={}){
   const d=store[kind].data;if(!d){toast('Data belum siap, coba sebentar lagi.');return}
@@ -29266,7 +29273,7 @@ function openYear(){
   const a=store.active||store.filter;if(!a)return;
   form={kind:null,edit:null,yearMode:true};
   $('#trkModalTitle').textContent='Atur Tahun Ajaran';
-  $('#trkModalBody').innerHTML=`<div class="trk-form">${fld('trkSetSemester','Semester aktif','select',a.semester,{opts:['Semester 1','Semester 2']})}${fld('trkSetYear','Tahun ajaran aktif','text',a.academic_year||a.year,{ph:'2026/2027',attrs:'maxlength="9"'})}<p class="trk-note span">Berlaku untuk seluruh Tracking Prestasi dan Book Tracking. Hanya Presiden, Wakil Presiden, dan Guru yang dapat mengubahnya; pengurus lain memakai pengaturan ini.</p></div>`;
+  $('#trkModalBody').innerHTML=`<div class="trk-form">${fld('trkSetSemester','Semester aktif','select',a.semester,{opts:['Semester 1','Semester 2']})}${fld('trkSetYear','Tahun ajaran aktif','select',a.academic_year||a.year,{opts:yearOpts(a.academic_year||a.year)})}<p class="trk-note span">Berlaku untuk seluruh Tracking Prestasi dan Book Tracking. Hanya Presiden, Wakil Presiden, dan Guru yang dapat mengubahnya; pengurus lain memakai pengaturan ini.</p></div>`;
   const r=$('#trkModal');r.classList.add('open');r.setAttribute('aria-hidden','false');document.body.classList.add('dues-modal-open');icons();
 }
 async function saveYear(){
