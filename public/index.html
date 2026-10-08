@@ -11997,7 +11997,9 @@ html[data-theme-resolved="dark"] .quiz-choice-note-v141{
       <button data-page="telkom"><span class="nav-icon"><i data-lucide="phone-call"></i></span>telkom.7mit</button>
 
       <button data-page="social"><span class="nav-icon"><i data-lucide="orbit"></i></span>Social</button>
-          <button data-page="students"><span class="nav-icon"><i data-lucide="users-round"></i></span>Data & Catatan Siswa</button>
+          <button data-page="achievements"><span class="nav-icon"><i data-lucide="trophy"></i></span>Tracking Prestasi</button>
+      <button data-page="bookTracking"><span class="nav-icon"><i data-lucide="book-open"></i></span>Book Tracking</button>
+      <button data-page="students"><span class="nav-icon"><i data-lucide="users-round"></i></span>Data & Catatan Siswa</button>
       <button data-page="documents"><span class="nav-icon"><i data-lucide="files"></i></span>Dokumen & Voting</button>
       <button data-page="officers"><span class="nav-icon"><i data-lucide="network"></i></span>Struktur Organisasi</button>
           <button data-page="settings"><span class="nav-icon"><i data-lucide="settings"></i></span>Pengaturan</button><button type="button" data-feedback-open><span class="nav-icon"><i data-lucide="message-square-more"></i></span>Feedback</button>
@@ -12643,7 +12645,24 @@ html[data-theme-resolved="dark"] .quiz-choice-note-v141{
         </section>
       </div>
 
-    <section class="page" id="students">
+    <section class="page" id="achievements">
+  <header class="topbar">
+    <div class="title"><h2>Tracking Prestasi</h2><p id="trkAchSub">Pantau pemenuhan target kompetisi untuk setiap siswa dalam satu semester.</p></div>
+    <div class="actions"><button class="btn" type="button" data-trk-yearset hidden><i data-lucide="calendar-cog"></i> Atur Tahun Ajaran</button><button class="btn" type="button" data-trk-target="achievement" hidden><i data-lucide="target"></i> Atur Target</button><button class="btn primary" type="button" data-trk-add="achievement"><i data-lucide="trophy"></i> Tambah Kompetisi</button></div>
+  </header>
+  <div class="trk-root" id="trkAchRoot"><div class="trk-loading"><span class="k7-spin"></span> Memuat data prestasi…</div></div>
+</section>
+
+<section class="page" id="bookTracking">
+  <header class="topbar">
+    <div class="title"><h2>Book Tracking</h2><p id="trkBookSub">Catat bacaan buku dan kitab suci setiap siswa dalam satu semester.</p></div>
+    <div class="actions"><button class="btn" type="button" data-trk-yearset hidden><i data-lucide="calendar-cog"></i> Atur Tahun Ajaran</button><button class="btn" type="button" data-trk-target="tab" hidden><i data-lucide="target"></i> Atur Target</button><button class="btn primary" type="button" data-trk-add="tab" id="trkBookAddBtn"><i data-lucide="book-plus"></i> Tambah Buku</button></div>
+  </header>
+  <div class="trk-tabs" role="tablist" aria-label="Jenis bacaan"><span class="trk-tab-ind" aria-hidden="true"></span><button type="button" role="tab" class="active" data-trk-tab="book"><i data-lucide="book-open"></i> Book Reading</button><button type="button" role="tab" data-trk-tab="religious"><i data-lucide="book-marked"></i> Religious Reading</button></div>
+  <div class="trk-root" id="trkBookRoot"><div class="trk-loading"><span class="k7-spin"></span> Memuat data bacaan…</div></div>
+</section>
+
+<section class="page" id="students">
       <header class="topbar"><div class="title"><h2>Data & Catatan Siswa</h2><p>Siswa dapat melihat daftar dan catatan siswa dalam mode baca saja.</p></div>
         <div class="actions"><button class="btn" id="reloadStudents"><i data-lucide="refresh-cw"></i> Muat Ulang</button></div></header>
       <section class="panel"><div class="readonly-note"><i data-lucide="eye"></i> Data dan catatan siswa ditampilkan dalam mode baca saja.</div>
@@ -28698,6 +28717,411 @@ document.addEventListener('click',e=>{
 new MutationObserver(()=>{if(reduced())return;root.classList.add('k7-theme-fade');clearTimeout(root.__k7tf);root.__k7tf=setTimeout(()=>root.classList.remove('k7-theme-fade'),450)}).observe(root,{attributes:true,attributeFilter:['data-theme','data-theme-resolved']});
 function boot(){scan();mo.observe(document.body,{subtree:true,childList:true,characterData:true})}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
+})();
+</script>
+<div class="trk-modal" id="trkModal" aria-hidden="true"><div class="trk-modal-backdrop" data-trk-close></div><div class="trk-modal-card" role="dialog" aria-modal="true" aria-labelledby="trkModalTitle"><header class="trk-modal-head"><h3 id="trkModalTitle">Tambah</h3><button type="button" class="trk-x" data-trk-close aria-label="Tutup"><i data-lucide="x"></i></button></header><div class="trk-modal-body" id="trkModalBody"></div><footer class="trk-modal-foot"><button type="button" class="btn" data-trk-close>Batal</button><button type="button" class="btn primary" id="trkSaveBtn"><i data-lucide="save"></i> Simpan</button></footer></div></div>
+<style id="k7-tracker-v157">
+/* ===== V157 · TRACKER: PRESTASI · BOOK READING · QURAN READING ===== */
+.trk-root{display:grid;gap:18px}
+.trk-hero{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px;padding:20px 22px;border:1px solid var(--theme-line,#e2e8f0);border-radius:20px;background:linear-gradient(135deg,color-mix(in srgb,var(--accent-primary,#2563eb) 8%,var(--theme-surface,#fff)),var(--theme-surface,#fff))}
+.trk-hero h3{margin:0 0 4px;font-size:19px;letter-spacing:-.01em}
+.trk-hero p{margin:0;color:var(--theme-muted,#64748b);font-size:14px}
+.trk-hero p b{color:var(--theme-text,#0f172a)}
+.trk-filters{display:flex;flex-wrap:wrap;gap:10px}
+.trk-filters label{display:grid;gap:4px;font-size:12px;font-weight:700;color:var(--theme-muted,#64748b)}
+.trk-filters select,.trk-filters input,.trk-form input,.trk-form select,.trk-form textarea{min-height:40px;padding:8px 11px;border:1px solid var(--theme-line,#e2e8f0);border-radius:11px;background:var(--theme-surface,#fff);color:var(--theme-text,#0f172a);font:inherit;font-size:14px;width:100%}
+.trk-filters select,.trk-filters input{min-width:130px;width:auto}
+.trk-filters .trk-search input{min-width:190px}
+.trk-section{margin:6px 2px -6px;font-size:15px;font-weight:800}
+.trk-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:14px}
+.trk-grid.single{grid-template-columns:minmax(0,640px)}
+.trk-card{display:flex;flex-direction:column;gap:10px;padding:16px;border:1px solid var(--theme-line,#e2e8f0);border-radius:18px;background:var(--theme-surface,#fff);box-shadow:var(--k7-shadow,0 8px 24px -14px rgba(16,24,40,.18))}
+.trk-card.mine{border-color:color-mix(in srgb,var(--accent-primary,#2563eb) 45%,var(--theme-line,#e2e8f0));box-shadow:0 0 0 3px color-mix(in srgb,var(--accent-primary,#2563eb) 12%,transparent)}
+.trk-card.done{border-color:rgba(34,197,94,.45)}
+.trk-card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.trk-card h4{margin:0;font-size:15px;line-height:1.3}
+.trk-sub{font-size:12px;color:var(--theme-muted,#64748b)}
+.trk-me{display:inline-block;margin-left:4px;padding:1px 8px;border-radius:999px;font-size:11px;font-weight:800;color:#fff;background:var(--accent-primary,#2563eb);vertical-align:2px}
+.trk-badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:999px;font-size:11.5px;font-weight:800;white-space:nowrap;background:#e2e8f0;color:#475569}
+.trk-badge.green{background:rgba(34,197,94,.15);color:#15803d}.trk-badge.amber{background:rgba(245,158,11,.16);color:#b45309}.trk-badge.red{background:rgba(239,68,68,.13);color:#b91c1c}.trk-badge.blue{background:rgba(59,130,246,.15);color:#1d4ed8}
+.trk-bar{height:9px;border-radius:999px;background:color-mix(in srgb,var(--theme-muted,#64748b) 18%,transparent);overflow:hidden}
+.trk-bar>span{display:block;height:100%;width:var(--w,0%);border-radius:inherit;background:linear-gradient(90deg,var(--accent-primary,#2563eb),var(--accent-secondary,#06b6d4));transform-origin:left center}
+.trk-card.done .trk-bar>span{background:linear-gradient(90deg,#22c55e,#16a34a)}
+.trk-entries{display:grid;gap:8px}
+.trk-entry{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;padding:10px 12px;border:1px solid var(--theme-line,#e2e8f0);border-radius:13px;background:color-mix(in srgb,var(--theme-surface,#fff) 70%,var(--theme-bg,#f4f7fb))}
+.trk-entry-body{min-width:0;display:grid;gap:3px}
+.trk-entry h5{margin:0;font-size:14px;line-height:1.35;overflow-wrap:anywhere}
+.trk-entry h5 small{font-weight:600;color:var(--theme-muted,#64748b);font-size:12px}
+.trk-entry p{margin:0;font-size:12.5px;color:var(--theme-muted,#64748b)}
+.trk-entry p b{color:var(--theme-text,#0f172a)}
+.trk-entry .trk-bar{height:6px;margin:3px 0}
+.trk-note{font-size:12px!important;font-style:italic}
+.trk-entry-actions{display:flex;gap:6px;flex:0 0 auto}
+.trk-none{padding:14px;text-align:center;font-size:13px;color:var(--theme-muted,#64748b);border:1px dashed var(--theme-line,#e2e8f0);border-radius:13px;grid-column:1/-1}
+.trk-add-in{align-self:flex-start;display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 13px;border:1px dashed color-mix(in srgb,var(--accent-primary,#2563eb) 55%,transparent);border-radius:11px;background:transparent;color:var(--accent-primary,#2563eb);font:inherit;font-size:13px;font-weight:750;cursor:pointer}
+.trk-add-in:hover{background:color-mix(in srgb,var(--accent-primary,#2563eb) 9%,transparent)}
+.trk-add-in svg{width:16px;height:16px}
+.trk-loading,.trk-empty{display:flex;align-items:center;justify-content:center;gap:10px;padding:46px 16px;color:var(--theme-muted,#64748b);font-size:14px}
+.trk-empty{flex-direction:column;text-align:center}.trk-empty svg{width:34px;height:34px}.trk-empty b{color:var(--theme-text,#0f172a)}
+/* tab Book / Quran */
+.trk-tabs{position:relative;display:inline-flex;gap:4px;padding:5px;margin:0 0 16px;border:1px solid var(--theme-line,#e2e8f0);border-radius:15px;background:var(--theme-surface,#fff)}
+.trk-tabs button{position:relative;z-index:1;display:inline-flex;align-items:center;gap:8px;min-height:42px;padding:0 20px;border:0;border-radius:11px;background:transparent;color:var(--theme-muted,#64748b);font:inherit;font-weight:750;font-size:14px;cursor:pointer;transition:color .25s}
+.trk-tabs button.active{color:#fff}
+.trk-tabs svg{width:18px;height:18px}
+.trk-tab-ind{position:absolute;z-index:0;left:0;top:5px;bottom:5px;width:0;border-radius:11px;background:linear-gradient(135deg,var(--accent-primary,#2563eb),var(--accent-secondary,#06b6d4));box-shadow:0 8px 18px -8px color-mix(in srgb,var(--accent-primary,#2563eb) 70%,transparent);transition:transform .35s var(--k7-ease,cubic-bezier(.22,.9,.28,1)),width .35s var(--k7-ease,cubic-bezier(.22,.9,.28,1))}
+/* modal */
+.trk-modal{position:fixed;inset:0;z-index:132500;display:none;align-items:center;justify-content:center;padding:16px}
+.trk-modal.open{display:flex}
+.trk-modal-backdrop{position:absolute;inset:0;background:rgba(2,9,22,.58)}
+.trk-modal-card{position:relative;width:min(640px,100%);max-height:calc(100dvh - 32px);display:flex;flex-direction:column;border-radius:22px;background:var(--theme-surface,#fff);color:var(--theme-text,#0f172a);box-shadow:0 30px 80px -20px rgba(2,9,22,.55);overflow:hidden}
+.trk-modal-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:16px 20px;border-bottom:1px solid var(--theme-line,#e2e8f0)}
+.trk-modal-head h3{margin:0;font-size:18px}
+.trk-x{width:38px;height:38px;display:grid;place-items:center;border:1px solid var(--theme-line,#e2e8f0);border-radius:11px;background:transparent;color:inherit;cursor:pointer}
+.trk-modal-body{padding:18px 20px;overflow:auto}
+.trk-modal-foot{display:flex;justify-content:flex-end;gap:10px;padding:14px 20px;border-top:1px solid var(--theme-line,#e2e8f0)}
+.trk-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.trk-f{display:grid;gap:5px}.trk-f.span,.trk-form .span{grid-column:1/-1}
+.trk-f label{font-size:12px;font-weight:750;color:var(--theme-muted,#64748b)}
+.trk-form textarea{min-height:84px;resize:vertical}
+.trk-self{display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:11px;background:color-mix(in srgb,var(--accent-primary,#2563eb) 9%,transparent);font-weight:700}
+.trk-self svg{width:18px;height:18px;color:var(--accent-primary,#2563eb)}
+@media(max-width:640px){.trk-form{grid-template-columns:1fr}.trk-grid{grid-template-columns:1fr}.trk-hero{padding:16px}.trk-filters{width:100%}.trk-filters label{flex:1 1 130px}.trk-filters select,.trk-filters input{width:100%}.trk-tabs{display:flex;width:100%}.trk-tabs button{flex:1;justify-content:center;padding:0 10px}.trk-modal{align-items:flex-end;padding:0}.trk-modal-card{border-radius:22px 22px 0 0;max-height:92dvh}}
+html[data-theme-resolved="dark"] .trk-entry{background:rgba(15,29,49,.55)}
+html[data-theme-resolved="dark"] .trk-badge{background:rgba(148,163,184,.2);color:#cbd5e1}
+html[data-theme-resolved="dark"] .trk-badge.green{background:rgba(34,197,94,.2);color:#4ade80}html[data-theme-resolved="dark"] .trk-badge.amber{background:rgba(245,158,11,.2);color:#fbbf24}html[data-theme-resolved="dark"] .trk-badge.red{background:rgba(239,68,68,.2);color:#f87171}html[data-theme-resolved="dark"] .trk-badge.blue{background:rgba(59,130,246,.22);color:#93c5fd}
+.trk-modal:not(.open){display:none!important}
+.trk-modal[aria-hidden="true"] .trk-modal-card{pointer-events:none}
+/* animasi (otomatis dimatikan oleh aturan reduce-motion global) */
+@media (prefers-reduced-motion:no-preference){
+  html:not(.k7-reduce) .trk-card{animation:trkRise .5s var(--k7-soft,cubic-bezier(.22,.9,.28,1)) both;animation-delay:calc(var(--i,0)*55ms)}
+  html:not(.k7-reduce) .trk-bar>span{animation:trkGrow .9s var(--k7-soft,cubic-bezier(.22,.9,.28,1)) both;animation-delay:calc(var(--i,0)*55ms + 120ms)}
+  html:not(.k7-reduce) .trk-entry{animation:trkFade .4s ease both}
+  html:not(.k7-reduce) .trk-hero,html:not(.k7-reduce) .trk-stats .achievement-stat{animation:trkRise .45s var(--k7-soft,cubic-bezier(.22,.9,.28,1)) both}
+  html:not(.k7-reduce) .trk-stats .achievement-stat:nth-child(2){animation-delay:.05s}html:not(.k7-reduce) .trk-stats .achievement-stat:nth-child(3){animation-delay:.1s}html:not(.k7-reduce) .trk-stats .achievement-stat:nth-child(4){animation-delay:.15s}
+  html:not(.k7-reduce) .trk-card.done .trk-badge.green{animation:trkPop .6s var(--k7-soft,cubic-bezier(.22,.9,.28,1)) .5s both}
+  html:not(.k7-reduce) .trk-modal.open .trk-modal-backdrop{animation:trkFade .25s ease both}
+  html:not(.k7-reduce) .trk-modal.open .trk-modal-card{animation:trkSheet .34s var(--k7-soft,cubic-bezier(.22,.9,.28,1)) both}
+  html:not(.k7-reduce) .trk-card:hover{transform:translateY(-3px);transition:transform .25s var(--k7-soft,cubic-bezier(.22,.9,.28,1)),box-shadow .25s ease}
+  @keyframes trkRise{from{opacity:0;transform:translateY(16px) scale(.985)}to{opacity:1;transform:none}}
+  @keyframes trkGrow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+  @keyframes trkFade{from{opacity:0}to{opacity:1}}
+  @keyframes trkPop{0%{transform:scale(.6);opacity:0}60%{transform:scale(1.15)}100%{transform:scale(1);opacity:1}}
+  @keyframes trkSheet{from{opacity:0;transform:translateY(24px) scale(.98)}to{opacity:1;transform:none}}
+}
+
+.btn[hidden],.trk-add-in[hidden],[data-trk-target][hidden]{display:none!important}
+
+.trk-active{display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin-top:8px!important;font-size:13px!important}.trk-active svg{width:16px;height:16px;color:var(--accent-primary,#2563eb)}
+.trk-link{border:0;background:none;padding:0;color:var(--accent-primary,#2563eb);font:inherit;font-size:12.5px;font-weight:750;text-decoration:underline;cursor:pointer}
+.trk-form :disabled{opacity:.7;cursor:not-allowed;background:color-mix(in srgb,var(--theme-muted,#64748b) 10%,var(--theme-surface,#fff))}
+.btn[data-trk-yearset][hidden]{display:none!important}
+
+.trk-tag{display:inline-flex;align-items:center;gap:4px;margin-left:6px;padding:2px 9px;border-radius:999px;font-size:11px;font-weight:800;border:0;vertical-align:middle;font-family:inherit}
+.trk-tag.quran{background:#dcfce7;color:#166534}.trk-tag.alkitab{background:#e0e7ff;color:#3730a3}
+button.trk-tag{cursor:pointer;transition:transform .15s,box-shadow .15s}button.trk-tag:hover{transform:translateY(-1px);box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.trk-tag svg{width:12px;height:12px}
+.trk-dyn{display:contents}
+@media (prefers-color-scheme:dark){.trk-tag.quran{background:#14532d;color:#bbf7d0}.trk-tag.alkitab{background:#312e81;color:#c7d2fe}}
+</style>
+<script id="k7-tracker-v157-js">
+(()=>{
+'use strict';
+if(window.__k7Tracker)return;window.__k7Tracker=1;
+const API=()=>`${window.SUPABASE_URL||'https://lajzrempjyoqkubkumhb.supabase.co'}/functions/v1/tracker-api`;
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const esc=s=>String(s??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+const SURAH=[["Al-Fatihah",7],["Al-Baqarah",286],["Ali 'Imran",200],["An-Nisa'",176],["Al-Ma'idah",120],["Al-An'am",165],["Al-A'raf",206],["Al-Anfal",75],["At-Taubah",129],["Yunus",109],["Hud",123],["Yusuf",111],["Ar-Ra'd",43],["Ibrahim",52],["Al-Hijr",99],["An-Nahl",128],["Al-Isra'",111],["Al-Kahf",110],["Maryam",98],["Taha",135],["Al-Anbiya'",112],["Al-Hajj",78],["Al-Mu'minun",118],["An-Nur",64],["Al-Furqan",77],["Ash-Shu'ara'",227],["An-Naml",93],["Al-Qasas",88],["Al-'Ankabut",69],["Ar-Rum",60],["Luqman",34],["As-Sajdah",30],["Al-Ahzab",73],["Saba'",54],["Fatir",45],["Ya-Sin",83],["As-Saffat",182],["Sad",88],["Az-Zumar",75],["Ghafir",85],["Fussilat",54],["Ash-Shura",53],["Az-Zukhruf",89],["Ad-Dukhan",59],["Al-Jathiyah",37],["Al-Ahqaf",35],["Muhammad",38],["Al-Fath",29],["Al-Hujurat",18],["Qaf",45],["Adh-Dhariyat",60],["At-Tur",49],["An-Najm",62],["Al-Qamar",55],["Ar-Rahman",78],["Al-Waqi'ah",96],["Al-Hadid",29],["Al-Mujadilah",22],["Al-Hashr",24],["Al-Mumtahanah",13],["As-Saff",14],["Al-Jumu'ah",11],["Al-Munafiqun",11],["At-Taghabun",18],["At-Talaq",12],["At-Tahrim",12],["Al-Mulk",30],["Al-Qalam",52],["Al-Haqqah",52],["Al-Ma'arij",44],["Nuh",28],["Al-Jinn",28],["Al-Muzzammil",20],["Al-Muddaththir",56],["Al-Qiyamah",40],["Al-Insan",31],["Al-Mursalat",50],["An-Naba'",40],["An-Nazi'at",46],["'Abasa",42],["At-Takwir",29],["Al-Infitar",19],["Al-Mutaffifin",36],["Al-Inshiqaq",25],["Al-Buruj",22],["At-Tariq",17],["Al-A'la",19],["Al-Ghashiyah",26],["Al-Fajr",30],["Al-Balad",20],["Ash-Shams",15],["Al-Layl",21],["Ad-Duha",11],["Ash-Sharh",8],["At-Tin",8],["Al-'Alaq",19],["Al-Qadr",5],["Al-Bayyinah",8],["Az-Zalzalah",8],["Al-'Adiyat",11],["Al-Qari'ah",11],["At-Takathur",8],["Al-'Asr",3],["Al-Humazah",9],["Al-Fil",5],["Quraysh",4],["Al-Ma'un",7],["Al-Kawthar",3],["Al-Kafirun",6],["An-Nasr",3],["Al-Masad",5],["Al-Ikhlas",4],["Al-Falaq",5],["An-Nas",6]];
+const LEVELS=['Sekolah','Kecamatan','Kota/Kabupaten','Provinsi','Nasional','Internasional','Online'];
+const BSTAT=['Ingin dibaca','Sedang dibaca','Selesai'],QACT=['Tilawah','Hafalan','Murajaah'];
+const TITLE={achievement:'Kompetisi',book:'Buku',religious:'Bacaan Kitab Suci'};
+const KITAB=[["Kejadian",50],["Keluaran",40],["Imamat",27],["Bilangan",36],["Ulangan",34],["Yosua",24],["Hakim-hakim",21],["Rut",4],["1 Samuel",31],["2 Samuel",24],["1 Raja-raja",22],["2 Raja-raja",25],["1 Tawarikh",29],["2 Tawarikh",36],["Ezra",10],["Nehemia",13],["Ester",10],["Ayub",42],["Mazmur",150],["Amsal",31],["Pengkhotbah",12],["Kidung Agung",8],["Yesaya",66],["Yeremia",52],["Ratapan",5],["Yehezkiel",48],["Daniel",12],["Hosea",14],["Yoel",3],["Amos",9],["Obaja",1],["Yunus",4],["Mikha",7],["Nahum",3],["Habakuk",3],["Zefanya",3],["Hagai",2],["Zakharia",14],["Maleakhi",4],["Matius",28],["Markus",16],["Lukas",24],["Yohanes",21],["Kisah Para Rasul",28],["Roma",16],["1 Korintus",16],["2 Korintus",13],["Galatia",6],["Efesus",6],["Filipi",4],["Kolose",4],["1 Tesalonika",5],["2 Tesalonika",3],["1 Timotius",6],["2 Timotius",4],["Titus",3],["Filemon",1],["Ibrani",13],["Yakobus",5],["1 Petrus",5],["2 Petrus",3],["1 Yohanes",5],["2 Yohanes",1],["3 Yohanes",1],["Yudas",1],["Wahyu",22]];
+const AACT=['Bacaan','Renungan','Hafalan'];
+
+const store={achievement:{},book:{},religious:{},tab:'book',query:'',filter:null};
+function todayISO(){const p=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Jakarta',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date());return`${p.find(x=>x.type==='year').value}-${p.find(x=>x.type==='month').value}-${p.find(x=>x.type==='day').value}`}
+store.filter=null;store.active=null;
+async function api(action,payload={}){
+  const token=await window.K7Session?.getToken?.();if(!token)throw new Error('Sesi akun belum tersedia.');
+  const anon=window.SUPABASE_ANON_KEY||'',ctrl=new AbortController(),timer=setTimeout(()=>ctrl.abort(),15000);
+  try{
+    const r=await fetch(API(),{method:'POST',headers:{'Content-Type':'application/json','apikey':anon,'Authorization':anon?`Bearer ${anon}`:'','x-7mit-session':token},body:JSON.stringify({action,...payload}),cache:'no-store',signal:ctrl.signal});
+    const raw=await r.text();let d={};try{d=raw?JSON.parse(raw):{}}catch{}
+    if(!r.ok||d?.ok===false)throw new Error(d?.message||raw||`HTTP ${r.status}`);return d;
+  }catch(e){if(e?.name==='AbortError')throw new Error('Server terlalu lama merespons.');throw e}finally{clearTimeout(timer)}
+}
+const fmtDate=v=>{if(!v)return'—';try{return new Intl.DateTimeFormat('id-ID',{day:'2-digit',month:'short',year:'numeric',timeZone:'Asia/Jakarta'}).format(new Date(`${v}T12:00:00+07:00`))}catch{return v}};
+const nf=n=>Number(n||0).toLocaleString('id-ID');
+const icons=()=>{try{window.lucide?.createIcons?.()}catch(e){}};
+const toast=m=>{try{window.toast?.(m)}catch(e){}};
+function badge(text,color){return`<span class="trk-badge ${color}">${esc(text)}</span>`}
+function bar(p){return`<div class="trk-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${p}"><span style="--w:${p}%"></span></div>`}
+const loadingHtml=t=>`<div class="trk-loading"><span class="k7-spin"></span> ${esc(t)}</div>`;
+
+/* ---------------- pemuatan data ---------------- */
+async function load(kind,{silent=false}={}){
+  const s=store[kind];if(s.loading)return;s.loading=true;
+  const root=kind==='achievement'?$('#trkAchRoot'):$('#trkBookRoot');
+  if(!silent&&root&&!s.data)root.innerHTML=loadingHtml('Memuat data…');
+  try{
+    s.data=await api('overview',store.filter?{kind,semester:store.filter.semester,academic_year:store.filter.year}:{kind});
+    store.active=s.data.active||store.active;if(!store.filter)store.filter={semester:s.data.semester,year:s.data.academic_year};
+    s.error='';render(kind);
+  }catch(e){
+    s.error=e.message||'Gagal memuat.';
+    if(!s.data&&root)root.innerHTML=`<div class="trk-empty"><i data-lucide="cloud-off"></i><b>Data belum bisa dimuat</b><small>${esc(s.error)}</small><button class="btn" type="button" data-trk-retry="${kind}"><i data-lucide="refresh-cw"></i> Coba lagi</button></div>`;
+    icons();
+  }finally{s.loading=false}
+}
+
+/* ---------------- ringkasan per siswa ---------------- */
+function metrics(kind,d,studentId){
+  const list=(d.entries||[]).filter(e=>e.student_id===studentId);
+  if(kind==='achievement')return{list,count:list.length,extra:''};
+  if(kind==='book'){const fin=list.filter(e=>e.status==='Selesai').length,rd=list.filter(e=>e.status==='Sedang dibaca').length;return{list,count:fin,reading:rd,extra:`${rd} sedang dibaca`}}
+  const ayat=list.filter(e=>e.kind!=='alkitab').reduce((n,e)=>n+Math.max(0,(e.ayat_to||0)-(e.ayat_from||0)+1),0);
+  const pasal=list.filter(e=>e.kind==='alkitab').reduce((n,e)=>n+Math.max(0,(e.chapter_to||0)-(e.chapter_from||0)+1),0);
+  const sc=((d.roster||[]).find(r=>r.id===studentId)||{}).scripture;
+  return{list,count:list.length,ayat,pasal,extra:sc==='Alkitab'?`${nf(pasal)} pasal`:`${nf(ayat)} ayat`};
+}
+function canEdit(d,e){return d.can_manage||(d.me&&e.student_id===d.me.id)}
+function entryHtml(kind,d,e){
+  const act=canEdit(d,e)?`<div class="trk-entry-actions"><button class="mini-btn" type="button" data-trk-edit="${esc(e.id)}" data-kind="${kind}" title="Edit" aria-label="Edit"><i data-lucide="pencil"></i></button><button class="mini-btn danger" type="button" data-trk-del="${esc(e.id)}" data-kind="${kind}" title="Hapus" aria-label="Hapus"><i data-lucide="trash-2"></i></button></div>`:'';
+  if(kind==='achievement')return`<div class="trk-entry"><div class="trk-entry-body"><h5>${esc(e.competition)}</h5><p>${esc(e.category||'Umum')} · ${esc(e.level||'—')} · ${fmtDate(e.date)}</p>${e.result?`<p>Hasil: <b>${esc(e.result)}</b></p>`:''}${e.notes?`<p class="trk-note">${esc(e.notes)}</p>`:''}</div>${act}</div>`;
+  if(kind==='book'){const p=e.total_pages?Math.min(100,Math.round((e.pages_read||0)/e.total_pages*100)):(e.status==='Selesai'?100:0);const col=e.status==='Selesai'?'green':e.status==='Sedang dibaca'?'blue':'gray';
+    return`<div class="trk-entry"><div class="trk-entry-body"><h5>${esc(e.title)} ${badge(e.status,col)}</h5><p>${esc(e.author||'Penulis tidak dicatat')}${e.total_pages?` · ${nf(e.pages_read||0)}/${nf(e.total_pages)} hlm`:''}</p>${e.total_pages||e.status==='Selesai'?bar(p):''}<p class="trk-note">${e.started_on?`Mulai ${fmtDate(e.started_on)}`:''}${e.finished_on?` · Selesai ${fmtDate(e.finished_on)}`:''}${e.rating?` · ${'★'.repeat(e.rating)}${'☆'.repeat(5-e.rating)}`:''}</p>${e.notes?`<p class="trk-note">${esc(e.notes)}</p>`:''}</div>${act}</div>`}
+  if(e.kind==='alkitab'){const n=Math.max(0,(e.chapter_to||0)-(e.chapter_from||0)+1);return`<div class="trk-entry"><div class="trk-entry-body"><h5>${esc(e.title)} <small>pasal ${e.chapter_from}–${e.chapter_to} (${n} pasal)</small></h5><p>${badge(e.activity||'Bacaan','blue')} ${fmtDate(e.read_on)}</p>${e.notes?`<p class="trk-note">${esc(e.notes)}</p>`:''}</div>${act}</div>`}
+  const n=Math.max(0,(e.ayat_to||0)-(e.ayat_from||0)+1);
+  return`<div class="trk-entry"><div class="trk-entry-body"><h5>${esc(e.title)} <small>ayat ${e.ayat_from}–${e.ayat_to} (${n} ayat)</small></h5><p>${badge(e.activity||'Tilawah','green')}${e.juz?` Juz ${e.juz} · `:' '}${fmtDate(e.read_on)}</p>${e.notes?`<p class="trk-note">${esc(e.notes)}</p>`:''}</div>${act}</div>`;
+}
+function scriptureTag(d,stu){
+  const sc=stu.scripture||'Quran',cls=sc==='Alkitab'?'alkitab':'quran';
+  return d.can_manage?`<button type="button" class="trk-tag ${cls}" data-trk-scripture="${esc(stu.id)}" title="Ubah tag kitab suci" aria-label="Tag kitab suci ${sc}, ubah">${sc}<i data-lucide="chevrons-up-down"></i></button>`:`<span class="trk-tag ${cls}">${sc}</span>`;
+}
+function cardHtml(kind,d,stu,idx,mineCard){
+  const m=metrics(kind,d,stu.id),target=d.target.target,p=Math.min(100,Math.round(m.count/target*100)),done=m.count>=target;
+  const isMe=d.me&&d.me.id===stu.id,canAdd=d.can_manage||isMe,unit=d.target.unit;
+  const sc=stu.scripture||'Quran';
+  const status=done?badge('Target Tercapai','green'):badge(`${m.count}/${target}`,m.count>=target*0.6?'amber':'red');
+  const note=done?'Target minimum sudah terpenuhi.':`Masih perlu ${target-m.count} ${unit} lagi.`;
+  const what=kind==='achievement'?'kompetisi':kind==='book'?'buku':`bacaan ${sc}`;
+  const entries=m.list.length?m.list.map(e=>entryHtml(kind,d,e)).join(''):`<div class="trk-none">Belum ada ${what} pada semester ini.</div>`;
+  return`<article class="trk-card${mineCard?' mine':''}${done?' done':''}" style="--i:${Math.min(idx,14)}" data-student="${esc(stu.name.toLowerCase())}"><div class="trk-card-head"><div><h4>${esc(stu.name)}${isMe&&d.can_manage?' <span class="trk-me">Saya</span>':''}${kind==='religious'?' '+scriptureTag(d,stu):''}</h4><div class="trk-sub">${esc(d.semester)} · ${esc(d.academic_year)}${m.extra?` · ${esc(m.extra)}`:''}</div></div>${status}</div>${bar(p)}<div class="trk-sub">${esc(note)}</div><div class="trk-entries">${entries}</div>${canAdd?`<button type="button" class="trk-add-in" data-trk-add="${kind}" data-student="${esc(stu.id)}"><i data-lucide="plus"></i> Tambah ${kind==='religious'?'bacaan '+sc:TITLE[kind].toLowerCase()}</button>`:''}</article>`;
+}
+function activeNote(d){
+  const a=d.active;if(!a)return'';
+  const same=a.semester===d.semester&&a.academic_year===d.academic_year;
+  return`<p class="trk-active"><i data-lucide="calendar-check"></i> Tahun ajaran aktif: <b>${esc(a.academic_year)} · ${esc(a.semester)}</b>${same?'':` <span class="trk-badge amber">Sedang melihat arsip ${esc(d.academic_year)} · ${esc(d.semester)}</span> <button type="button" class="trk-link" data-trk-backactive>Kembali ke aktif</button>`}</p>`;
+}
+function filterHtml(kind,d){
+  const mgr=d.can_manage;
+  const head=kind==='achievement'?'Target Kompetisi Semester':kind==='book'?'Target Book Reading':(mgr?'Target Religious Reading':`Target ${(d.me&&d.me.scripture)||'Quran'} Reading`);
+  const t=d.target,desc=kind==='achievement'?`${mgr?'Setiap siswa wajib':'Kamu wajib'} mengikuti minimal <b>${t.target} kompetisi</b> pada setiap semester.`:kind==='book'?`Target: minimal <b>${t.target} ${esc(t.unit)}</b> per semester.`:`Target: minimal <b>${t.target} ${esc(t.unit)}</b> per semester (Quran: tilawah, hafalan, murajaah · Alkitab: bacaan, renungan, hafalan).`;
+  return`<section class="trk-hero"><div class="trk-hero-text"><h3>${head}</h3><p>${desc}</p>${activeNote(d)}</div><div class="trk-filters"><label>Semester<select data-trk-semester><option${store.filter.semester==='Semester 1'?' selected':''}>Semester 1</option><option${store.filter.semester==='Semester 2'?' selected':''}>Semester 2</option></select></label><label>Tahun Ajaran<input type="text" data-trk-year value="${esc(store.filter.year)}" placeholder="2026/2027" maxlength="9"></label>${mgr?`<label class="trk-search">Cari siswa<input type="search" data-trk-search value="${esc(store.query)}" placeholder="Nama siswa…"></label>`:''}</div></section>`;
+}
+function statsHtml(kind,d){
+  const card=(l,v)=>`<article class="achievement-stat"><small>${l}</small><b>${v}</b></article>`;
+  if(!d.can_manage&&d.me){ // ringkasan pribadi siswa
+    const m=metrics(kind,d,d.me.id),t=d.target.target,left=Math.max(0,t-m.count),alk=d.me.scripture==='Alkitab';
+    const a=kind==='achievement'?[['Kompetisi Diikuti',m.count],['Progress',Math.min(100,Math.round(m.count/t*100))+'%']]:kind==='book'?[['Buku Selesai',m.count],['Sedang Dibaca',m.reading||0]]:[['Sesi Bacaan',m.count],[alk?'Total Pasal':'Total Ayat',nf(alk?m.pasal:m.ayat)]];
+    return`<div class="achievement-overview trk-stats">${a.map(x=>card(x[0],x[1])).join('')}${card('Target Semester',t)}${card('Sisa Target',left)}</div>`;
+  }
+  const rows=d.roster||[];const ms=rows.map(r=>metrics(kind,d,r.id));
+  const done=ms.filter(m=>m.count>=d.target.target).length;
+  const last=kind==='achievement'?['Total Kompetisi',ms.reduce((n,m)=>n+m.count,0)]:kind==='book'?['Buku Selesai',ms.reduce((n,m)=>n+m.count,0)]:['Total Sesi Bacaan',ms.reduce((n,m)=>n+m.count,0)];
+  return`<div class="achievement-overview trk-stats">${card('Total Siswa',rows.length)}${card('Target Tercapai',done)}${card('Belum Tercapai',rows.length-done)}${card(last[0],nf(last[1]))}</div>`;
+}
+function applyLabels(){
+  const d=store.religious.data||store.book.data||store.achievement.data;
+  const mgr=!d||d.can_manage,sc=(d&&d.me&&d.me.scripture)||'Quran';
+  const tab=$('[data-trk-tab="religious"]');if(tab)tab.innerHTML=`<i data-lucide="book-marked"></i> ${mgr?'Religious Reading':sc+' Reading'}`;
+  const sub=$('#trkBookSub');if(sub)sub.textContent=mgr?'Catat bacaan buku dan kitab suci (Quran atau Alkitab) setiap siswa dalam satu semester.':`Catat bacaan buku dan ${sc} milikmu dalam satu semester.`;
+  const asub=$('#trkAchSub');if(asub&&store.achievement.data)asub.textContent=mgr?`Pantau pemenuhan minimal ${store.achievement.data.target.target} kompetisi untuk setiap siswa dalam satu semester.`:`Catat kompetisi yang kamu ikuti. Targetmu minimal ${store.achievement.data.target.target} kompetisi per semester.`;
+}
+function render(kind){
+  const d=store[kind].data;if(!d)return;
+  const root=kind==='achievement'?$('#trkAchRoot'):$('#trkBookRoot');if(!root)return;
+  if(d.message&&!(d.roster||[]).length){root.innerHTML=`<div class="trk-empty"><i data-lucide="user-x"></i><b>${esc(d.message)}</b></div>`;icons();return}
+  const q=store.query.trim().toLowerCase();
+  let rows=[...(d.roster||[])].sort((a,b)=>a.name.localeCompare(b.name,'id'));
+  let html=filterHtml(kind,d)+statsHtml(kind,d);
+  if(!d.can_manage){ // siswa: hanya kartunya sendiri
+    const me=rows.find(r=>d.me&&r.id===d.me.id);
+    html+=`<div class="trk-grid single">${me?cardHtml(kind,d,me,0,true):''}</div>`;
+  }else{
+    if(q)rows=rows.filter(r=>r.name.toLowerCase().includes(q));
+    html+=`<div class="trk-grid" id="trk-grid-${kind}">${rows.map((r,i)=>cardHtml(kind,d,r,i+1,false)).join('')||'<div class="trk-none">Tidak ada siswa yang cocok.</div>'}</div>`;
+  }
+  root.innerHTML=html;
+  const tg=kind==='achievement'?$('[data-trk-target="achievement"]'):$('[data-trk-target="tab"]');if(tg)tg.hidden=!d.can_manage;
+  $$('[data-trk-yearset]').forEach(b=>{b.hidden=!d.can_set_year});
+  applyLabels();refreshAddBtn();icons();
+}
+function refreshAddBtn(){
+  const b=$('#trkBookAddBtn');if(!b)return;
+  const d=store.religious.data||store.book.data,mgr=!d||d.can_manage,sc=(d&&d.me&&d.me.scripture)||'Quran';
+  b.innerHTML=store.tab==='book'?'<i data-lucide="book-plus"></i> Tambah Buku':`<i data-lucide="book-marked"></i> ${mgr?'Tambah Bacaan Kitab Suci':'Tambah Bacaan '+sc}`;icons();
+}
+function setTab(tab,{load:doLoad=true}={}){
+  store.tab=tab;
+  $$('.trk-tabs [data-trk-tab]').forEach(b=>{const on=b.dataset.trkTab===tab;b.classList.toggle('active',on);b.setAttribute('aria-selected',on)});
+  const ind=$('.trk-tab-ind'),act=$(`.trk-tabs [data-trk-tab="${tab}"]`);
+  if(ind&&act){ind.style.width=act.offsetWidth+'px';ind.style.transform=`translateX(${act.offsetLeft}px)`}
+  refreshAddBtn();
+  applyLabels();if(store[tab].data)render(tab);
+  if(doLoad)load(tab);
+}
+
+/* ---------------- formulir ---------------- */
+const fld=(id,label,type,val,{opts=null,ph='',span=false,attrs=''}={})=>{
+  const cls=`trk-f${span?' span':''}`;
+  if(opts)return`<div class="${cls}"><label for="${id}">${label}</label><select id="${id}" ${attrs}>${opts.map(o=>{const v=typeof o==='object'?o.v:o,t=typeof o==='object'?o.t:o;return`<option value="${esc(v)}"${String(v)===String(val)?' selected':''}>${esc(t)}</option>`}).join('')}</select></div>`;
+  if(type==='textarea')return`<div class="${cls}"><label for="${id}">${label}</label><textarea id="${id}" maxlength="1000" placeholder="${esc(ph)}" ${attrs}>${esc(val)}</textarea></div>`;
+  return`<div class="${cls}"><label for="${id}">${label}</label><input id="${id}" type="${type}" value="${esc(val??'')}" placeholder="${esc(ph)}" ${attrs}></div>`;
+};
+let form={kind:null,edit:null};
+function syFields(d,e){
+  const f=store.filter,lock=d.can_set_year?'':' disabled title="Hanya Presiden, Wakil Presiden, atau Guru yang dapat mengubah tahun ajaran"';
+  const act=store.active||{semester:f.semester,academic_year:f.year};
+  return fld('trkSemester','Semester','select',e.semester||(d.can_set_year?f.semester:act.semester),{opts:['Semester 1','Semester 2'],attrs:lock})+fld('trkYear','Tahun ajaran','text',e.academic_year||(d.can_set_year?f.year:act.academic_year),{ph:'2026/2027',attrs:'maxlength="9"'+lock});
+}
+function relScripture(d){
+  if(d.can_manage){const id=$('#trkStudent')?.value;return(((d.roster||[]).find(r=>r.id===id))||{}).scripture||'Quran'}
+  return(d.me&&d.me.scripture)||'Quran';
+}
+function renderRelDyn(e){
+  const d=store.religious.data,sc=relScripture(d),box=$('#trkRelDyn');if(!box)return;e=e||{};
+  const sy=syFields(d,e);
+  if(sc==='Alkitab'){
+    const idx=Math.max(0,KITAB.findIndex(k=>k[0]===e.title));
+    box.innerHTML=fld('trkKitab','Kitab *','select',KITAB[idx][0],{opts:KITAB.map((k,i)=>({v:k[0],t:`${i+1}. ${k[0]} (${k[1]} pasal)`})),span:true})+fld('trkCFrom','Pasal awal *','number',e.chapter_from??1,{attrs:'min="1"'})+fld('trkCTo','Pasal akhir *','number',e.chapter_to??'',{attrs:'min="1"'})+fld('trkAct','Jenis kegiatan','select',e.activity||'Bacaan',{opts:AACT})+fld('trkReadOn','Tanggal','date',e.read_on||todayISO())+sy+fld('trkNotes','Catatan / renungan','textarea',e.notes||'',{span:true,ph:'Apa yang kamu renungkan dari bacaan ini?'});
+  }else{
+    const sIdx=Math.max(0,SURAH.findIndex(s=>s[0]===e.title));
+    box.innerHTML=fld('trkSurah','Surah *','select',SURAH[sIdx][0],{opts:SURAH.map((s,i)=>({v:s[0],t:`${i+1}. ${s[0]} (${s[1]} ayat)`})),span:true})+fld('trkFrom','Ayat awal *','number',e.ayat_from??1,{attrs:'min="1"'})+fld('trkTo','Ayat akhir *','number',e.ayat_to??'',{attrs:'min="1"'})+fld('trkJuz','Juz','select',e.juz||'',{opts:[{v:'',t:'— tidak dicatat —'},...Array.from({length:30},(_,i)=>({v:i+1,t:`Juz ${i+1}`}))]})+fld('trkAct','Jenis kegiatan','select',e.activity||'Tilawah',{opts:QACT})+fld('trkReadOn','Tanggal','date',e.read_on||todayISO())+sy+fld('trkNotes','Catatan','textarea',e.notes||'',{span:true,ph:'Catatan tajwid, hafalan, atau refleksi'});
+  }
+  updateHints();icons();
+}
+function openForm(kind,{edit=null,student=null}={}){
+  const d=store[kind].data;if(!d){toast('Data belum siap, coba sebentar lagi.');return}
+  if(!d.can_manage&&!d.me){toast('Akunmu belum terhubung ke daftar siswa kelas.');return}
+  form={kind,edit};const e=edit||{};
+  const stuOpts=(d.roster||[]).map(r=>({v:r.id,t:r.name+(kind==='religious'?` (${r.scripture||'Quran'})`:'')}));
+  const stuVal=e.student_id||student||(d.me&&d.me.id)||stuOpts[0]?.v;
+  let body=d.can_manage?fld('trkStudent','Nama siswa','select',stuVal,{opts:stuOpts,span:true}):`<div class="trk-f span"><label>Atas nama</label><div class="trk-self"><i data-lucide="user-check"></i> ${esc(d.me.name)}${kind==='religious'?' · '+esc(d.me.scripture||'Quran'):''}</div></div>`;
+  if(kind==='achievement'){
+    body+=fld('trkCompetition','Nama kompetisi *','text',e.competition||'',{ph:'Nama lomba atau kompetisi',span:true})+fld('trkCategory','Bidang / kategori','text',e.category||'',{ph:'Akademik, olahraga, seni…'})+fld('trkLevel','Tingkat','select',e.level||'Sekolah',{opts:LEVELS})+fld('trkDate','Tanggal mengikuti','date',e.date||todayISO())+fld('trkResult','Hasil / prestasi','text',e.result||'',{ph:'Peserta, finalis, juara…'})+syFields(d,e)+fld('trkNotes','Catatan','textarea',e.notes||'',{ph:'Informasi tambahan',span:true});
+  }else if(kind==='book'){
+    body+=fld('trkTitle','Judul buku *','text',e.title||'',{span:true,ph:'Judul buku'})+fld('trkAuthor','Penulis','text',e.author||'')+fld('trkStatus','Status','select',e.status||'Sedang dibaca',{opts:BSTAT})+fld('trkTotal','Total halaman','number',e.total_pages??'',{attrs:'min="1" max="100000"'})+fld('trkRead','Halaman terakhir dibaca','number',e.pages_read??'',{attrs:'min="0" max="100000"'})+fld('trkStarted','Tanggal mulai','date',e.started_on||'')+fld('trkFinished','Tanggal selesai','date',e.finished_on||'')+fld('trkRating','Penilaian','select',e.rating||'',{opts:[{v:'',t:'— tanpa nilai —'},...[1,2,3,4,5].map(n=>({v:n,t:'★'.repeat(n)}))]})+syFields(d,e)+fld('trkNotes','Catatan / ringkasan','textarea',e.notes||'',{span:true,ph:'Apa yang kamu pelajari dari buku ini?'});
+  }else body+='<div class="trk-dyn span" id="trkRelDyn"></div>';
+  $('#trkModalTitle').textContent=`${edit?'Edit':'Tambah'} ${TITLE[kind]}`;
+  $('#trkModalBody').innerHTML=`<div class="trk-form">${body}</div>`;
+  const root=$('#trkModal');root.classList.add('open');root.setAttribute('aria-hidden','false');document.body.classList.add('dues-modal-open');
+  if(kind==='religious')renderRelDyn(e);icons();
+}
+function updateHints(){
+  const s=SURAH.find(x=>x[0]===$('#trkSurah')?.value);
+  if(s)['#trkFrom','#trkTo'].forEach(id=>{const el=$(id);if(el){el.max=s[1];el.placeholder=`1–${s[1]}`}});
+  const k=KITAB.find(x=>x[0]===$('#trkKitab')?.value);
+  if(k)['#trkCFrom','#trkCTo'].forEach(id=>{const el=$(id);if(el){el.max=k[1];el.placeholder=`1–${k[1]}`}});
+}
+function openScripture(studentId){
+  const d=store.religious.data;if(!d?.can_manage)return;
+  const stu=(d.roster||[]).find(r=>r.id===studentId);if(!stu)return;
+  form={kind:'religious',edit:null,scriptureMode:true,studentId};
+  $('#trkModalTitle').textContent='Tag kitab suci';
+  $('#trkModalBody').innerHTML=`<div class="trk-form"><div class="trk-f span"><label>Siswa</label><div class="trk-self"><i data-lucide="user"></i> ${esc(stu.name)}</div></div>${fld('trkScripture','Kitab suci','select',stu.scripture||'Quran',{opts:['Quran','Alkitab'],span:true})}<p class="trk-note span">Menentukan nama halaman yang dilihat siswa (Quran Reading atau Alkitab Reading) dan jenis catatan bacaannya.</p></div>`;
+  const r=$('#trkModal');r.classList.add('open');r.setAttribute('aria-hidden','false');document.body.classList.add('dues-modal-open');icons();
+}
+async function saveScripture(){
+  const sc=val('#trkScripture'),id=form.studentId;
+  try{await api('set_scripture',{student_id:id,scripture:sc});closeForm();toast('Tag kitab suci berhasil disimpan.');store.religious.data=null;await load('religious',{silent:true})}catch(e){toast(e.message||'Gagal menyimpan tag.')}
+}
+function closeForm(){const r=$('#trkModal');r?.classList.remove('open');r?.setAttribute('aria-hidden','true');document.body.classList.remove('dues-modal-open');form={kind:null,edit:null}}
+const val=id=>($(id)?.value??'').trim();
+async function saveForm(){
+  const {kind,edit}=form;if(!kind)return;const d=store[kind].data;
+  const entry={id:edit?.id,student_id:d.can_manage?val('#trkStudent'):d.me.id,semester:val('#trkSemester'),academic_year:val('#trkYear')};
+  if(kind==='achievement'){Object.assign(entry,{competition:val('#trkCompetition'),category:val('#trkCategory'),level:val('#trkLevel'),date:val('#trkDate'),result:val('#trkResult'),notes:val('#trkNotes')});if(!entry.competition){toast('Nama kompetisi wajib diisi.');return}}
+  else if(kind==='book'){Object.assign(entry,{title:val('#trkTitle'),author:val('#trkAuthor'),status:val('#trkStatus'),total_pages:val('#trkTotal'),pages_read:val('#trkRead'),started_on:val('#trkStarted'),finished_on:val('#trkFinished'),rating:val('#trkRating'),notes:val('#trkNotes')});if(!entry.title){toast('Judul buku wajib diisi.');return}}
+  else if(relScripture(d)==='Alkitab'){Object.assign(entry,{title:val('#trkKitab'),chapter_from:val('#trkCFrom'),chapter_to:val('#trkCTo'),activity:val('#trkAct'),read_on:val('#trkReadOn'),notes:val('#trkNotes')});if(!entry.chapter_from||!entry.chapter_to){toast('Pasal awal dan akhir wajib diisi.');return}}
+  else{Object.assign(entry,{title:val('#trkSurah'),ayat_from:val('#trkFrom'),ayat_to:val('#trkTo'),juz:val('#trkJuz'),activity:val('#trkAct'),read_on:val('#trkReadOn'),notes:val('#trkNotes')});if(!entry.ayat_from||!entry.ayat_to){toast('Ayat awal dan akhir wajib diisi.');return}}
+  const btn=$('#trkSaveBtn');btn.disabled=true;btn.innerHTML='<span class="k7-spin"></span> Menyimpan…';
+  try{await api('save',{kind,entry});closeForm();toast(`${TITLE[kind]} berhasil ${edit?'diperbarui':'ditambahkan'}.`);store[kind].data=null;await load(kind,{silent:true})}
+  catch(e){toast(e.message||'Gagal menyimpan.')}
+  finally{btn.disabled=false;btn.innerHTML='<i data-lucide="save"></i> Simpan';icons()}
+}
+async function removeEntry(kind,id){
+  const e=(store[kind].data?.entries||[]).find(x=>x.id===id);
+  if(!confirm(`Hapus ${TITLE[kind].toLowerCase()} "${e?.competition||e?.title||''}"?`))return;
+  try{await api('delete',{kind,id});toast('Data berhasil dihapus.');await load(kind,{silent:true})}catch(err){toast(err.message||'Gagal menghapus.')}
+}
+function openTarget(kind){
+  const d=store[kind].data;if(!d?.can_manage)return;
+  form={kind,edit:null,targetMode:true};
+  $('#trkModalTitle').textContent=`Atur target · ${kind==='achievement'?'Kompetisi':kind==='book'?'Book Reading':'Religious Reading'}`;
+  $('#trkModalBody').innerHTML=`<div class="trk-form">${fld('trkTargetVal',`Target minimum (${esc(d.target.unit)} per semester)`,'number',d.target.target,{attrs:'min="1" max="500"',span:true})}<p class="trk-note span">Berlaku untuk seluruh siswa. Perubahan langsung terlihat oleh semua orang.</p></div>`;
+  const r=$('#trkModal');r.classList.add('open');r.setAttribute('aria-hidden','false');document.body.classList.add('dues-modal-open');icons();
+}
+async function saveTarget(){
+  const kind=form.kind,n=Number(val('#trkTargetVal'));if(!Number.isFinite(n)||n<1||n>500){toast('Target harus 1 sampai 500.');return}
+  try{await api('set_target',{kind,target:n});closeForm();toast('Target berhasil disimpan.');await load(kind,{silent:true})}catch(e){toast(e.message||'Gagal menyimpan target.')}
+}
+
+function openYear(){
+  const a=store.active||store.filter;if(!a)return;
+  form={kind:null,edit:null,yearMode:true};
+  $('#trkModalTitle').textContent='Atur Tahun Ajaran';
+  $('#trkModalBody').innerHTML=`<div class="trk-form">${fld('trkSetSemester','Semester aktif','select',a.semester,{opts:['Semester 1','Semester 2']})}${fld('trkSetYear','Tahun ajaran aktif','text',a.academic_year||a.year,{ph:'2026/2027',attrs:'maxlength="9"'})}<p class="trk-note span">Berlaku untuk seluruh Tracking Prestasi dan Book Tracking. Hanya Presiden, Wakil Presiden, dan Guru yang dapat mengubahnya; pengurus lain memakai pengaturan ini.</p></div>`;
+  const r=$('#trkModal');r.classList.add('open');r.setAttribute('aria-hidden','false');document.body.classList.add('dues-modal-open');icons();
+}
+async function saveYear(){
+  const semester=val('#trkSetSemester'),year=val('#trkSetYear');
+  if(!/^\d{4}\/\d{4}$/.test(year)){toast('Tahun ajaran harus seperti 2026/2027.');return}
+  try{await api('set_year',{semester,academic_year:year});closeForm();toast('Tahun ajaran aktif berhasil disimpan.');resetToActive()}catch(e){toast(e.message||'Gagal menyimpan tahun ajaran.')}
+}
+function resetToActive(){
+  store.filter=null;store.achievement.data=null;store.book.data=null;store.religious.data=null;
+  load('achievement',{silent:true});if($('#bookTracking.active'))load(store.tab,{silent:true});
+}
+/* ---------------- peristiwa ---------------- */
+document.addEventListener('click',e=>{
+  const t=e.target;if(!t.closest)return;
+  if(t.closest('[data-trk-close]')){closeForm();return}
+  if(t.closest('#trkSaveBtn')){form.scriptureMode?saveScripture():form.yearMode?saveYear():form.targetMode?saveTarget():saveForm();return}
+  const sct=t.closest('[data-trk-scripture]');if(sct){openScripture(sct.dataset.trkScripture);return}
+  if(t.closest('[data-trk-yearset]')){openYear();return}
+  if(t.closest('[data-trk-backactive]')){resetToActive();return}
+  const add=t.closest('[data-trk-add]');if(add){const k=add.dataset.trkAdd==='tab'?store.tab:add.dataset.trkAdd;openForm(k,{student:add.dataset.student||null});return}
+  const ed=t.closest('[data-trk-edit]');if(ed){const k=ed.dataset.kind,en=(store[k].data?.entries||[]).find(x=>x.id===ed.dataset.trkEdit);if(en)openForm(k,{edit:en});return}
+  const del=t.closest('[data-trk-del]');if(del){removeEntry(del.dataset.kind,del.dataset.trkDel);return}
+  const tg=t.closest('[data-trk-target]');if(tg){openTarget(tg.dataset.trkTarget==='tab'?store.tab:tg.dataset.trkTarget);return}
+  const tab=t.closest('[data-trk-tab]');if(tab){setTab(tab.dataset.trkTab);return}
+  const rt=t.closest('[data-trk-retry]');if(rt){load(rt.dataset.trkRetry);return}
+  if(t.closest('[data-page="achievements"]'))setTimeout(()=>load('achievement'),150);
+  if(t.closest('[data-page="bookTracking"]'))setTimeout(()=>{setTab(store.tab)},150);
+});
+document.addEventListener('change',e=>{
+  const t=e.target;
+  if(t.matches?.('[data-trk-semester],[data-trk-year]')){
+    const sem=$('[data-trk-semester]',t.closest('.trk-root')),yr=$('[data-trk-year]',t.closest('.trk-root'));
+    const y=(yr?.value||'').trim();if(!/^\d{4}\/\d{4}$/.test(y)){toast('Tahun ajaran harus seperti 2026/2027.');return}
+    store.filter={semester:sem.value,year:y};
+    const k=t.closest('#trkAchRoot')?'achievement':store.tab;store.achievement.data=null;store.book.data=null;store.religious.data=null;load(k);return;
+  }
+  if(t.id==='trkSurah'||t.id==='trkKitab'){updateHints();return}
+  if(t.id==='trkStudent'&&form.kind==='religious'){renderRelDyn(form.edit||{});return}
+});
+document.addEventListener('input',e=>{
+  const t=e.target;if(t.matches?.('[data-trk-search]')){store.query=t.value;const k=t.closest('#trkAchRoot')?'achievement':store.tab;const pos=t.selectionStart;render(k);const n=$('[data-trk-search]');if(n){n.focus();try{n.setSelectionRange(pos,pos)}catch(x){}}}
+});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('#trkModal')?.classList.contains('open'))closeForm()});
+window.addEventListener('resize',()=>{if($('#bookTracking.active'))setTab(store.tab,{load:false})});
+function boot(){
+  if($('#achievements.active'))load('achievement');
+  if($('#bookTracking.active'))setTab(store.tab);
+  setInterval(()=>{if(document.hidden||$('#trkModal')?.classList.contains('open'))return;if($('#achievements.active'))load('achievement',{silent:true});if($('#bookTracking.active'))load(store.tab,{silent:true})},60000);
+}
+window.k7Tracker={reload:k=>load(k||store.tab),store};
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else setTimeout(boot,300);
 })();
 </script>
 </body>
