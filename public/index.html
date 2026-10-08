@@ -29163,7 +29163,9 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 })();
 </script>
 <style id="k7-voice-v158">
-.k7-ai-compose-row{grid-template-columns:42px minmax(0,1fr) 42px 42px!important}
+.k7-ai-compose-row{display:flex!important;align-items:flex-end!important;gap:8px!important;flex-wrap:nowrap!important}
+.k7-ai-compose-row>.k7-ai-input{flex:1 1 auto!important;min-width:0!important;width:auto!important}
+.k7-ai-compose-row>button,.k7-ai-compose-row>label{flex:none!important;width:42px!important;height:42px!important;margin:0!important}
 .k7-voice-mic{width:42px;height:42px;border-radius:14px;border:1px solid var(--line,rgba(120,130,160,.35));background:var(--surface,#fff);color:var(--accent-primary,#2563eb);display:inline-grid;place-items:center;cursor:pointer;transition:transform .15s,background .2s,box-shadow .2s}
 .k7-voice-mic:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(37,99,235,.2)}
 .k7-voice-mic.on{background:linear-gradient(135deg,#2563eb,#22a7e8);color:#fff;border-color:transparent}
@@ -29188,6 +29190,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 .k7-voice-side button,.k7-voice-side select{font:inherit;font-size:12px;font-weight:700;border-radius:10px;border:1px solid var(--line,rgba(120,130,160,.35));background:var(--surface,#fff);color:inherit;padding:6px 10px;cursor:pointer}
 .k7-voice-side .stop{color:#b91c1c}
 @media (max-width:520px){.k7-voice{flex-wrap:wrap}.k7-voice-side{flex-direction:row;width:100%}}
+.k7-ai-compose-row>.k7-ai-input::placeholder{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 </style>
 <script id="k7-voice-v158-js">
 (()=>{
