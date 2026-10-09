@@ -21492,16 +21492,28 @@ document.addEventListener("click",e=>{const t=e.target.closest?.("[data-play-ans
       const legacyAccountKey=`student:${selectedName.toLocaleLowerCase("id-ID")}`;
       let verifiedAccountKey=usernameAccountKey;
 
-      let valid=await verifyPortalAccountPassword(usernameAccountKey,password);
-      if(!valid&&legacyAccountKey!==usernameAccountKey){
-        valid=await verifyPortalAccountPassword(legacyAccountKey,password);
-        if(valid)verifiedAccountKey=legacyAccountKey;
+      /* Kunci akun asli dicari dari USERNAME. Ejaan nama pada daftar kelas bisa berbeda dengan data akun
+         (mis. "Fasya" vs "fazya"), sehingga kunci yang disusun dari nama tidak boleh jadi satu-satunya acuan. */
+      let trueKey="";
+      try{
+        const lk=await akunAuthRequest({action:"lookup",username:usernameBase});
+        const st=(lk?.accounts||[]).find(a=>a.account_type==="student");
+        trueKey=String(st?.account_key||"");
+      }catch(error){}
+      const keyCandidates=[...new Set([trueKey,usernameAccountKey,legacyAccountKey].filter(Boolean))];
+      /* keyboard HP sering menambahkan spasi di ujung password → coba juga tanpa spasi ujung */
+      const passwordCandidates=[...new Set([password,password.trim()].filter(Boolean))];
+      let valid=false,usedPassword=password;
+      outer:for(const pw of passwordCandidates){
+        for(const key of keyCandidates){
+          if(await verifyPortalAccountPassword(key,pw)){valid=true;verifiedAccountKey=key;usedPassword=pw;break outer}
+        }
       }
 
       if(!valid)throw new Error("Username akun.7mit atau password siswa salah.");
 
       clearChatUserSession({forgetPassword:true});
-      const persistentSession=await createPersistentPortalSession(usernameBase,password,verifiedAccountKey);
+      const persistentSession=await createPersistentPortalSession(usernameBase,usedPassword,verifiedAccountKey);
       window.KELAS7MIT_ACTIVE_ACCOUNT={
         username:`${persistentSession.profile.username}@7mit`,
         displayName:persistentSession.profile.display_name||selectedName,
