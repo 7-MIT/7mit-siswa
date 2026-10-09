@@ -25491,7 +25491,7 @@ function telkomCreatePeer(remoteKey){
     if(!ev.detail||ev.detail.phase==="open")return;
     try{telkomCloseIncoming()}catch(error){}
     if(telkomData.roomId){
-      telkomLeave().finally(()=>{try{toast("Panggilan telkom.7mit diputus otomatis karena sudah jam tidur.")}catch(error){}});
+      telkomLeave().finally(()=>{try{(window.toast||toast)("Panggilan telkom.7mit diputus otomatis karena sudah jam tidur.")}catch(error){}});
     }
   });
 
