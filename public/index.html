@@ -26323,71 +26323,13 @@ setInterval(()=>{if(!document.hidden&&!$('#somModal')?.classList.contains('open'
         <button class="k7fb-close" type="button" data-feedback-close aria-label="Tutup"><i data-lucide="x"></i></button>
       </header>
 
-      <form class="k7fb-body" id="k7fbForm" action="https://formsubmit.co/7mit@republikindomaret.com" method="POST">
-        <input type="hidden" name="_subject" id="k7fbMailSubject" value="[7 MIT Feedback] Feedback Baru">
-        <input type="hidden" name="_template" value="table">
-        <input type="hidden" name="_captcha" value="false">
-        <input type="hidden" name="_next" id="k7fbNext" value="">
-        <input class="k7fb-honey" type="text" name="_honey" tabindex="-1" autocomplete="off">
-        <input type="hidden" name="Portal" id="k7fbPortalInput" value="">
-        <input type="hidden" name="Halaman" id="k7fbPageInput" value="">
-        <input type="hidden" name="URL Halaman" id="k7fbUrlInput" value="">
-        <input type="hidden" name="Akun 7 MIT" id="k7fbAccountInput" value="">
-        <input type="hidden" name="Username 7 MIT" id="k7fbUsernameInput" value="">
-        <input type="hidden" name="Role 7 MIT" id="k7fbRoleInput" value="">
-        <input type="hidden" name="Rating" id="k7fbRatingInput" value="Tidak diisi">
-
+      <div class="k7fb-body k7fb-embed" id="k7fbEmbed">
         <div class="k7fb-context"><span>Portal: <b data-k7fb-portal>7 MIT</b></span><span>Halaman: <b data-k7fb-page>—</b></span></div>
-        <div class="k7fb-direct-note">Feedback dikirim melalui form POST langsung ke inbox resmi Customer Support 7 MIT. Jangan masukkan password, OTP, token, private key, atau credential lain.</div>
-
-        <div class="k7fb-grid">
-          <div class="k7fb-field">
-            <label for="k7fbName">Nama</label>
-            <input id="k7fbName" name="name" maxlength="180" autocomplete="name" required placeholder="Nama kamu">
-          </div>
-          <div class="k7fb-field">
-            <label for="k7fbEmail">Email untuk balasan</label>
-            <input id="k7fbEmail" name="email" type="email" maxlength="320" autocomplete="email" required placeholder="nama@email.com">
-          </div>
-
-          <div class="k7fb-field">
-            <label for="k7fbCategory">Kategori</label>
-            <select id="k7fbCategory" name="Kategori" required>
-              <option>Saran</option><option>Bug</option><option>Fitur</option><option>Tampilan</option><option>Akademik</option><option>Transaksi</option><option>Akun & Login</option><option>Lainnya</option>
-            </select>
-          </div>
-
-          <div class="k7fb-field">
-            <label>Rating pengalaman</label>
-            <div class="k7fb-rating" id="k7fbRating" aria-label="Rating 1 sampai 5">
-              <button class="k7fb-star" type="button" data-rating="1" aria-label="1 bintang"><i data-lucide="star"></i></button>
-              <button class="k7fb-star" type="button" data-rating="2" aria-label="2 bintang"><i data-lucide="star"></i></button>
-              <button class="k7fb-star" type="button" data-rating="3" aria-label="3 bintang"><i data-lucide="star"></i></button>
-              <button class="k7fb-star" type="button" data-rating="4" aria-label="4 bintang"><i data-lucide="star"></i></button>
-              <button class="k7fb-star" type="button" data-rating="5" aria-label="5 bintang"><i data-lucide="star"></i></button>
-              <span class="k7fb-rating-label" data-rating-label>Opsional</span>
-            </div>
-          </div>
-
-          <div class="k7fb-field full">
-            <label for="k7fbSubject">Judul singkat</label>
-            <input id="k7fbSubject" name="Judul Feedback" maxlength="140" autocomplete="off" placeholder="Contoh: Kalender lebih enak kalau..." required>
-          </div>
-
-          <div class="k7fb-field full">
-            <label for="k7fbMessage">Feedback / saran</label>
-            <textarea id="k7fbMessage" name="Feedback" maxlength="6000" placeholder="Ceritakan apa yang bagus, yang mengganggu, bug yang kamu temukan, atau fitur yang ingin ditambahkan..." required></textarea>
-            <div class="k7fb-counter"><span data-k7fb-count>0</span>/6000</div>
-          </div>
-        </div>
-
-        <div class="k7fb-status" id="k7fbStatus" role="status"></div>
-
-        <div class="k7fb-actions">
-          <div class="k7fb-hint">Nama akun, role, portal, halaman, dan URL saat ini ikut dilampirkan sebagai konteks agar laporan lebih mudah ditindaklanjuti.</div>
-          <button class="k7fb-submit" id="k7fbSubmit" type="submit"><i data-lucide="send"></i><span>Kirim Feedback</span></button>
-        </div>
-      </form>
+        <div class="k7fb-direct-note">Jangan masukkan password, OTP, token, private key, atau credential lain pada formulir.</div>
+        <div class="k7fb-embed-loading" id="k7fbEmbedLoading" role="status"><span class="k7-spin"></span> Memuat formulir…</div>
+        <iframe id="saran-feedback-7-mit-dtcalt" title="Formulir Saran &amp; Feedback 7 MIT" style="border:none;width:100%" data-src="https://opnform.com/forms/saran-feedback-7-mit-dtcalt"></iframe>
+        <div class="k7fb-embed-foot">Formulir tidak muncul? <a href="https://opnform.com/forms/saran-feedback-7-mit-dtcalt" target="_blank" rel="noopener">Buka di tab baru</a></div>
+      </div>
     </section>
   </div>
 </div>
@@ -26413,65 +26355,51 @@ setInterval(()=>{if(!document.hidden&&!$('#somModal')?.classList.contains('open'
     const map={dashboard:'Ringkasan',finance:'Keuangan',learningSchool:'Belajar',files:'Files',notes:'Catatan',pricing:'Pricing',news:'Berita Kelas',announcements:'Pengumuman & Kalender',tasks:'Tugas & Piket',settings:'Pengaturan',documents:'Dokumen & Voting',officers:'Struktur Organisasi',classMap:'Denah Kelas',betaFeatures:'Fitur Kelas'};
     return map[id]||String(id||'Dashboard').replace(/([a-z])([A-Z])/g,'$1 $2');
   }
-  function defaultCategory(page){
-    const p=String(page||'').toLowerCase();
-    
-    if(p.includes('pricing')||p.includes('finance'))return 'Transaksi';
-    if(p.includes('setting')||p.includes('account'))return 'Akun & Login';
-    if(p.includes('learning')||p.includes('task')||p.includes('quiz')||p.includes('announcement'))return 'Akademik';
-    return 'Saran';
-  }
-  function setStatus(msg,type=''){const el=$('#k7fbStatus');if(!el)return;el.textContent=msg||'';el.className='k7fb-status'+(msg?' show':'')+(type?' '+type:'')}
-  function setRating(v){
-    rating=v?Number(v):null;
-    $$('.k7fb-star').forEach(b=>b.classList.toggle('on',rating&&Number(b.dataset.rating)<=rating));
-    const labels={1:'Kurang',2:'Perlu diperbaiki',3:'Cukup',4:'Bagus',5:'Sangat bagus'};
-    $('[data-rating-label]').textContent=rating?labels[rating]:'Opsional';
-    $('#k7fbRatingInput').value=rating?`${rating} / 5 · ${labels[rating]}`:'Tidak diisi';
-  }
   function fillContext(){
-    const p=profile(),page=currentPage(),label=pageLabel(page);
-    $('[data-k7fb-portal]').textContent=PORTAL;
-    $('[data-k7fb-page]').textContent=label;
-    $('#k7fbPortalInput').value=PORTAL;
-    $('#k7fbPageInput').value=label;
-    $('#k7fbUrlInput').value=location.href;
-    $('#k7fbAccountInput').value=p.display_name||p.name||'';
-    $('#k7fbUsernameInput').value=p.username||'';
-    $('#k7fbRoleInput').value=p.role||p.account_type||'';
-    $('#k7fbName').value=$('#k7fbName').value||p.display_name||p.name||'';
-    $('#k7fbCategory').value=defaultCategory(page);
-    $('#k7fbNext').value=location.origin+location.pathname+location.hash;
+    const a=$('[data-k7fb-portal]'),b=$('[data-k7fb-page]');
+    if(a)a.textContent=PORTAL;if(b)b.textContent=pageLabel(currentPage());
+  }
+  const toastSafe=m=>{try{window.toast?.(m)}catch{}};
+  let sdkState=0,bound=false,submitted=false;
+  function bindSdk(){
+    if(bound||!window.opnform?.on)return;bound=true;
+    /* Javascript SDK OpnForm: formulir menyesuaikan tinggi iframe otomatis; event submit kita pakai untuk konfirmasi */
+    window.opnform.on('submit',()=>{submitted=true;toastSafe('Terima kasih! Feedback kamu sudah terkirim.');setTimeout(()=>{if(!$('#k7fbModal')?.hidden)close()},2800)});
+  }
+  function loadSdk(){
+    if(window.opnform){bindSdk();return}
+    if(sdkState)return;sdkState=1;
+    const s=document.createElement('script');s.src='https://opnform.com/widgets/opnform-sdk.min.js';s.async=true;
+    s.onload=()=>{sdkState=2;bindSdk()};s.onerror=()=>{sdkState=0};
+    document.head.appendChild(s);
+  }
+  function ensureForm(){
+    const f=document.getElementById('saran-feedback-7-mit-dtcalt');if(!f)return;
+    const src=f.dataset.src;
+    if(!f.getAttribute('src')||submitted){
+      submitted=false;$('#k7fbEmbedLoading')?.removeAttribute('hidden');
+      f.addEventListener('load',()=>$('#k7fbEmbedLoading')?.setAttribute('hidden',''),{once:true});
+      f.setAttribute('src',src);
+    }
+    loadSdk(); /* SDK dimuat setelah iframe punya src agar iframe ikut terdeteksi */
   }
   function open(){
     lastFocus=document.activeElement;
-    fillContext();setStatus('');setRating(null);
+    fillContext();
     $('#k7fbModal').hidden=false;document.documentElement.style.overflow='hidden';
-    setTimeout(()=>$('#k7fbEmail')?.focus(),60);window.lucide?.createIcons?.();
+    ensureForm();
+    setTimeout(()=>$('.k7fb-close')?.focus(),60);window.lucide?.createIcons?.();
   }
   function close(){
-    $('#k7fbModal').hidden=true;document.documentElement.style.overflow='';setStatus('');lastFocus?.focus?.();
-  }
-  function beforeSubmit(e){
-    fillContext();
-    const subject=$('#k7fbSubject').value.trim(),message=$('#k7fbMessage').value.trim(),email=$('#k7fbEmail').value.trim();
-    if(subject.length<3){e.preventDefault();setStatus('Judul feedback minimal 3 karakter.','error');$('#k7fbSubject').focus();return}
-    if(message.length<10){e.preventDefault();setStatus('Isi feedback minimal 10 karakter.','error');$('#k7fbMessage').focus();return}
-    if(!email){e.preventDefault();setStatus('Email untuk balasan wajib diisi.','error');$('#k7fbEmail').focus();return}
-    $('#k7fbMailSubject').value=`[7 MIT Feedback · ${PORTAL} · ${$('#k7fbCategory').value}] ${subject}`;
-    $('#k7fbSubmit').querySelector('span').textContent='Mengirim…';
-    $('#k7fbSubmit').disabled=true;
+    $('#k7fbModal').hidden=true;document.documentElement.style.overflow='';lastFocus?.focus?.();
   }
   function init(){
     document.addEventListener('click',e=>{
       if(e.target.closest?.('[data-feedback-open]')){e.preventDefault();open();return}
       if(e.target.closest?.('[data-feedback-close]')){e.preventDefault();close();return}
       if(e.target.matches?.('[data-feedback-backdrop]')){close();return}
-      const star=e.target.closest?.('.k7fb-star');if(star){e.preventDefault();setRating(star.dataset.rating)}
     });
     document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#k7fbModal')?.hidden)close()});
-    $('#k7fbForm')?.addEventListener('submit',beforeSubmit);
-    $('#k7fbMessage')?.addEventListener('input',e=>{$('[data-k7fb-count]').textContent=String(e.target.value.length)});
     window.lucide?.createIcons?.();
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
@@ -29331,6 +29259,13 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 <style id="k7-dues-pos-total-v158">.dues-cycle-kpi-main{background:linear-gradient(135deg,rgba(37,99,235,.14),rgba(34,167,232,.12));border-color:rgba(37,99,235,.35)!important}.dues-cycle-kpi-main b{color:var(--accent-primary,#2563eb)}
 #duesPosPane .dues-cycle-summary{grid-template-columns:repeat(4,1fr)}#duesPosPane .dues-cycle-kpi:first-child{grid-column:span 2}#duesPosPane .dues-cycle-summary-note{grid-column:1/-1}
 @media(max-width:720px){#duesPosPane .dues-cycle-summary{grid-template-columns:1fr 1fr}#duesPosPane .dues-cycle-kpi:first-child{grid-column:1/-1}}
+</style>
+<style id="k7-feedback-opnform-v158">
+.k7fb-embed iframe{display:block;width:100%;min-height:560px;border:0;border-radius:14px;background:transparent}
+.k7fb-embed-loading{display:flex;align-items:center;justify-content:center;gap:10px;padding:40px 12px;color:#667085;font-weight:700}
+.k7fb-embed-loading[hidden]{display:none!important}
+.k7fb-embed-foot{margin-top:10px;text-align:center;font-size:12px;color:#667085}
+.k7fb-embed-foot a{color:var(--accent-primary,#2563eb);font-weight:700}
 </style>
 </body>
 </html>
