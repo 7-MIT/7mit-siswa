@@ -24352,6 +24352,8 @@ const TELKOM_ICE_SERVERS=[
   }
 
   async function telkomApi(action,payload={},keepalive=false){
+    /* jam tidur (21.00–05.10 WIB): telkom.7mit tidak mengirim request apa pun kecuali memutus/menolak panggilan */
+    if(action!=="leave_room"&&action!=="decline_room"&&window.k7Bedtime&&window.k7Bedtime.phase()!=="open")throw new Error("telkom.7mit ditutup karena sudah jam tidur (21.00 - 05.10 WIB).");
     const token=await window.K7Session.getToken();
 
     // V53: signaling telkom.7mit langsung ke Postgres RPC melalui PostgREST.
@@ -25484,6 +25486,14 @@ function telkomCreatePeer(remoteKey){
     if(id)try{await telkomApi("leave_room",{room_id:id,reason:"Keluar telkom.7mit"})}catch(error){}
     telkomCleanup(false);
   }
+  /* 21.00 WIB: panggilan yang masih berlangsung diputus otomatis + notifikasi */
+  document.addEventListener("k7:bedtime",ev=>{
+    if(!ev.detail||ev.detail.phase==="open")return;
+    try{telkomCloseIncoming()}catch(error){}
+    if(telkomData.roomId){
+      telkomLeave().finally(()=>{try{toast("Panggilan telkom.7mit diputus otomatis karena sudah jam tidur.")}catch(error){}});
+    }
+  });
 
   function telkomCleanup(notify=false){
     const id=telkomData.roomId;
@@ -25504,6 +25514,7 @@ function telkomCreatePeer(remoteKey){
 
   async function telkomGlobalPoll(){
     if(telkomData.roomId||telkomData.busy||telkomData.pollBusy)return;
+    if(window.k7Bedtime&&window.k7Bedtime.phase()!=="open")return;
 
     const token=window.K7Session?.token?.()||"";
     if(!token)return;
@@ -27324,9 +27335,9 @@ html.k7-lite .st-panel.on{animation:none}
   /* ---------- penyimpanan ---------- */
   const uname=()=>{try{return String(window.KELAS7MIT_ACTIVE_ACCOUNT?.username||window.K7Session?.read?.()?.profile?.username||'tamu').replace(/@7mit$/i,'')}catch{return 'tamu'}};
   const KEY=()=>`k7st:${uname()}:v1`;
-  const DEF=()=>({focus:{set:{focus:25,short:5,long:15},auto:true,hist:{},run:null,mode:'focus'},todos:[],grades:{target:85,rows:[{n:'Tugas',w:20,s:''},{n:'Kuis',w:20,s:''},{n:'UTS',w:25,s:''},{n:'UAS',w:35,s:''}]},cds:[]});
+  const DEF=()=>({focus:{set:{focus:25,short:5,long:15},auto:true,hist:{},run:null,mode:'focus',alarm:{on:true,tone:'bell',vol:80,secs:10,vibrate:true}},todos:[],grades:{target:85,rows:[{n:'Tugas',w:20,s:''},{n:'Kuis',w:20,s:''},{n:'UTS',w:25,s:''},{n:'UAS',w:35,s:''}]},cds:[]});
   let D=null,dkeyLoaded='';
-  function load(){const k=KEY();if(D&&dkeyLoaded===k)return D;dkeyLoaded=k;try{const raw=JSON.parse(localStorage.getItem(k)||'null');D=raw?{...DEF(),...raw,focus:{...DEF().focus,...raw.focus},grades:{...DEF().grades,...raw.grades}}:DEF()}catch{D=DEF()}return D}
+  function load(){const k=KEY();if(D&&dkeyLoaded===k)return D;dkeyLoaded=k;try{const raw=JSON.parse(localStorage.getItem(k)||'null');D=raw?{...DEF(),...raw,focus:{...DEF().focus,...raw.focus,alarm:{...DEF().focus.alarm,...(raw.focus&&raw.focus.alarm)}},grades:{...DEF().grades,...raw.grades}}:DEF()}catch{D=DEF()}return D}
   function save(){try{localStorage.setItem(KEY(),JSON.stringify(D))}catch{}}
 
   /* ---------- UI utama ---------- */
@@ -27350,12 +27361,43 @@ html.k7-lite .st-panel.on{animation:none}
   const dur=m=>Math.max(1,Math.min(180,Number(F().set[m])||25))*60000;
   function remaining(){const r=F().run;if(!r)return dur(F().mode);return r.running?Math.max(0,r.endAt-Date.now()):Math.max(0,r.left)}
   const fmtT=ms=>{const s=Math.ceil(ms/1000);return `${pad(Math.floor(s/60))}:${pad(s%60)}`};
-  function startT(){const f=F();const left=remaining();f.run={running:true,mode:f.mode,endAt:Date.now()+left,left,total:dur(f.mode)};save();loop();renderFocus();pill()}
+  function startT(){audioCtx();stopAlarm();const f=F();const left=remaining();f.run={running:true,mode:f.mode,endAt:Date.now()+left,left,total:dur(f.mode)};save();loop();renderFocus();pill()}
   function pauseT(){const f=F();if(!f.run?.running)return;f.run={...f.run,running:false,left:Math.max(0,f.run.endAt-Date.now())};save();clearInterval(tick);tick=0;renderFocus();pill()}
   function resetT(){const f=F();f.run=null;save();clearInterval(tick);tick=0;document.title=baseTitle;renderFocus();pill()}
   function setMode(m){const f=F();f.mode=m;f.run=null;save();clearInterval(tick);tick=0;document.title=baseTitle;renderFocus();pill()}
   const baseTitle=document.title;
-  function beep(){try{const a=new (window.AudioContext||window.webkitAudioContext)();[0,.28,.56].forEach((t,i)=>{const o=a.createOscillator(),g=a.createGain();o.frequency.value=i===2?988:784;o.connect(g);g.connect(a.destination);g.gain.setValueAtTime(.0001,a.currentTime+t);g.gain.exponentialRampToValueAtTime(.25,a.currentTime+t+.03);g.gain.exponentialRampToValueAtTime(.0001,a.currentTime+t+.24);o.start(a.currentTime+t);o.stop(a.currentTime+t+.26)})}catch{}try{navigator.vibrate?.([200,100,200])}catch{}}
+  /* ---------- ALARM TIMER (dapat diatur: nada, volume, durasi, getar) ---------- */
+  const TONES={bell:'Lonceng',digital:'Digital',chime:'Denting',classic:'Alarm klasik',soft:'Lembut'};
+  let actx=null,alarmTimer=0,alarmEnd=0,k7ringAlarm=null;
+  function audioCtx(){try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();if(actx.state==='suspended')actx.resume();return actx}catch{return null}}
+  function note(ctx,t,freq,len,type,vol){const o=ctx.createOscillator(),g=ctx.createGain();o.type=type;o.frequency.value=freq;o.connect(g);g.connect(ctx.destination);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(Math.max(.001,vol),t+.03);g.gain.exponentialRampToValueAtTime(.0001,t+len);o.start(t);o.stop(t+len+.03)}
+  function cycle(ctx,tone,v){ /* satu putaran nada, mengembalikan durasi (detik) */
+    const t=ctx.currentTime+.02;
+    if(tone==='digital'){[0,.18,.36,.54].forEach(d=>note(ctx,t+d,1000,.12,'square',v*.5));return 1.1}
+    if(tone==='chime'){[523.25,659.25,783.99,1046.5].forEach((fq,i)=>note(ctx,t+i*.22,fq,.5,'sine',v*.7));return 1.6}
+    if(tone==='classic'){for(let i=0;i<6;i++)note(ctx,t+i*.16,i%2?660:880,.14,'square',v*.45);return 1.2}
+    if(tone==='soft'){[523.25,659.25].forEach((fq,i)=>note(ctx,t+i*.4,fq,.7,'triangle',v*.6));return 1.5}
+    [0,.5].forEach(d=>{note(ctx,t+d,880,.9,'sine',v*.7);note(ctx,t+d,1318.5,.9,'sine',v*.35)});return 1.6 /* lonceng */
+  }
+  function alarmOverlay(show,msg){
+    let el=document.getElementById('k7stAlarm');
+    if(!show){el?.remove();return}
+    if(!el){el=document.createElement('div');el.id='k7stAlarm';el.className='k7st-alarm';el.setAttribute('role','alertdialog');el.setAttribute('aria-live','assertive');document.body.appendChild(el)}
+    el.innerHTML=`<div class="k7st-alarm-card"><div class="k7st-alarm-bell"><i data-lucide="alarm-clock"></i></div><b>${msg}</b><small>Alarm timer fokus berbunyi</small><button type="button" data-k7st-alarm-off><i data-lucide="bell-off"></i> Matikan alarm</button></div>`;
+    el.querySelector('[data-k7st-alarm-off]').addEventListener('click',()=>stopAlarm());icons();
+  }
+  function stopAlarm(){clearTimeout(alarmTimer);alarmTimer=0;alarmOverlay(false);try{navigator.vibrate?.(0)}catch{}}
+  function playOnce(tone,vol){const ctx=audioCtx();if(!ctx)return 0;return cycle(ctx,tone,Math.max(.02,Math.min(1,vol/100))*.9)}
+  k7ringAlarm=function(msg){
+    const a=F().alarm||{};if(a.on===false)return;
+    stopAlarm();
+    const secs=Number(a.secs)||0,limit=secs>0?secs*1000:5*60*1000;alarmEnd=Date.now()+limit;
+    alarmOverlay(true,msg);
+    const step=()=>{if(Date.now()>=alarmEnd){stopAlarm();return}const d=playOnce(a.tone||'bell',a.vol??80);if(a.vibrate!==false){try{navigator.vibrate?.([300,120,300])}catch{}}alarmTimer=setTimeout(step,Math.max(900,(d||1.2)*1000+350))};
+    step();
+  };
+  function beep(msg){k7ringAlarm(msg||'Waktu habis!')}
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden){const r=F().run;if(r?.running&&r.endAt<=Date.now())finish()}});
   function finish(){
     const f=F(),r=f.run,mode=r?.mode||f.mode;
     clearInterval(tick);tick=0;document.title=baseTitle;
@@ -27363,15 +27405,17 @@ html.k7-lite .st-panel.on{animation:none}
     f.run=null;
     const sessions=todaySessions();
     const next=mode==='focus'?(sessions%4===0?'long':'short'):'focus';
-    f.mode=f.auto?next:mode;save();beep();
+    f.mode=f.auto?next:mode;save();beep(mode==='focus'?'Sesi fokus selesai!':'Istirahat selesai!');
     toastS(mode==='focus'?'Sesi fokus selesai! Waktunya istirahat sebentar.':'Istirahat selesai. Siap fokus lagi?');
     renderFocus();renderToday();pill();
   }
-  function loop(){clearInterval(tick);tick=setInterval(()=>{const f=F();if(!f.run?.running){clearInterval(tick);tick=0;return}const left=f.run.endAt-Date.now();if(left<=0){finish();return}updateRing(left);pill();document.title=`${fmtT(left)} · ${MODES[f.run.mode]}`},250)}
+  let endTo=0;function loop(){clearTimeout(endTo);const r0=F().run;if(r0?.running)endTo=setTimeout(()=>{const r=F().run;if(r?.running&&r.endAt<=Date.now()+60)finish()},Math.max(0,r0.endAt-Date.now())+40);clearInterval(tick);tick=setInterval(()=>{const f=F();if(!f.run?.running){clearInterval(tick);tick=0;return}const left=f.run.endAt-Date.now();if(left<=0){finish();return}updateRing(left);pill();document.title=`${fmtT(left)} · ${MODES[f.run.mode]}`},250)}
   const todaySessions=()=>F().hist[dkey()]?.s||0,todayMinutes=()=>F().hist[dkey()]?.m||0;
   function streak(){const h=F().hist;let n=0;const d=new Date();if(!h[dkey(d)]?.s)d.setDate(d.getDate()-1);while(h[dkey(d)]?.s){n++;d.setDate(d.getDate()-1)}return n}
   function updateRing(left){const f=F(),total=f.run?.total||dur(f.mode),c=2*Math.PI*45,ring=$('.st-ring .fg',root),t=$('.st-time b',root);if(ring){ring.style.strokeDasharray=c;ring.style.strokeDashoffset=c*(1-Math.min(1,Math.max(0,left/total)))}if(t)t.textContent=fmtT(left)}
-  function renderFocus(){
+  let rfBusy=false;
+  function renderFocus(){if(rfBusy)return;rfBusy=true;try{renderFocus0()}finally{rfBusy=false}}
+  function renderFocus0(){
     const f=F(),run=f.run,mode=run?.mode||f.mode,left=remaining();
     const days=[...Array(7)].map((_,i)=>{const d=new Date();d.setDate(d.getDate()-(6-i));return{k:dkey(d),l:['M','S','S','R','K','J','S'][d.getDay()],m:f.hist[dkey(d)]?.m||0}});
     const max=Math.max(30,...days.map(d=>d.m));
@@ -27380,7 +27424,13 @@ html.k7-lite .st-panel.on{animation:none}
       <div class="st-ring" data-mode="${mode}"><svg viewBox="0 0 100 100"><circle class="bg" cx="50" cy="50" r="45"/><circle class="fg" cx="50" cy="50" r="45" style="stroke-dasharray:${2*Math.PI*45};stroke-dashoffset:${2*Math.PI*45*(1-Math.min(1,left/(run?.total||dur(mode))))}"/></svg><div class="st-time"><b>${fmtT(left)}</b><small>${MODES[mode]}</small></div></div>
       <div class="st-actions">${run?.running?'<button class="st-btn pri" data-st-act="pause"><i data-lucide="pause"></i> Jeda</button>':`<button class="st-btn pri" data-st-act="start"><i data-lucide="play"></i> ${run?'Lanjut':'Mulai'}</button>`}<button class="st-btn" data-st-act="reset"><i data-lucide="rotate-ccw"></i> Reset</button></div>
       <div class="st-settings"><label>Fokus (mnt)<input class="st-input" type="number" min="1" max="180" data-st-set="focus" value="${f.set.focus}"></label><label>Istirahat<input class="st-input" type="number" min="1" max="60" data-st-set="short" value="${f.set.short}"></label><label>Panjang<input class="st-input" type="number" min="1" max="90" data-st-set="long" value="${f.set.long}"></label></div>
-      <label style="font-size:11px;font-weight:800;color:var(--muted,#667085);display:flex;gap:8px;align-items:center"><input type="checkbox" data-st-auto ${f.auto?'checked':''}> Pindah otomatis ke sesi berikutnya</label></div>
+      <label style="font-size:11px;font-weight:800;color:var(--muted,#667085);display:flex;gap:8px;align-items:center"><input type="checkbox" data-st-auto ${f.auto?'checked':''}> Pindah otomatis ke sesi berikutnya</label>
+      <div class="k7st-alarm-set"><div class="k7st-alarm-head"><b><i data-lucide="alarm-clock"></i> Alarm timer</b><label class="k7st-switch"><input type="checkbox" data-st-alarm="on" ${f.alarm.on!==false?'checked':''}> Aktif</label></div>
+        <div class="k7st-alarm-grid"><label>Nada<select class="st-input" data-st-alarm="tone">${Object.entries(TONES).map(([k,l])=>`<option value="${k}" ${f.alarm.tone===k?'selected':''}>${l}</option>`).join('')}</select></label>
+        <label>Lama bunyi<select class="st-input" data-st-alarm="secs">${[[3,'3 detik'],[10,'10 detik'],[30,'30 detik'],[60,'1 menit'],[0,'Sampai dimatikan']].map(([v,l])=>`<option value="${v}" ${Number(f.alarm.secs)===v?'selected':''}>${l}</option>`).join('')}</select></label>
+        <label>Volume <span data-st-vol-out>${f.alarm.vol}%</span><input type="range" min="10" max="100" step="5" value="${f.alarm.vol}" data-st-alarm="vol"></label>
+        <label class="k7st-switch"><input type="checkbox" data-st-alarm="vibrate" ${f.alarm.vibrate!==false?'checked':''}> Getar (jika didukung)</label></div>
+        <button class="st-btn" type="button" data-st-alarm-test><i data-lucide="volume-2"></i> Uji alarm</button></div></div>
       <div class="st-card"><h3 class="st-h">Progres belajarmu</h3><p class="st-sub">Setiap 4 sesi fokus, ada istirahat panjang. Konsisten lebih penting daripada lama.</p>
         <div class="st-stats"><div class="st-stat"><b>${todaySessions()}</b><small>Sesi hari ini</small></div><div class="st-stat"><b>${todayMinutes()}</b><small>Menit fokus</small></div><div class="st-stat"><b>${streak()}🔥</b><small>Hari beruntun</small></div></div>
         <div class="st-week" aria-label="Menit fokus 7 hari terakhir">${days.map(d=>`<i class="${d.m?'has':''}" style="height:${Math.max(8,Math.round(d.m/max*100))}%" title="${d.m} menit"><span>${d.l}</span></i>`).join('')}</div><div style="height:22px"></div>
@@ -27390,6 +27440,9 @@ html.k7-lite .st-panel.on{animation:none}
   P('focus').addEventListener('click',e=>{const m=e.target.closest('[data-st-mode]');if(m&&!m.disabled)return setMode(m.dataset.stMode);const a=e.target.closest('[data-st-act]');if(!a)return;({start:startT,pause:pauseT,reset:resetT})[a.dataset.stAct]?.()});
   P('focus').addEventListener('change',e=>{const s=e.target.closest('[data-st-set]');if(s){const v=Math.max(1,Math.min(180,parseInt(s.value,10)||1));F().set[s.dataset.stSet]=v;if(!F().run){}save();renderFocus()}if(e.target.matches('[data-st-auto]')){F().auto=e.target.checked;save()}});
 
+  P('focus').addEventListener('input',e=>{const v=e.target.closest('[data-st-alarm="vol"]');if(v){const o=P('focus').querySelector('[data-st-vol-out]');if(o)o.textContent=v.value+'%'}});
+  P('focus').addEventListener('change',e=>{const a=e.target.closest('[data-st-alarm]');if(!a)return;const f=F(),k=a.dataset.stAlarm;f.alarm[k]=a.type==='checkbox'?a.checked:(k==='tone'?a.value:Number(a.value));save();if(k==='tone'||k==='vol'){stopAlarm();playOnce(f.alarm.tone,f.alarm.vol)}});
+  P('focus').addEventListener('click',e=>{if(e.target.closest('[data-st-alarm-test]')){audioCtx();k7ringAlarm('Uji alarm')}});
   /* pil mengambang saat timer berjalan di halaman lain */
   const pillEl=document.createElement('button');pillEl.className='st-running';pillEl.type='button';pillEl.setAttribute('aria-label','Buka timer fokus');document.body.appendChild(pillEl);
   pillEl.addEventListener('click',()=>{go('focus')});
@@ -29317,6 +29370,223 @@ new MutationObserver(()=>{if($('.k7-ai-compose-row')&&!$('#k7VoiceMic'))build();
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&on)stop()});
 window.addEventListener('pagehide',()=>{try{TTS?.cancel()}catch{}});
 try{TTS?.getVoices?.();TTS?.addEventListener?.('voiceschanged',()=>{})}catch{}
+})();
+</script>
+<style id="k7-st-alarm-v158">
+.k7st-alarm-set{margin-top:12px;padding:12px;border:1px solid var(--line,#dbe3ee);border-radius:14px;background:color-mix(in srgb,var(--accent-primary,#2563eb) 5%,transparent)}
+.k7st-alarm-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}.k7st-alarm-head b{display:flex;align-items:center;gap:7px;font-size:13px}.k7st-alarm-head svg{width:16px;height:16px}
+.k7st-alarm-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}.k7st-alarm-grid label{display:flex;flex-direction:column;gap:5px;font-size:11px;font-weight:800;color:var(--muted,#667085)}
+.k7st-alarm-grid input[type=range]{width:100%}.k7st-switch{display:inline-flex!important;flex-direction:row!important;align-items:center;gap:7px}
+@media(max-width:560px){.k7st-alarm-grid{grid-template-columns:1fr}}
+.k7st-alarm{position:fixed;inset:0;z-index:2147483000;display:grid;place-items:center;background:rgba(2,8,23,.55);backdrop-filter:blur(6px);animation:k7stIn .25s both}
+.k7st-alarm-card{width:min(360px,calc(100% - 32px));padding:26px 22px;border-radius:24px;text-align:center;background:var(--theme-surface,#fff);color:var(--theme-text,#0f172a);box-shadow:0 30px 80px rgba(0,0,0,.45);display:flex;flex-direction:column;gap:8px;align-items:center}
+.k7st-alarm-card b{font-size:20px}.k7st-alarm-card small{opacity:.65}
+.k7st-alarm-bell{width:72px;height:72px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#2563eb,#22a7e8);color:#fff;animation:k7stRing .6s ease-in-out infinite}.k7st-alarm-bell svg{width:34px;height:34px}
+.k7st-alarm-card button{margin-top:10px;border:0;border-radius:14px;padding:12px 18px;font:inherit;font-weight:800;color:#fff;background:#dc2626;display:inline-flex;gap:8px;align-items:center;cursor:pointer}
+@keyframes k7stIn{from{opacity:0}to{opacity:1}}@keyframes k7stRing{0%,100%{transform:rotate(0)}25%{transform:rotate(-14deg)}75%{transform:rotate(14deg)}}
+</style>
+<style id="k7-bedtime-v158">
+/* v158 · Jam tidur portal: peringatan 21.00, tutup 21.05, buka 05.10 (WIB) */
+html.k7-bed-on #nav button[data-bed-off]{opacity:.5;position:relative}
+html.k7-bed-on #nav button[data-bed-off]::after{content:"Tutup";margin-left:auto;font-size:9px;font-weight:800;letter-spacing:.02em;white-space:nowrap;flex:none;padding:2px 6px;border-radius:999px;background:rgba(100,116,139,.22);color:inherit}
+.k7bed-pill{position:fixed;top:10px;left:50%;transform:translateX(-50%);z-index:2147483200;display:none;align-items:center;gap:8px;padding:7px 14px;border-radius:999px;font-size:12px;font-weight:700;line-height:1.25;color:#fff;background:linear-gradient(135deg,#4f46e5,#7c3aed);box-shadow:0 10px 30px rgba(79,70,229,.45);max-width:calc(100% - 24px);text-align:center}
+.k7bed-pill.show{display:inline-flex;animation:k7bedDrop .4s both}
+.k7bed-pill svg{width:15px;height:15px;flex:none}
+.k7bed-pill.locked{background:linear-gradient(135deg,#0f172a,#312e81)}
+@keyframes k7bedDrop{from{opacity:0;transform:translate(-50%,-14px)}to{opacity:1;transform:translate(-50%,0)}}
+.k7bed-modal,.k7bed-lock{position:fixed;display:none;place-items:center;padding:18px;font-family:inherit}
+.k7bed-modal.show,.k7bed-lock.show{display:grid;animation:k7bedFade .3s both}
+.k7bed-modal{inset:0;z-index:2147483100;background:rgba(2,6,23,.62);backdrop-filter:blur(8px)}
+.k7bed-lock{z-index:2147483050;background:radial-gradient(circle at 20% 15%,rgba(99,102,241,.35),transparent 40%),radial-gradient(circle at 80% 85%,rgba(124,58,237,.3),transparent 42%),#050b1c;color:#e8edff;overflow:auto}
+.k7bed-card{width:min(460px,100%);padding:26px 24px;border-radius:26px;text-align:center;background:var(--theme-surface,#fff);color:var(--theme-text,#0f172a);box-shadow:0 40px 100px rgba(0,0,0,.5);display:flex;flex-direction:column;gap:12px;align-items:center}
+.k7bed-lock .k7bed-card{background:rgba(15,23,42,.78);color:#e8edff;border:1px solid rgba(165,180,252,.25);backdrop-filter:blur(14px)}
+.k7bed-moon{width:76px;height:76px;border-radius:50%;display:grid;place-items:center;color:#fff;background:linear-gradient(135deg,#4f46e5,#7c3aed);box-shadow:0 14px 40px rgba(79,70,229,.5);animation:k7bedFloat 3s ease-in-out infinite}
+.k7bed-moon svg{width:36px;height:36px}
+.k7bed-card h2{margin:0;font-size:24px;letter-spacing:-.02em}
+.k7bed-card p{margin:0;font-size:14px;line-height:1.55;opacity:.85}
+.k7bed-count{font:800 30px/1 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.04em}
+.k7bed-count small{display:block;font-family:system-ui,-apple-system,Segoe UI,sans-serif;font-size:12px;font-weight:700;line-height:1.4;opacity:.65;letter-spacing:0;margin-top:6px}
+.k7bed-list{width:100%;margin:2px 0;padding:0;list-style:none;display:grid;gap:7px;text-align:left}
+.k7bed-list li{display:flex;gap:10px;align-items:flex-start;padding:9px 11px;border-radius:12px;background:rgba(99,102,241,.12);font-size:13px}
+.k7bed-list li svg{width:16px;height:16px;flex:none;margin-top:1px}
+.k7bed-hours{width:100%;border-collapse:collapse;font-size:13px;text-align:left}
+.k7bed-hours td{padding:8px 4px;border-top:1px solid rgba(148,163,184,.25)}
+.k7bed-hours td:last-child{text-align:right;font-weight:800;white-space:nowrap}
+.k7bed-actions{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;width:100%;margin-top:4px}
+.k7bed-btn{border:0;border-radius:13px;padding:11px 16px;font:inherit;font-weight:800;font-size:13px;cursor:pointer;display:inline-flex;gap:7px;align-items:center;color:#fff;background:linear-gradient(135deg,#4f46e5,#7c3aed)}
+.k7bed-btn.ghost{background:rgba(148,163,184,.18);color:inherit}
+.k7bed-btn svg{width:15px;height:15px}
+.k7bed-stars{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.k7bed-stars i{position:absolute;width:3px;height:3px;border-radius:50%;background:#fff;opacity:.5;animation:k7bedTwinkle 3s ease-in-out infinite}
+@keyframes k7bedFade{from{opacity:0}to{opacity:1}}
+@keyframes k7bedFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+@keyframes k7bedTwinkle{0%,100%{opacity:.15}50%{opacity:.85}}
+
+.k7bed-ops{display:flex;flex-direction:column;align-items:center;gap:2px;padding:9px 18px;border-radius:14px;background:rgba(99,102,241,.16);border:1px solid rgba(165,180,252,.22)}
+.k7bed-ops small{font-size:11px;opacity:.7}.k7bed-ops b{font-size:17px;letter-spacing:.01em}
+</style>
+<script id="k7-bedtime-v158-js">
+(()=>{
+if(window.__k7Bed)return;window.__k7Bed=1;
+const URL_=()=>window.SUPABASE_URL||'https://lajzrempjyoqkubkumhb.supabase.co';
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const RESTRICTED=['telkom','chats','social'];           /* dibatasi sejak peringatan 21.00 */
+const ALLOWED_LOCKED=['dashboard','settings'];          /* saat portal ditutup (21.05) */
+let cfg={warning:'21:00',lock:'21:05',reopen:'05:10',enabled:true},offset=0,phase='open',lastPhase=null,synced=false,tickT=0;
+const sec=h=>{const [a,b]=String(h).split(':').map(Number);return(a||0)*3600+(b||0)*60};
+const fmt=h=>String(h).replace(':','.');
+const nowMs=()=>Date.now()+offset;
+const wibSec=ms=>((Math.floor(ms/1000)+7*3600)%86400+86400)%86400;
+function phaseAt(ms){
+  if(cfg.enabled===false)return'open';
+  const s=wibSec(ms),w=sec(cfg.warning),l=sec(cfg.lock),r=sec(cfg.reopen);
+  if(s>=l||s<r)return'locked';if(s>=w)return'warning';return'open';
+}
+function untilNext(ms){
+  const s=wibSec(ms),w=sec(cfg.warning),l=sec(cfg.lock),r=sec(cfg.reopen),p=phaseAt(ms);
+  if(p==='locked')return s>=l?86400-s+r:r-s;if(p==='warning')return l-s;return w-s;
+}
+const hms=t=>{t=Math.max(0,Math.floor(t));const h=Math.floor(t/3600),m=Math.floor(t%3600/60),s=t%60;return[h,m,s].map(x=>String(x).padStart(2,'0')).join(':')};
+const wibDate=ms=>new Date(ms+7*3600000).toISOString().slice(0,10);
+const toast=m=>{try{window.toast?.(m)}catch{}};
+const icon=n=>`<i data-lucide="${n}"></i>`;
+const lucide=()=>{try{window.lucide?.createIcons?.()}catch{}};
+
+async function sync(){
+  try{
+    const t0=Date.now(),anon=window.SUPABASE_ANON_KEY||'';
+    const r=await fetch(`${URL_()}/rest/v1/rpc/k7_portal_hours`,{method:'POST',headers:{'Content-Type':'application/json',apikey:anon,Authorization:anon?`Bearer ${anon}`:''},body:'{}',cache:'no-store'});
+    if(!r.ok)throw 0;const d=await r.json();if(!d||!d.server_time_ms)throw 0;
+    const t1=Date.now();offset=Number(d.server_time_ms)-Math.round((t0+t1)/2);   /* jam server, bukan jam perangkat */
+    cfg={warning:d.warning_at||cfg.warning,lock:d.lock_at||cfg.lock,reopen:d.reopen_at||cfg.reopen,enabled:d.enabled!==false};synced=true;
+  }catch{ /* tanpa koneksi: pakai jam perangkat */ }
+  evaluate();
+}
+
+/* ---------- elemen UI ---------- */
+function ensureUI(){
+  if($('#k7BedPill'))return;
+  const pill=document.createElement('div');pill.id='k7BedPill';pill.className='k7bed-pill';pill.setAttribute('role','status');document.body.appendChild(pill);
+  const modal=document.createElement('div');modal.id='k7BedWarn';modal.className='k7bed-modal';modal.setAttribute('role','alertdialog');modal.setAttribute('aria-modal','true');modal.setAttribute('aria-labelledby','k7BedWarnTitle');
+  modal.innerHTML=`<div class="k7bed-card"><div class="k7bed-moon">${icon('moon-star')}</div><h2 id="k7BedWarnTitle">Sudah Masuk Jam Tidur</h2>
+   <p>Sekarang pukul <b data-k7bed-clock>21.00</b> WIB. Saatnya istirahat supaya besok segar kembali.</p>
+   <ul class="k7bed-list"><li>${icon('phone-off')}<span><b>telkom.7mit</b> dinonaktifkan. Panggilan yang masih berlangsung akan diputus otomatis.</span></li><li>${icon('message-circle-off')}<span><b>Chats.7mit</b> dan <b>Social.7mit</b> tidak menerima permintaan lagi.</span></li><li>${icon('lock')}<span>Seluruh portal ditutup pukul <b data-k7bed-lock>21.05</b> WIB (kecuali Ringkasan, Pengaturan, dan Feedback).</span></li></ul>
+   <div class="k7bed-count" data-k7bed-count>00:05:00<small>menuju penutupan portal</small></div>
+   <div class="k7bed-actions"><button type="button" class="k7bed-btn" data-k7bed-ok>${icon('check')} Mengerti</button></div></div>`;
+  document.body.appendChild(modal);
+  const lock=document.createElement('div');lock.id='k7BedLock';lock.className='k7bed-lock';lock.setAttribute('role','alertdialog');lock.setAttribute('aria-labelledby','k7BedLockTitle');
+  const stars=Array.from({length:26},(_,i)=>`<i style="left:${(i*37)%100}%;top:${(i*53)%100}%;animation-delay:${(i%7)*.4}s"></i>`).join('');
+  lock.innerHTML=`<div class="k7bed-stars" aria-hidden="true">${stars}</div><div class="k7bed-card"><div class="k7bed-moon">${icon('moon')}</div><h2 id="k7BedLockTitle">Akses Portal Ditutup</h2>
+   <p>Akses portal telah ditutup karena sudah jam tidur. Sampai jumpa besok pagi!</p>
+   <div class="k7bed-count" data-k7bed-count>00:00:00<small>menuju portal dibuka kembali</small></div>
+   <div class="k7bed-ops"><small>Jam operasional</small><b data-k7bed-ops>05.10 – 21.05 WIB</b><small>Telkom, Chats &amp; Social tutup sejak <span data-k7bed-warning>21.00</span></small></div>
+   <div class="k7bed-actions"><button type="button" class="k7bed-btn" data-k7bed-go="dashboard">${icon('layout-dashboard')} Ringkasan</button><button type="button" class="k7bed-btn ghost" data-k7bed-go="settings">${icon('settings')} Pengaturan</button><button type="button" class="k7bed-btn ghost" data-k7bed-feedback>${icon('message-square-heart')} Feedback</button></div></div>`;
+  document.body.appendChild(lock);
+  modal.addEventListener('click',e=>{if(e.target.closest('[data-k7bed-ok]')||e.target===modal)dismissWarn()});
+  lock.addEventListener('click',e=>{
+    const g=e.target.closest('[data-k7bed-go]');if(g){goPage(g.dataset.k7bedGo);return}
+    if(e.target.closest('[data-k7bed-feedback]')){
+      lock.classList.remove('show');const fb=$('[data-feedback-open]');fb?.click();
+      const iv=setInterval(()=>{const m=$('#k7fbModal');if(!m||m.hidden){clearInterval(iv);applyLockOverlay()}},400);
+    }
+  });
+  lucide();
+}
+function goPage(id){const b=$(`#nav button[data-page="${id}"]`);b?.click()}
+function activePage(){return $('.page.active')?.id||''}
+function dismissWarn(){
+  $('#k7BedWarn')?.classList.remove('show');
+  try{localStorage.setItem('k7_bed_warn_'+wibDate(nowMs()),'1')}catch{}
+}
+function seenWarn(){try{return localStorage.getItem('k7_bed_warn_'+wibDate(nowMs()))==='1'}catch{return false}}
+
+/* ---------- penerapan fase ---------- */
+function markNav(){
+  const on=phase!=='open';
+  document.documentElement.classList.toggle('k7-bed-on',on);
+  document.documentElement.classList.toggle('k7-bed-locked',phase==='locked');
+  $$('#nav button[data-page]').forEach(b=>{
+    const id=b.dataset.page;
+    const off=(phase==='warning'&&RESTRICTED.includes(id))||(phase==='locked'&&!ALLOWED_LOCKED.includes(id));
+    if(off)b.setAttribute('data-bed-off','');else b.removeAttribute('data-bed-off');
+  });
+}
+function applyPill(){
+  const pill=$('#k7BedPill');if(!pill)return;
+  if(phase==='open'){pill.classList.remove('show','locked');return}
+  pill.classList.add('show');pill.classList.toggle('locked',phase==='locked');
+  pill.innerHTML=phase==='warning'
+    ?`${icon('moon-star')} Jam tidur · telkom, Chats, Social ditutup · portal ditutup ${fmt(cfg.lock)} WIB`
+    :`${icon('moon')} Portal ditutup · dibuka kembali ${fmt(cfg.reopen)} WIB`;
+  lucide();
+}
+function applyLockOverlay(){
+  const lock=$('#k7BedLock');if(!lock)return;
+  const show=phase==='locked'&&!ALLOWED_LOCKED.includes(activePage())&&!($('#k7fbModal')&&!$('#k7fbModal').hidden);
+  lock.classList.toggle('show',show);
+  if(show){
+    /* sidebar tetap terlihat di desktop agar Ringkasan/Pengaturan/Keluar tetap terjangkau */
+    const sb=$('.sidebar'),r=sb?sb.getBoundingClientRect():null;
+    const left=r&&r.width&&r.width<420&&r.left<=0&&getComputedStyle(sb).display!=='none'&&r.right<window.innerWidth*0.6?Math.round(r.right):0;
+    lock.style.left=left+'px';lock.style.top='0';lock.style.right='0';lock.style.bottom='0';
+  }
+}
+function leaveRestricted(){
+  /* sedang di halaman yang ditutup → pindah ke Ringkasan */
+  const p=activePage();
+  if(phase==='warning'&&RESTRICTED.includes(p)){goPage('dashboard');toast('Fitur ini ditutup karena sudah jam tidur.')}
+}
+function fillTexts(){
+  const set=(sel,v)=>$$(sel).forEach(e=>e.textContent=v);
+  set('[data-k7bed-lock]',fmt(cfg.lock));set('[data-k7bed-warning]',fmt(cfg.warning)+' WIB');
+  set('[data-k7bed-ops]',`${fmt(cfg.reopen)} – ${fmt(cfg.lock)} WIB`);set('[data-k7bed-clock]',fmt(cfg.warning));
+}
+function evaluate(){
+  ensureUI();
+  const ms=nowMs(),p=phaseAt(ms);
+  const changed=p!==phase||lastPhase===null;
+  const prev=phase;phase=p;
+  fillTexts();
+  if(changed){
+    markNav();applyPill();
+    if(phase==='warning'){
+      /* 21.00: pop-up peringatan pertama (sekali per malam) */
+      if(!seenWarn())$('#k7BedWarn')?.classList.add('show');
+      leaveRestricted();
+    }
+    if(phase==='locked'){
+      $('#k7BedWarn')?.classList.remove('show');
+      if(!ALLOWED_LOCKED.includes(activePage()))goPage('dashboard');
+      applyLockOverlay();
+    }
+    if(phase==='open'){
+      $('#k7BedWarn')?.classList.remove('show');$('#k7BedLock')?.classList.remove('show');
+      if(lastPhase!==null&&prev==='locked')toast(`Selamat pagi! Portal sudah dibuka kembali (${fmt(cfg.reopen)} WIB).`);
+    }
+    if(lastPhase!==null||phase!=='open')document.dispatchEvent(new CustomEvent('k7:bedtime',{detail:{phase,previous:prev}}));
+    lastPhase=phase;lucide();
+  }
+  /* hitung mundur */
+  const t=hms(untilNext(ms));
+  $$('#k7BedWarn [data-k7bed-count],#k7BedLock [data-k7bed-count]').forEach(el=>{const small=el.querySelector('small');const txt=(el.firstChild&&el.firstChild.nodeType===3)?el.firstChild:null;if(txt)txt.nodeValue=t});
+}
+/* klik menu fitur yang ditutup */
+document.addEventListener('click',e=>{
+  if(phase==='open')return;
+  const el=e.target.closest?.('#nav button[data-page],[data-go]');if(!el)return;
+  const id=el.dataset.page||el.dataset.go;
+  if(phase==='warning'&&RESTRICTED.includes(id)){e.preventDefault();e.stopPropagation();toast('Fitur ini ditutup karena sudah jam tidur.')}
+},true);
+/* halaman aktif berubah (navigasi apa pun) */
+new MutationObserver(()=>{if(phase==='open')return;if(phase==='warning')leaveRestricted();applyLockOverlay()}).observe(document.body,{subtree:true,attributes:true,attributeFilter:['class']});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)sync()});
+function boot(){
+  ensureUI();evaluate();sync();
+  clearInterval(tickT);tickT=setInterval(evaluate,1000);
+  setInterval(sync,5*60*1000);
+}
+window.k7Bedtime={phase:()=>phase,sync};
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
 })();
 </script>
 </body>
