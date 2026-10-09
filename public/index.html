@@ -28687,148 +28687,6 @@ function boot(){scan();mo.observe(document.body,{subtree:true,childList:true,cha
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
 })();
 </script>
-<style id="k7-voice-v158">
-.k7-ai-compose-row{display:flex!important;align-items:flex-end!important;gap:8px!important;flex-wrap:nowrap!important}
-.k7-ai-compose-row>.k7-ai-input{flex:1 1 auto!important;min-width:0!important;width:auto!important}
-.k7-ai-compose-row>button,.k7-ai-compose-row>label{flex:none!important;width:42px!important;height:42px!important;margin:0!important}
-.k7-voice-mic{width:42px;height:42px;border-radius:14px;border:1px solid var(--line,rgba(120,130,160,.35));background:var(--surface,#fff);color:var(--accent-primary,#2563eb);display:inline-grid;place-items:center;cursor:pointer;transition:transform .15s,background .2s,box-shadow .2s}
-.k7-voice-mic:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(37,99,235,.2)}
-.k7-voice-mic.on{background:linear-gradient(135deg,#2563eb,#22a7e8);color:#fff;border-color:transparent}
-.k7-voice-mic svg{width:20px;height:20px}
-.k7-voice{display:none;margin:0 14px 10px;padding:14px;border-radius:18px;border:1px solid var(--line,rgba(120,130,160,.35));background:linear-gradient(160deg,color-mix(in srgb,var(--accent-primary,#2563eb) 9%,var(--surface,#fff)),var(--surface,#fff));align-items:center;gap:14px}
-.k7-voice.show{display:flex}
-.k7-voice-orb{flex:none;width:58px;height:58px;border-radius:50%;border:0;color:#fff;background:radial-gradient(circle at 30% 25%,#7dd3fc,#2563eb 70%);display:grid;place-items:center;cursor:pointer;position:relative;box-shadow:0 6px 20px rgba(37,99,235,.4)}
-.k7-voice-orb svg{width:24px;height:24px;position:relative;z-index:1}
-.k7-voice-orb::before,.k7-voice-orb::after{content:"";position:absolute;inset:0;border-radius:50%;border:2px solid #38bdf8;opacity:0}
-.k7-voice[data-st="listen"] .k7-voice-orb::before{animation:k7vPulse 1.5s ease-out infinite}
-.k7-voice[data-st="listen"] .k7-voice-orb::after{animation:k7vPulse 1.5s ease-out .75s infinite}
-.k7-voice[data-st="speak"] .k7-voice-orb{background:radial-gradient(circle at 30% 25%,#86efac,#16a34a 70%);box-shadow:0 6px 20px rgba(22,163,74,.4);animation:k7vBeat .9s ease-in-out infinite}
-.k7-voice[data-st="think"] .k7-voice-orb{background:radial-gradient(circle at 30% 25%,#fde68a,#d97706 70%);animation:k7vSpin 1.1s linear infinite}
-.k7-voice[data-st="error"] .k7-voice-orb{background:radial-gradient(circle at 30% 25%,#fca5a5,#dc2626 70%)}
-@keyframes k7vPulse{0%{transform:scale(1);opacity:.7}100%{transform:scale(1.9);opacity:0}}
-@keyframes k7vBeat{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
-@keyframes k7vSpin{to{transform:rotate(360deg)}}
-.k7-voice-body{min-width:0;flex:1}
-.k7-voice-body b{display:block;font-size:14px}
-.k7-voice-text{margin-top:2px;font-size:13px;opacity:.8;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
-.k7-voice-side{display:flex;flex-direction:column;gap:6px;flex:none}
-.k7-voice-side button,.k7-voice-side select{font:inherit;font-size:12px;font-weight:700;border-radius:10px;border:1px solid var(--line,rgba(120,130,160,.35));background:var(--surface,#fff);color:inherit;padding:6px 10px;cursor:pointer}
-.k7-voice-side .stop{color:#b91c1c}
-@media (max-width:520px){.k7-voice{flex-wrap:wrap}.k7-voice-side{flex-direction:row;width:100%}}
-.k7-ai-compose-row>.k7-ai-input::placeholder{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-</style>
-<script id="k7-voice-v158-js">
-(()=>{
-const SR=window.SpeechRecognition||window.webkitSpeechRecognition,TTS=window.speechSynthesis;
-const $=(s,r=document)=>r.querySelector(s);
-const LANGS=[['id-ID','Indonesia'],['en-US','English']];
-let lang='id-ID';try{lang=localStorage.getItem('k7_voice_lang')||lang}catch{}
-let on=false,state='idle',rec=null,muted=false,retries=0,lastSpoken='',voiceTurn=false,mo=null;
-const ICON={mic:'mic',stop:'square'};
-const icons=()=>{try{window.lucide?.createIcons?.()}catch{}};
-function say(msg,st,txt){const p=$('#k7Voice');if(!p)return;state=st||state;p.dataset.st=state;$('#k7VoiceTitle',p).textContent=msg;$('#k7VoiceText',p).textContent=txt||''}
-function clean(t){
-  return String(t||'')
-    .replace(/```[\s\S]*?```/g,' ')
-    .replace(/`([^`]*)`/g,'$1')
-    .replace(/!\[[^\]]*\]\([^)]*\)/g,' ')
-    .replace(/\[([^\]]+)\]\([^)]*\)/g,'$1')
-    .replace(/https?:\/\/\S+/g,' tautan ')
-    .replace(/^\s{0,3}#{1,6}\s*/gm,'')
-    .replace(/^\s*[-*+]\s+/gm,'')
-    .replace(/[*_~>|#]+/g,' ')
-    .replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}]/gu,'')
-    .replace(/\s+/g,' ').trim();
-}
-function chunks(t){const out=[];let cur='';for(const s of t.split(/(?<=[.!?。\n])\s+/)){if((cur+' '+s).length>200&&cur){out.push(cur);cur=s}else cur=(cur?cur+' ':'')+s}if(cur)out.push(cur);return out}
-function voiceFor(l){const vs=TTS?.getVoices?.()||[];const pre=l.slice(0,2);return vs.find(v=>v.lang===l)||vs.find(v=>v.lang.toLowerCase().startsWith(pre))||null}
-function speak(text){
-  if(!TTS||muted||!text){after();return}
-  TTS.cancel();const parts=chunks(text);if(!parts.length){after();return}
-  say('Berbicara…','speak',text.slice(0,140));
-  parts.forEach((p,i)=>{const u=new SpeechSynthesisUtterance(p);u.lang=lang;const v=voiceFor(lang);if(v)u.voice=v;u.rate=1;
-    if(i===parts.length-1){u.onend=()=>{if(on&&state==='speak')after()};u.onerror=()=>{if(on&&state==='speak')after()}}
-    TTS.speak(u)});
-}
-function after(){if(on)setTimeout(()=>{if(on)listen()},350)}
-function listen(){
-  if(!on||!SR)return;
-  try{TTS?.cancel()}catch{}
-  rec=new SR();rec.lang=lang;rec.interimResults=true;rec.continuous=false;rec.maxAlternatives=1;
-  let final='',got=false;
-  say('Mendengarkan…','listen','Silakan bicara');
-  rec.onresult=e=>{let interim='';for(let i=e.resultIndex;i<e.results.length;i++){const r=e.results[i];if(r.isFinal)final+=r[0].transcript;else interim+=r[0].transcript}got=true;say('Mendengarkan…','listen',(final+interim).trim())};
-  rec.onerror=e=>{
-    if(e.error==='not-allowed'||e.error==='service-not-allowed'){stop();say('Izin mikrofon ditolak','error','Izinkan mikrofon di pengaturan browser, lalu coba lagi.');show(true);state='error';return}
-    if(e.error==='audio-capture'){stop();show(true);say('Mikrofon tidak ditemukan','error','Pastikan perangkat memiliki mikrofon.');return}
-  };
-  rec.onend=()=>{
-    if(!on||state!=='listen')return;
-    const t=final.trim();
-    if(t){retries=0;submit(t)}
-    else if(++retries>=3){stop();show(true);say('Tidak ada suara terdengar','error','Voice Mode dihentikan. Tekan mikrofon untuk memulai lagi.')}
-    else listen();
-  };
-  try{rec.start()}catch{setTimeout(()=>on&&listen(),400)}
-}
-function submit(text){
-  const input=$('#k7AiInput'),btn=$('#k7AiSend');if(!input||!btn){stop();return}
-  say('Memproses…','think',text);voiceTurn=true;
-  input.value=text;btn.click();
-  // jawaban selesai ketika tombol kirim aktif kembali
-  mo?.disconnect();let started=btn.disabled;
-  mo=new MutationObserver(()=>{
-    if(btn.disabled){started=true;return}
-    if(!started)return;
-    mo.disconnect();finishTurn();
-  });
-  mo.observe(btn,{attributes:true,attributeFilter:['disabled']});
-  setTimeout(()=>{if(!started&&on&&state==='think'){mo.disconnect();finishTurn()}},4000);
-}
-function finishTurn(){
-  if(!on||!voiceTurn)return;voiceTurn=false;
-  const msgs=[...document.querySelectorAll('#k7AiMessages .k7-ai-message:not(.user)')];
-  const last=msgs[msgs.length-1];if(!last){after();return}
-  const b=last.cloneNode(true);b.querySelectorAll('small,button,.k7-ai-actions,pre,canvas,svg').forEach(x=>x.remove());
-  const t=clean(b.textContent);
-  speak(t.slice(0,2500));
-}
-function show(v){$('#k7Voice')?.classList.toggle('show',v)}
-function start(){
-  if(!SR){alert('Browser ini belum mendukung pengenalan suara. Gunakan Chrome, Edge, atau Safari terbaru.');return}
-  on=true;retries=0;show(true);$('#k7VoiceMic')?.classList.add('on');
-  const sel=$('#k7VoiceLang');if(sel)sel.value=lang;
-  listen();
-}
-function stop(){
-  on=false;voiceTurn=false;mo?.disconnect();
-  try{rec&&(rec.onend=null,rec.abort())}catch{}try{TTS?.cancel()}catch{}
-  state='idle';$('#k7VoiceMic')?.classList.remove('on');show(false);
-}
-function build(){
-  const row=$('.k7-ai-compose-row');if(!row||$('#k7VoiceMic'))return;
-  const mic=document.createElement('button');mic.type='button';mic.id='k7VoiceMic';mic.className='k7-voice-mic';mic.title='Voice Mode';mic.setAttribute('aria-label','Voice Mode');
-  mic.innerHTML=`<i data-lucide="${ICON.mic}"></i>`;
-  row.insertBefore(mic,$('#k7AiSend'));
-  const panel=document.createElement('div');panel.id='k7Voice';panel.className='k7-voice';panel.setAttribute('role','status');panel.setAttribute('aria-live','polite');
-  panel.innerHTML=`<button type="button" class="k7-voice-orb" id="k7VoiceOrb" aria-label="Ketuk untuk bicara / menyela"><i data-lucide="audio-lines"></i></button><div class="k7-voice-body"><b id="k7VoiceTitle">Voice Mode</b><div class="k7-voice-text" id="k7VoiceText"></div></div><div class="k7-voice-side"><select id="k7VoiceLang" aria-label="Bahasa suara">${LANGS.map(l=>`<option value="${l[0]}">${l[1]}</option>`).join('')}</select><button type="button" id="k7VoiceMute">Suara: aktif</button><button type="button" class="stop" id="k7VoiceStop">Selesai</button></div>`;
-  $('.k7-ai-compose').before(panel);
-  mic.addEventListener('click',()=>on?stop():start());
-  $('#k7VoiceStop').addEventListener('click',stop);
-  $('#k7VoiceMute').addEventListener('click',e=>{muted=!muted;e.currentTarget.textContent=muted?'Suara: mati':'Suara: aktif';if(muted)try{TTS?.cancel()}catch{}});
-  $('#k7VoiceLang').addEventListener('change',e=>{lang=e.target.value;try{localStorage.setItem('k7_voice_lang',lang)}catch{};if(on){try{rec&&(rec.onend=null,rec.abort())}catch{}try{TTS?.cancel()}catch{}listen()}});
-  // ketuk orb: menyela jawaban lalu langsung mendengarkan
-  $('#k7VoiceOrb').addEventListener('click',()=>{if(!on)return;if(state==='speak'||state==='error'||state==='idle'){try{TTS?.cancel()}catch{}retries=0;on=true;listen()}});
-  if(!SR)mic.title='Voice Mode (browser belum mendukung pengenalan suara)';
-  icons();
-}
-// overlay AI dibuat saat pertama dibuka → pasang setelah muncul
-new MutationObserver(()=>{if($('.k7-ai-compose-row')&&!$('#k7VoiceMic'))build();const ov=$('#k7GeminiOverlay');if(on&&ov&&!ov.classList.contains('show'))stop()}).observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class']});
-document.addEventListener('visibilitychange',()=>{if(document.hidden&&on)stop()});
-window.addEventListener('pagehide',()=>{try{TTS?.cancel()}catch{}});
-try{TTS?.getVoices?.()}catch{}
-})();
-</script>
 <div class="trk-modal" id="trkModal" aria-hidden="true"><div class="trk-modal-backdrop" data-trk-close></div><div class="trk-modal-card" role="dialog" aria-modal="true" aria-labelledby="trkModalTitle"><header class="trk-modal-head"><h3 id="trkModalTitle">Tambah</h3><button type="button" class="trk-x" data-trk-close aria-label="Tutup"><i data-lucide="x"></i></button></header><div class="trk-modal-body" id="trkModalBody"></div><footer class="trk-modal-foot"><button type="button" class="btn" data-trk-close>Batal</button><button type="button" class="btn primary" id="trkSaveBtn"><i data-lucide="save"></i> Simpan</button></footer></div></div>
 <style id="k7-tracker-v157">
 /* ===== V157 · TRACKER: PRESTASI · BOOK READING · QURAN READING ===== */
@@ -29267,5 +29125,199 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 .k7fb-embed-foot{margin-top:10px;text-align:center;font-size:12px;color:#667085}
 .k7fb-embed-foot a{color:var(--accent-primary,#2563eb);font-weight:700}
 </style>
+<style id="k7-dark-fix-v158">
+/* v158 · Mode gelap konsisten dengan Pengaturan tema (telkom.7mit dan komponen yang masih berwarna terang tetap) */
+:is(html[data-theme-resolved="dark"],html[data-theme="dark"]) .telkom-card{background:var(--theme-surface,#0d192b);border-color:var(--theme-line,rgba(148,163,184,.18));box-shadow:var(--theme-card-shadow,0 18px 46px rgba(0,0,0,.28))}
+:is(html[data-theme-resolved="dark"],html[data-theme="dark"]) .telkom-brand small,:is(html[data-theme-resolved="dark"],html[data-theme="dark"]) .telkom-group-title,:is(html[data-theme-resolved="dark"],html[data-theme="dark"]) .telkom-person-copy small,:is(html[data-theme-resolved="dark"],html[data-theme="dark"]) .telkom-hero p,:is(html[data-theme-resolved="dark"],html[data-theme="dark"]) .telkom-loading,:is(html[data-theme-resolved="dark"],html[data-theme="dark"]) .telkom-footnote{color:var(--theme-muted,#9fb0c8)}
+:is(html[data-theme-resolved="dark"],html[data-theme="dark"]) .telkom-mode-btn{background:var(--theme-surface-2,#111f33);color:var(--theme-text,#edf4ff);border-color:var(--theme-line)}
+:is(html[data-theme-resolved="dark"],html[data-theme="dark"]) .telkom-mode-btn.active{background:color-mix(in srgb,var(--accent-primary,#2563eb) 22%,var(--theme-surface-2,#111f33));color:#dbeafe;border-color:color-mix(in srgb,var(--accent-primary,#2563eb) 55%,transparent)}
+:is(html[data-theme-resolved="dark"],html[data-theme="dark"]) .telkom-person{background:var(--theme-surface-2,#111f33);border-color:var(--theme-line);color:var(--theme-text,#edf4ff)}
+:is(html[data-theme-resolved="dark"],html[data-theme="dark"]) .telkom-person:hover{background:var(--theme-surface-3,#17263c)}
+:is(html[data-theme-resolved="dark"],html[data-theme="dark"]) .telkom-person.active{background:color-mix(in srgb,var(--accent-primary,#2563eb) 24%,var(--theme-surface-2,#111f33));border-color:color-mix(in srgb,var(--accent-primary,#2563eb) 60%,transparent)}
+:is(html[data-theme-resolved="dark"],html[data-theme="dark"]) .telkom-person-copy b,:is(html[data-theme-resolved="dark"],html[data-theme="dark"]) .telkom-hero h3,:is(html[data-theme-resolved="dark"],html[data-theme="dark"]) .telkom-brand b{color:var(--theme-text,#edf4ff)!important}
+:is(html[data-theme-resolved="dark"],html[data-theme="dark"]) .telkom-hero{background:radial-gradient(circle at 15% 15%,rgba(37,99,235,.22),transparent 34%),radial-gradient(circle at 85% 20%,rgba(124,58,237,.2),transparent 32%),linear-gradient(160deg,var(--theme-surface-2,#111f33),var(--theme-surface,#0d192b));border-color:var(--theme-line)}
+:is(html[data-theme-resolved="dark"],html[data-theme="dark"]) .telkom-selected{background:var(--theme-surface-3,#17263c);border-color:var(--theme-line);color:var(--theme-text,#edf4ff)}
+:is(html[data-theme-resolved="dark"],html[data-theme="dark"]) .telkom-action.call{background:#e2e8f0;color:#0f172a}
+:is(html[data-theme-resolved="dark"],html[data-theme="dark"]) .telkom-footnote{background:var(--theme-surface-2,#111f33);border-color:var(--theme-line)}
+:is(html[data-theme-resolved="dark"],html[data-theme="dark"]) .telkom-search input,:is(html[data-theme-resolved="dark"],html[data-theme="dark"]) .telkom-meeting-row input{background:var(--theme-input,#101e31);color:var(--theme-text,#edf4ff);border-color:var(--theme-line)}
+:is(html[data-theme-resolved="dark"],html[data-theme="dark"]) .telkom-meeting-join{background:var(--theme-surface-2,#111f33);border-color:var(--theme-line);color:var(--theme-text,#edf4ff)}
+:is(html[data-theme-resolved="dark"],html[data-theme="dark"]) :is(.jobdesc-open-btn,.beta-item,.telkom-directory-retry,#autoSyncStatus.autosync-status){background:var(--theme-surface-2,#111f33)!important;color:var(--theme-text,#edf4ff)!important;border-color:var(--theme-line,rgba(148,163,184,.18))!important}
+:is(html[data-theme-resolved="dark"],html[data-theme="dark"]) .jobdesc-open-btn:hover{background:var(--theme-surface-3,#17263c)!important}
+:is(html[data-theme-resolved="dark"],html[data-theme="dark"]) .beta-item :is(b,strong,h4){color:var(--theme-text,#edf4ff)}
+</style>
+<style id="k7-voice-v158">
+.k7-ai-compose-row{display:flex!important;align-items:flex-end!important;gap:8px!important;flex-wrap:nowrap!important}
+.k7-ai-compose-row>.k7-ai-input{flex:1 1 auto!important;min-width:0!important;width:auto!important}
+.k7-ai-compose-row>button,.k7-ai-compose-row>label{flex:none!important;width:42px!important;height:42px!important;margin:0!important}
+.k7-voice-mic{width:42px;height:42px;border-radius:14px;border:1px solid var(--line,rgba(120,130,160,.35));background:var(--surface,#fff);color:var(--accent-primary,#2563eb);display:inline-grid;place-items:center;cursor:pointer;transition:transform .15s,background .2s,box-shadow .2s}
+.k7-voice-mic:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(37,99,235,.2)}
+.k7-voice-mic.on{background:linear-gradient(135deg,#2563eb,#22a7e8);color:#fff;border-color:transparent}
+.k7-voice-mic svg{width:20px;height:20px}
+.k7-voice{display:none;margin:0 14px 10px;padding:14px;border-radius:18px;border:1px solid var(--line,rgba(120,130,160,.35));background:linear-gradient(160deg,color-mix(in srgb,var(--accent-primary,#2563eb) 9%,var(--surface,#fff)),var(--surface,#fff));align-items:center;gap:14px}
+.k7-voice.show{display:flex}
+.k7-voice-orb{flex:none;width:58px;height:58px;border-radius:50%;border:0;color:#fff;background:radial-gradient(circle at 30% 25%,#7dd3fc,#2563eb 70%);display:grid;place-items:center;cursor:pointer;position:relative;box-shadow:0 6px 20px rgba(37,99,235,.4)}
+.k7-voice-orb svg{width:24px;height:24px;position:relative;z-index:1}
+.k7-voice-orb::before,.k7-voice-orb::after{content:"";position:absolute;inset:0;border-radius:50%;border:2px solid #38bdf8;opacity:0}
+.k7-voice[data-st="listen"] .k7-voice-orb::before{animation:k7vPulse 1.5s ease-out infinite}
+.k7-voice[data-st="listen"] .k7-voice-orb::after{animation:k7vPulse 1.5s ease-out .75s infinite}
+.k7-voice[data-st="speak"] .k7-voice-orb{background:radial-gradient(circle at 30% 25%,#86efac,#16a34a 70%);box-shadow:0 6px 20px rgba(22,163,74,.4);animation:k7vBeat .9s ease-in-out infinite}
+.k7-voice[data-st="think"] .k7-voice-orb{background:radial-gradient(circle at 30% 25%,#fde68a,#d97706 70%);animation:k7vSpin 1.1s linear infinite}
+.k7-voice[data-st="error"] .k7-voice-orb{background:radial-gradient(circle at 30% 25%,#fca5a5,#dc2626 70%)}
+@keyframes k7vPulse{0%{transform:scale(1);opacity:.7}100%{transform:scale(1.9);opacity:0}}
+@keyframes k7vBeat{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
+@keyframes k7vSpin{to{transform:rotate(360deg)}}
+.k7-voice-body{min-width:0;flex:1}
+.k7-voice-body b{display:block;font-size:14px}
+.k7-voice-text{margin-top:2px;font-size:13px;opacity:.8;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.k7-voice-side{display:flex;flex-direction:column;gap:6px;flex:none}
+.k7-voice-side button,.k7-voice-side select{font:inherit;font-size:12px;font-weight:700;border-radius:10px;border:1px solid var(--line,rgba(120,130,160,.35));background:var(--surface,#fff);color:inherit;padding:6px 10px;cursor:pointer}
+.k7-voice-side .stop{color:#b91c1c}
+@media (max-width:520px){.k7-voice{flex-wrap:wrap}.k7-voice-side{flex-direction:row;width:100%}}
+.k7-ai-compose-row>.k7-ai-input::placeholder{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+</style>
+<script id="k7-voice-v158-js">
+(()=>{
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition,TTS=window.speechSynthesis;
+const $=(s,r=document)=>r.querySelector(s);
+const LANGS=[['id-ID','Indonesia'],['en-US','English']];
+let lang='id-ID';try{lang=localStorage.getItem('k7_voice_lang')||lang}catch{}
+let on=false,state='idle',rec=null,muted=false,retries=0,lastSpoken='',voiceTurn=false,mo=null;
+const ICON={mic:'mic',stop:'square'};
+const icons=()=>{try{window.lucide?.createIcons?.()}catch{}};
+function say(msg,st,txt){const p=$('#k7Voice');if(!p)return;state=st||state;p.dataset.st=state;$('#k7VoiceTitle',p).textContent=msg;$('#k7VoiceText',p).textContent=txt||''}
+function clean(t){
+  return String(t||'')
+    .replace(/```[\s\S]*?```/g,' ')
+    .replace(/`([^`]*)`/g,'$1')
+    .replace(/!\[[^\]]*\]\([^)]*\)/g,' ')
+    .replace(/\[([^\]]+)\]\([^)]*\)/g,'$1')
+    .replace(/https?:\/\/\S+/g,' tautan ')
+    .replace(/^\s{0,3}#{1,6}\s*/gm,'')
+    .replace(/^\s*[-*+]\s+/gm,'')
+    .replace(/[*_~>|#]+/g,' ')
+    .replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}]/gu,'')
+    .replace(/\s+/g,' ').trim();
+}
+function chunks(t){const out=[];let cur='';for(const s of t.split(/(?<=[.!?。\n])\s+/)){if((cur+' '+s).length>200&&cur){out.push(cur);cur=s}else cur=(cur?cur+' ':'')+s}if(cur)out.push(cur);return out}
+function voiceFor(l){try{const vs=TTS?.getVoices?.()||[];const pre=l.slice(0,2);return vs.find(v=>v.lang===l)||vs.find(v=>v.lang.toLowerCase().startsWith(pre))||null}catch{return null}}
+let keep=null;
+function unlockTTS(){ /* iOS/Safari: suara hanya boleh dimulai dari tap pengguna → "bangunkan" TTS saat tombol mic ditekan */
+  try{if(!TTS)return;const u=new SpeechSynthesisUtterance(' ');u.volume=0;u.lang=lang;TTS.speak(u)}catch{}
+}
+function speak(text){
+  try{
+    if(!TTS||muted||!text){after();return}
+    TTS.cancel();const parts=chunks(text);if(!parts.length){after();return}
+    say('Berbicara…','speak',text.slice(0,140));
+    clearInterval(keep);keep=setInterval(()=>{try{if(TTS.speaking){TTS.pause();TTS.resume()}}catch{}},12000); /* Chrome memotong ucapan >15 dtk */
+    const fin=()=>{clearInterval(keep);if(on&&state==='speak')after()};
+    let guard=setTimeout(fin,Math.max(8000,text.length*90)); /* jaga-jaga bila onend tidak pernah terpanggil */
+    parts.forEach((p,i)=>{const u=new SpeechSynthesisUtterance(p);u.lang=lang;const v=voiceFor(lang);if(v)u.voice=v;u.rate=1;
+      if(i===parts.length-1){u.onend=()=>{clearTimeout(guard);fin()};u.onerror=()=>{clearTimeout(guard);fin()}}
+      else u.onerror=()=>{};
+      TTS.speak(u)});
+  }catch{after()}
+}
+function after(){if(on)setTimeout(()=>{if(on)listen()},350)}
+const ERR={
+  'not-allowed':['Izin mikrofon ditolak','Izinkan mikrofon untuk situs ini di pengaturan browser, lalu tekan mikrofon lagi.'],
+  'service-not-allowed':['Pengenalan suara tidak diizinkan','Aktifkan Dikte/Siri atau izin mikrofon di pengaturan perangkat, lalu coba lagi.'],
+  'audio-capture':['Mikrofon tidak ditemukan','Pastikan perangkat memiliki mikrofon yang aktif.'],
+  'network':['Pengenalan suara butuh internet','Periksa koneksi internet, lalu tekan mikrofon lagi.'],
+  'language-not-supported':['Bahasa belum didukung','Pilih bahasa lain pada pilihan bahasa.']
+};
+function fatal(code){const m=ERR[code]||['Voice Mode berhenti','Terjadi kendala pada pengenalan suara. Coba lagi.'];stop();show(true);say(m[0],'error',m[1])}
+function listen(){
+  if(!on||!SR)return;
+  try{TTS?.cancel()}catch{}
+  let final='',got=false,fatalErr='';
+  try{
+    rec=new SR();rec.lang=lang;rec.interimResults=true;rec.continuous=false;rec.maxAlternatives=1;
+    say('Mendengarkan…','listen','Silakan bicara');
+    rec.onresult=e=>{try{let interim='';for(let i=e.resultIndex;i<e.results.length;i++){const r=e.results[i];if(r.isFinal)final+=r[0].transcript;else interim+=r[0].transcript}got=true;say('Mendengarkan…','listen',(final+interim).trim())}catch{}};
+    rec.onerror=e=>{const c=e&&e.error;if(c==='no-speech'||c==='aborted')return;fatalErr=c||'unknown'};
+    rec.onend=()=>{
+      try{
+        if(!on||state!=='listen')return;
+        if(fatalErr){fatal(fatalErr);return}
+        const t=final.trim();
+        if(t){retries=0;submit(t)}
+        else if(++retries>=3){stop();show(true);say('Tidak ada suara terdengar','error','Voice Mode dihentikan. Tekan mikrofon untuk memulai lagi.')}
+        else setTimeout(()=>on&&listen(),300);
+      }catch{stop()}
+    };
+    rec.start();
+  }catch{
+    /* start() dapat melempar bila recognition sebelumnya belum selesai → coba lagi sekali */
+    if(++retries>=3){stop();show(true);say('Voice Mode belum bisa dimulai','error','Tutup dan buka lagi chat AI, lalu tekan mikrofon.')}
+    else setTimeout(()=>on&&listen(),500);
+  }
+}
+function submit(text){
+  const input=$('#k7AiInput'),btn=$('#k7AiSend');if(!input||!btn){stop();return}
+  say('Memproses…','think',text);voiceTurn=true;
+  const go=()=>{
+    if(!on)return;
+    input.value=text;btn.click();
+    mo?.disconnect();let started=btn.disabled;
+    mo=new MutationObserver(()=>{
+      if(btn.disabled){started=true;return}
+      if(!started)return;
+      mo.disconnect();finishTurn();
+    });
+    mo.observe(btn,{attributes:true,attributeFilter:['disabled']});
+    setTimeout(()=>{if(!started&&on&&state==='think'){mo.disconnect();voiceTurn=false;say('Pesan belum terkirim','error','Coba bicara lagi.');after()}},5000);
+  };
+  if(btn.disabled){ /* AI masih memproses pesan sebelumnya */
+    let n=0;const w=setInterval(()=>{if(!on||++n>120){clearInterval(w);return}if(!btn.disabled){clearInterval(w);go()}},500);
+  }else go();
+}
+function finishTurn(){
+  try{
+    if(!on||!voiceTurn)return;voiceTurn=false;
+    const msgs=[...document.querySelectorAll('#k7AiMessages .k7-ai-message:not(.user)')];
+    const last=msgs[msgs.length-1];if(!last){after();return}
+    const b=last.cloneNode(true);b.querySelectorAll('small,button,.k7-ai-actions,pre,canvas,svg').forEach(x=>x.remove());
+    let t=clean(b.textContent);
+    if(/belum dapat digunakan|belum tersambung/i.test(t)){say('AI belum bisa menjawab','error','Coba tanyakan lagi sebentar lagi.');speak('Maaf, intellegence belum bisa menjawab. Silakan coba lagi.');return}
+    speak(t.slice(0,2500));
+  }catch{after()}
+}
+function show(v){$('#k7Voice')?.classList.toggle('show',v)}
+function start(){
+  if(!SR){show(true);say('Browser belum mendukung suara','error','Gunakan Chrome, Edge, atau Safari terbaru untuk Voice Mode.');return}
+  unlockTTS();on=true;retries=0;show(true);$('#k7VoiceMic')?.classList.add('on');
+  const sel=$('#k7VoiceLang');if(sel)sel.value=lang;
+  listen();
+}
+function stop(){
+  clearInterval(keep);on=false;voiceTurn=false;mo?.disconnect();
+  try{rec&&(rec.onend=null,rec.abort())}catch{}try{TTS?.cancel()}catch{}
+  state='idle';$('#k7VoiceMic')?.classList.remove('on');show(false);
+}
+function build(){
+  const row=$('.k7-ai-compose-row');if(!row||$('#k7VoiceMic'))return;
+  const mic=document.createElement('button');mic.type='button';mic.id='k7VoiceMic';mic.className='k7-voice-mic';mic.title='Voice Mode';mic.setAttribute('aria-label','Voice Mode');
+  mic.innerHTML=`<i data-lucide="${ICON.mic}"></i>`;
+  row.insertBefore(mic,$('#k7AiSend'));
+  const panel=document.createElement('div');panel.id='k7Voice';panel.className='k7-voice';panel.setAttribute('role','status');panel.setAttribute('aria-live','polite');
+  panel.innerHTML=`<button type="button" class="k7-voice-orb" id="k7VoiceOrb" aria-label="Ketuk untuk bicara / menyela"><i data-lucide="audio-lines"></i></button><div class="k7-voice-body"><b id="k7VoiceTitle">Voice Mode</b><div class="k7-voice-text" id="k7VoiceText"></div></div><div class="k7-voice-side"><select id="k7VoiceLang" aria-label="Bahasa suara">${LANGS.map(l=>`<option value="${l[0]}">${l[1]}</option>`).join('')}</select><button type="button" id="k7VoiceMute">Suara: aktif</button><button type="button" class="stop" id="k7VoiceStop">Selesai</button></div>`;
+  $('.k7-ai-compose').before(panel);
+  mic.addEventListener('click',()=>on?stop():start());
+  $('#k7VoiceStop').addEventListener('click',stop);
+  $('#k7VoiceMute').addEventListener('click',e=>{muted=!muted;e.currentTarget.textContent=muted?'Suara: mati':'Suara: aktif';if(muted)try{TTS?.cancel()}catch{}});
+  $('#k7VoiceLang').addEventListener('change',e=>{lang=e.target.value;try{localStorage.setItem('k7_voice_lang',lang)}catch{};if(on){try{rec&&(rec.onend=null,rec.abort())}catch{}try{TTS?.cancel()}catch{}listen()}});
+  // ketuk orb: menyela jawaban lalu langsung mendengarkan
+  $('#k7VoiceOrb').addEventListener('click',()=>{unlockTTS();if(!on)return;if(state==='speak'||state==='error'||state==='idle'){try{TTS?.cancel()}catch{}retries=0;on=true;listen()}});
+  if(!SR)mic.title='Voice Mode (browser belum mendukung pengenalan suara)';
+  icons();
+}
+// overlay AI dibuat saat pertama dibuka → pasang setelah muncul
+new MutationObserver(()=>{if($('.k7-ai-compose-row')&&!$('#k7VoiceMic'))build();const ov=$('#k7GeminiOverlay');if(on&&ov&&!ov.classList.contains('show'))stop()}).observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class']});
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&on)stop()});
+window.addEventListener('pagehide',()=>{try{TTS?.cancel()}catch{}});
+try{TTS?.getVoices?.();TTS?.addEventListener?.('voiceschanged',()=>{})}catch{}
+})();
+</script>
 </body>
 </html>
