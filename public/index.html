@@ -12499,7 +12499,9 @@ html[data-theme-resolved="dark"] .quiz-choice-note-v141{
             <div id="duesPosPane" hidden><div class="dues-pos-hero"><div><span class="dues-pos-kicker"><i data-lucide="scan-line"></i> POS BAYAR IURAN</span><h4>Redeem & Review</h4><p>Cash: kode/scan QR Redeem. QRIS: review bukti + hasil screening intellegence.7mit.</p></div><span class="dues-status approved">Petugas Terotorisasi</span></div><div class="dues-cycle-summary" id="duesCycleSummary">
       <div class="dues-cycle-kpi"><small>PERIODE</small><b id="duesPosCycle">Memuat…</b></div>
       <div class="dues-cycle-kpi"><small>TARGET</small><b id="duesPosTarget">Rp0</b></div>
+      <div class="dues-cycle-kpi dues-cycle-kpi-main"><small>TERKUMPUL</small><b id="duesPosCollected">Rp0</b></div>
       <div class="dues-cycle-kpi"><small>LUNAS</small><b id="duesPosPaid">0</b></div>
+      <div class="dues-cycle-kpi"><small>CICIL</small><b id="duesPosPartial">0</b></div>
       <div class="dues-cycle-kpi"><small>DIPROSES</small><b id="duesPosPending">0</b></div>
       <div class="dues-cycle-kpi"><small>BELUM BAYAR</small><b id="duesPosUnpaid">0</b></div>
       <div class="dues-cycle-summary-note" id="duesPosSummaryNote">Rp10.000 per siswa · periode 14 hari.</div>
@@ -25840,8 +25842,8 @@ function telkomCreatePeer(remoteKey){
    const s=x||{},c=s.cycle||{};
    const set=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v};
    set('duesPosCycle',c.starts_on&&c.ends_on?`${duesDate(c.starts_on)} – ${duesDate(c.ends_on)}`:'—');
-   set('duesPosTarget',fmt(s.expected_total||0));set('duesPosPaid',String(s.paid||0));set('duesPosPending',String(s.pending||0));set('duesPosUnpaid',String(s.unpaid||0));
-   set('duesPosSummaryNote',`${Number(s.total_students||0)} siswa × Rp10.000 = ${fmt(s.expected_total||0)} per 2 minggu · terkumpul ${fmt(s.paid_total||0)}${Number(s.partial||0)?` · ${Number(s.partial)} siswa mencicil`:''}.`);
+   set('duesPosTarget',fmt(s.expected_total||0));set('duesPosCollected',fmt(s.paid_total||0));set('duesPosPaid',String(s.paid||0));set('duesPosPartial',String(s.partial||0));set('duesPosPending',String(s.pending||0));set('duesPosUnpaid',String(s.unpaid||0));
+   set('duesPosSummaryNote',`${Number(s.total_students||0)} siswa × Rp10.000 = ${fmt(s.expected_total||0)} per 2 minggu · terkumpul ${fmt(s.paid_total||0)} (sudah termasuk cicilan; tunai ${fmt(s.cash_total||0)} · QRIS ${fmt(s.qris_total||0)}) · sisa ${fmt(Math.max(0,Number(s.expected_total||0)-Number(s.paid_total||0)))}${Number(s.partial||0)?` · ${Number(s.partial)} siswa mencicil`:''}.`);
  }
 async function load(){
    if(duesLoadBusy){duesLoadQueued=true;return}
@@ -29326,5 +29328,9 @@ window.k7Tracker={reload:k=>load(k||store.tab),store};
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else setTimeout(boot,300);
 })();
 </script>
+<style id="k7-dues-pos-total-v158">.dues-cycle-kpi-main{background:linear-gradient(135deg,rgba(37,99,235,.14),rgba(34,167,232,.12));border-color:rgba(37,99,235,.35)!important}.dues-cycle-kpi-main b{color:var(--accent-primary,#2563eb)}
+#duesPosPane .dues-cycle-summary{grid-template-columns:repeat(4,1fr)}#duesPosPane .dues-cycle-kpi:first-child{grid-column:span 2}#duesPosPane .dues-cycle-summary-note{grid-column:1/-1}
+@media(max-width:720px){#duesPosPane .dues-cycle-summary{grid-template-columns:1fr 1fr}#duesPosPane .dues-cycle-kpi:first-child{grid-column:1/-1}}
+</style>
 </body>
 </html>
