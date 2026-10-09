@@ -16479,6 +16479,8 @@ function setCurrentLessonSubject(value){
 
   function chatCurrentAccountKey(){
     const account=window.KELAS7MIT_ACTIVE_ACCOUNT;
+    /* kunci akun asli dari data akun (kolom username di portal_login_accounts), bukan ditebak dari nama */
+    if(account?.accountKey)return String(account.accountKey);
     const username=String(account?.username||"").trim().toLocaleLowerCase("id-ID");
     if(username){
       if(username==="syariful")return "guru:syariful";
@@ -21500,7 +21502,9 @@ document.addEventListener("click",e=>{const t=e.target.closest?.("[data-play-ans
         const st=(lk?.accounts||[]).find(a=>a.account_type==="student");
         trueKey=String(st?.account_key||"");
       }catch(error){}
-      const keyCandidates=[...new Set([trueKey,usernameAccountKey,legacyAccountKey].filter(Boolean))];
+      /* hanya kunci hasil pencarian USERNAME yang dipakai; kunci tebakan dari nama dihapus agar tidak salah akun */
+      if(!trueKey)throw new Error("Username akun.7mit tidak ditemukan atau server akun.7mit tidak dapat dijangkau. Coba lagi.");
+      const keyCandidates=[trueKey];
       /* keyboard HP sering menambahkan spasi di ujung password → coba juga tanpa spasi ujung */
       const passwordCandidates=[...new Set([password,password.trim()].filter(Boolean))];
       let valid=false,usedPassword=password;
@@ -29599,6 +29603,71 @@ function boot(){
 }
 window.k7Bedtime={phase:()=>phase,sync};
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
+})();
+</script>
+<style id="k7-device-v158">
+.k7-gate-privacy{margin:14px 0 0;font-size:11px;line-height:1.55;color:#667085;text-align:center}
+html[data-theme-resolved="dark"] .k7-gate-privacy{color:#9fb0c8}
+</style>
+<script id="k7-device-v158-js">
+(()=>{
+if(window.__k7Dev)return;window.__k7Dev=1;
+const URL_=()=>window.SUPABASE_URL||'https://lajzrempjyoqkubkumhb.supabase.co';
+const KEY='k7_device_reported';
+let busy=false;
+function portalName(){const h=String(location.hostname||'').split('.')[0];return h?h+'.7mit':'portal'}
+const mq=q=>{try{return matchMedia(q).matches}catch{return null}};
+async function collect(){
+  const n=navigator,s=screen,c=n.connection||{},u=n.userAgentData;
+  const d={
+    screen_width:s.width,screen_height:s.height,viewport_width:innerWidth,viewport_height:innerHeight,pixel_ratio:window.devicePixelRatio,color_depth:s.colorDepth,
+    language:n.language,languages:(n.languages||[]).join(','),
+    timezone:(()=>{try{return Intl.DateTimeFormat().resolvedOptions().timeZone}catch{return null}})(),tz_offset_minutes:-new Date().getTimezoneOffset(),
+    cpu_cores:n.hardwareConcurrency,device_memory_gb:n.deviceMemory,max_touch_points:n.maxTouchPoints,
+    color_scheme:mq('(prefers-color-scheme: dark)')?'dark':'light',reduced_motion:mq('(prefers-reduced-motion: reduce)'),
+    network_type:c.effectiveType,network_downlink:c.downlink,save_data:c.saveData,cookies_enabled:n.cookieEnabled,
+    is_standalone:mq('(display-mode: standalone)')===true||n.standalone===true,
+    page_url:location.origin+location.pathname,client_time:new Date().toISOString()
+  };
+  if(u){
+    d.is_mobile=u.mobile;
+    try{
+      const h=await u.getHighEntropyValues(['model','platformVersion','architecture','bitness','fullVersionList','platform']);
+      if(h.model)d.model=h.model;
+      d.platform=h.platform||u.platform;d.platform_version=h.platformVersion;d.architecture=h.architecture;d.bitness=h.bitness;
+      const b=(h.fullVersionList||[]).filter(x=>!/not.?a.?brand|chromium/i.test(x.brand)).pop()||(h.fullVersionList||[])[0];
+      if(b){d.browser=b.brand;d.browser_version=b.version}
+    }catch{}
+  }
+  return d;
+}
+async function report(){
+  if(busy)return;
+  try{
+    const token=window.K7Session?.token?.();if(!token)return;
+    if(localStorage.getItem(KEY)===token)return;
+    busy=true;
+    const device=await collect();
+    const anon=window.SUPABASE_ANON_KEY||'';
+    const r=await fetch(`${URL_()}/functions/v1/account-device-log`,{method:'POST',headers:{'Content-Type':'application/json',apikey:anon,Authorization:anon?`Bearer ${anon}`:'','x-7mit-session':token},body:JSON.stringify({portal:portalName(),device}),keepalive:true});
+    if(r.ok)localStorage.setItem(KEY,token);
+  }catch{}finally{busy=false}
+}
+/* keterangan di halaman login: perangkat & IP dicatat untuk keamanan akun */
+function privacyNote(){
+  if(document.getElementById('k7GatePrivacy'))return;
+  const host=document.querySelector('.access-form-wrap')||document.getElementById('studentGateMessage')?.parentElement;
+  if(!host)return;
+  const p=document.createElement('p');p.id='k7GatePrivacy';p.className='k7-gate-privacy';
+  p.textContent='Demi keamanan akun, alamat IP dan informasi perangkat (jenis perangkat, sistem, browser) dicatat saat kamu masuk. Data ini hanya dipakai untuk keamanan dan dapat dilihat admin.';
+  host.appendChild(p);
+}
+function boot(){
+  privacyNote();setTimeout(privacyNote,1500);
+  report();setInterval(report,4000);
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)report()});
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else setTimeout(boot,500);
 })();
 </script>
 </body>
