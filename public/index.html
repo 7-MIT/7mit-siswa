@@ -25907,9 +25907,9 @@ function telkomCreatePeer(remoteKey){
  document.addEventListener('click',e=>{
    const f=e.target.closest?.('[data-dues-rfilter]');if(f){rosterFilter=f.dataset.duesRfilter;renderRoster();return}
    if(e.target.closest?.('#duesRosterCopy')){
-     const names=(rosterData?.students||[]).filter(x=>x.status==='unpaid'||x.status==='partial').map(x=>x.status==='partial'?`${x.name} (sisa ${fmt(x.remaining)})`:x.name);
+     const names=(rosterData?.students||[]).filter(x=>x.status==='unpaid'||x.status==='partial').map(x=>x.name);names.sort((p,q)=>p.localeCompare(q,'id'));
      if(!names.length){toastSafe('Semua siswa sudah membayar.');return}
-     const text=`Belum lunas iuran periode ${rosterData?.cycle?.cycle_no||''} (${names.length} siswa):\n`+names.map((n,i)=>`${i+1}. ${n}`).join('\n');
+     const text=`_*Belum lunas iuran periode ${rosterData?.cycle?.cycle_no||''} (${names.length} siswa):*_\n`+names.map((n,i)=>`${i+1}. ${n}`).join('\n')+'\n\n*Bayar di siswa.7mit.org (buka bagian "Keuangan Kelas")*';
      (navigator.clipboard?.writeText(text)||Promise.reject()).then(()=>toastSafe(`${names.length} nama disalin.`)).catch(()=>toastSafe('Salin gagal. Pilih dan salin manual.'));
    }
  });
