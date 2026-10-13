@@ -12505,7 +12505,7 @@ html[data-theme-resolved="dark"] .quiz-choice-note-v141{
       <div class="dues-cycle-kpi"><small>DIPROSES</small><b id="duesPosPending">0</b></div>
       <div class="dues-cycle-kpi"><small>BELUM BAYAR</small><b id="duesPosUnpaid">0</b></div>
       <div class="dues-cycle-summary-note" id="duesPosSummaryNote">Rp10.000 per siswa · periode 14 hari.</div>
-    </div><div class="dues-pos-grid"><div class="dues-box"><h4>Redeem Cash</h4><div class="dues-redeem-row"><input class="dues-redeem-input" id="duesRedeemCode" type="text" maxlength="40" placeholder="IUR-XXXXXXXX"><button class="dues-redeem-btn" id="duesRedeemBtn" type="button">Redeem & Catat</button></div><button class="dues-scan-btn" id="duesScanQr" type="button"><i data-lucide="scan-line"></i> Scan QR Redeem</button><div class="dues-scanner" id="duesScanner" hidden><video id="duesScannerVideo" playsinline muted></video><div class="dues-scan-frame"></div><div class="dues-scanner-foot"><small id="duesScannerStatus">Arahkan kamera ke QR Redeem.</small><button class="dues-copy" id="duesStopScan" type="button">Tutup Kamera</button></div></div><div class="dues-pos-warning"><i data-lucide="triangle-alert"></i><span>Pastikan cash sudah diterima sebelum redeem.</span></div></div><div class="dues-box"><h4>Antrean POS</h4><p>Cash yang menunggu redeem dan <span class="qris-inline qris-inline-sm"><i data-lucide="qr-code"></i><span>QRIS</span></span> yang menunggu approval.</p><div class="dues-review" id="duesReviewQueue"><div class="dues-empty">Memuat antrean…</div></div></div></div></div>
+    </div><div class="dues-box dues-roster" id="duesRoster"><div class="dues-roster-head"><h4>Daftar Siswa</h4><div class="dues-roster-tools"><input type="search" id="duesRosterSearch" placeholder="Cari siswa…" aria-label="Cari siswa" autocomplete="off"><button type="button" class="dues-copy" id="duesRosterCopy" title="Salin nama siswa yang belum bayar">Salin belum bayar</button></div></div><div class="dues-roster-filters" id="duesRosterFilters" role="tablist" aria-label="Filter status iuran"></div><div class="dues-roster-list" id="duesRosterList"><div class="dues-empty">Memuat daftar siswa…</div></div></div><div class="dues-pos-grid"><div class="dues-box"><h4>Redeem Cash</h4><div class="dues-redeem-row"><input class="dues-redeem-input" id="duesRedeemCode" type="text" maxlength="40" placeholder="IUR-XXXXXXXX"><button class="dues-redeem-btn" id="duesRedeemBtn" type="button">Redeem & Catat</button></div><button class="dues-scan-btn" id="duesScanQr" type="button"><i data-lucide="scan-line"></i> Scan QR Redeem</button><div class="dues-scanner" id="duesScanner" hidden><video id="duesScannerVideo" playsinline muted></video><div class="dues-scan-frame"></div><div class="dues-scanner-foot"><small id="duesScannerStatus">Arahkan kamera ke QR Redeem.</small><button class="dues-copy" id="duesStopScan" type="button">Tutup Kamera</button></div></div><div class="dues-pos-warning"><i data-lucide="triangle-alert"></i><span>Pastikan cash sudah diterima sebelum redeem.</span></div></div><div class="dues-box"><h4>Antrean POS</h4><p>Cash yang menunggu redeem dan <span class="qris-inline qris-inline-sm"><i data-lucide="qr-code"></i><span>QRIS</span></span> yang menunggu approval.</p><div class="dues-review" id="duesReviewQueue"><div class="dues-empty">Memuat antrean…</div></div></div></div></div>
           </div>
         </div>
       </section>
@@ -25872,6 +25872,49 @@ function telkomCreatePeer(remoteKey){
    set('duesPosTarget',fmt(s.expected_total||0));set('duesPosCollected',fmt(s.paid_total||0));set('duesPosPaid',String(s.paid||0));set('duesPosPartial',String(s.partial||0));set('duesPosPending',String(s.pending||0));set('duesPosUnpaid',String(s.unpaid||0));
    set('duesPosSummaryNote',`${Number(s.total_students||0)} siswa × Rp10.000 = ${fmt(s.expected_total||0)} per 2 minggu · terkumpul ${fmt(s.paid_total||0)} (sudah termasuk cicilan; tunai ${fmt(s.cash_total||0)} · QRIS ${fmt(s.qris_total||0)}) · sisa ${fmt(Math.max(0,Number(s.expected_total||0)-Number(s.paid_total||0)))}${Number(s.partial||0)?` · ${Number(s.partial)} siswa mencicil`:''}.`);
  }
+ /* ---- Daftar Siswa POS: lunas / mencicil / diproses / belum bayar ---- */
+ let rosterData=null,rosterFilter='all',rosterQuery='',rosterBusy=false;
+ const RS={paid:['Lunas','paid'],partial:['Cicil','partial'],pending:['Diproses','pending'],unpaid:['Belum bayar','unpaid']};
+ const rmeth=m=>m==='qris'?'QRIS':m==='cash'?'Cash':String(m||'').toUpperCase();
+ async function loadRoster(){
+   if(rosterBusy)return;rosterBusy=true;
+   try{
+     const token=await window.K7Session?.getToken?.();if(!token)return;
+     const anon=window.SUPABASE_ANON_KEY||'';
+     const r=await fetch(`${window.SUPABASE_URL||'https://lajzrempjyoqkubkumhb.supabase.co'}/functions/v1/class-dues-roster`,{method:'POST',headers:{'Content-Type':'application/json',apikey:anon,Authorization:anon?`Bearer ${anon}`:'','x-7mit-session':token},body:'{}',cache:'no-store'});
+     const d=await r.json().catch(()=>({}));if(!r.ok||d.ok===false)throw new Error(d.message||'Daftar siswa gagal dimuat.');
+     rosterData=d;renderRoster();
+   }catch(e){const l=document.getElementById('duesRosterList');if(l&&!rosterData)l.innerHTML=`<div class="dues-empty">${esc(e.message||'Daftar siswa gagal dimuat.')}</div>`}
+   finally{rosterBusy=false}
+ }
+ function renderRoster(){
+   const d=rosterData,list=document.getElementById('duesRosterList'),fl=document.getElementById('duesRosterFilters');if(!d||!list||!fl)return;
+   const t=d.totals||{},st=d.students||[];
+   const tabs=[['all','Semua',t.students||st.length],['paid','Lunas',t.paid||0],['partial','Cicil',t.partial||0],['pending','Diproses',t.pending||0],['unpaid','Belum bayar',t.unpaid||0]];
+   fl.innerHTML=tabs.map(([k,l,n])=>`<button type="button" role="tab" class="dues-roster-chip${rosterFilter===k?' on':''}" data-dues-rfilter="${k}" aria-selected="${rosterFilter===k}">${l} <b>${n}</b></button>`).join('');
+   const q=rosterQuery.trim().toLowerCase();
+   const rows=st.filter(x=>(rosterFilter==='all'||x.status===rosterFilter)&&(!q||String(x.name).toLowerCase().includes(q)||String(x.username||'').toLowerCase().includes(q)));
+   const order={partial:0,pending:1,unpaid:2,paid:3};
+   rows.sort((a,b)=>rosterFilter==='all'?(order[a.status]-order[b.status])||String(a.name).localeCompare(String(b.name),'id'):String(a.name).localeCompare(String(b.name),'id'));
+   list.innerHTML=rows.length?rows.map((x,i)=>{
+     const [lab,cls]=RS[x.status]||RS.unpaid,pct=x.amount?Math.min(100,Math.round(x.paid_amount/x.amount*100)):0;
+     const meth=(x.payments||[]).map(p=>`${rmeth(p.method)} ${fmt(p.amount)}`).join(' · ');
+     const amt=x.status==='paid'?fmt(x.paid_amount):x.status==='partial'?`${fmt(x.paid_amount)} <small>dari ${fmt(x.amount)}</small>`:x.status==='pending'?`<small>menunggu</small> ${fmt(x.pending_amount)}`:fmt(x.amount);
+     const sub=x.status==='partial'?`Sisa ${fmt(x.remaining)}`:x.status==='paid'?'Lunas':x.status==='pending'?`Pembayaran sedang diproses${x.paid_amount?' · sudah '+fmt(x.paid_amount):''}`:'Belum membayar';
+     return`<div class="dues-roster-row ${cls}" style="--i:${Math.min(i,14)}"><span class="dues-roster-no">${i+1}</span><div class="dues-roster-who"><b>${esc(x.name)}</b><small>${esc(sub)}${meth?' · '+esc(meth):''}</small>${x.status==='partial'||x.status==='paid'?`<div class="dues-roster-bar"><i style="width:${pct}%"></i></div>`:''}</div><div class="dues-roster-amt"><span>${amt}</span><em class="dues-roster-badge ${cls}">${lab}</em></div></div>`;
+   }).join(''):'<div class="dues-empty">Tidak ada siswa pada filter ini.</div>';
+ }
+ document.addEventListener('click',e=>{
+   const f=e.target.closest?.('[data-dues-rfilter]');if(f){rosterFilter=f.dataset.duesRfilter;renderRoster();return}
+   if(e.target.closest?.('#duesRosterCopy')){
+     const names=(rosterData?.students||[]).filter(x=>x.status==='unpaid'||x.status==='partial').map(x=>x.status==='partial'?`${x.name} (sisa ${fmt(x.remaining)})`:x.name);
+     if(!names.length){toastSafe('Semua siswa sudah membayar.');return}
+     const text=`Belum lunas iuran periode ${rosterData?.cycle?.cycle_no||''} (${names.length} siswa):\n`+names.map((n,i)=>`${i+1}. ${n}`).join('\n');
+     (navigator.clipboard?.writeText(text)||Promise.reject()).then(()=>toastSafe(`${names.length} nama disalin.`)).catch(()=>toastSafe('Salin gagal. Pilih dan salin manual.'));
+   }
+ });
+ document.addEventListener('input',e=>{if(e.target?.id==='duesRosterSearch'){rosterQuery=e.target.value;renderRoster()}});
+
 async function load(){
    if(duesLoadBusy){duesLoadQueued=true;return}
    duesLoadBusy=true;
@@ -25880,7 +25923,7 @@ async function load(){
      document.querySelectorAll('[data-dues-pos-option]').forEach(x=>x.hidden=!d.can_review);
      if(d.can_review){
        const [q,sum]=await Promise.all([api('review_queue'),api('cycle_summary')]);
-       renderQueue(q.payments||[],d.me?.account_key);renderCycleSummary(sum.summary||{});
+       renderQueue(q.payments||[],d.me?.account_key);renderCycleSummary(sum.summary||{});loadRoster();
      }
      window.lucide?.createIcons?.();
    }catch(e){
@@ -29746,5 +29789,28 @@ function boot(){
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else setTimeout(boot,500);
 })();
 </script>
+<style id="k7-dues-roster-v158">
+.dues-roster{margin:0 0 14px}
+.dues-roster-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px}.dues-roster-head h4{margin:0}
+.dues-roster-tools{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.dues-roster-tools .dues-copy{padding:8px 12px;font-size:12px;border-radius:11px;white-space:nowrap}
+.dues-roster-tools input{min-width:160px;padding:8px 11px;border-radius:11px;border:1px solid var(--line,#dbe3ee);background:var(--surface,#fff);color:inherit;font:inherit;font-size:12px}
+.dues-roster-filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.dues-roster-chip{border:1px solid var(--line,#dbe3ee);background:transparent;color:inherit;border-radius:999px;padding:6px 12px;font:inherit;font-size:12px;font-weight:700;cursor:pointer;transition:background .2s,transform .15s}
+.dues-roster-chip b{margin-left:3px;opacity:.75}.dues-roster-chip:hover{transform:translateY(-1px)}
+.dues-roster-chip.on{background:var(--accent-primary,#2563eb);border-color:transparent;color:#fff}
+.dues-roster-list{max-height:340px;overflow:auto;display:flex;flex-direction:column;gap:6px;padding-right:2px}
+.dues-roster-row{display:flex;align-items:center;gap:10px;padding:9px 11px;border-radius:12px;border:1px solid var(--line,#e5e9f0);background:rgba(120,130,160,.06);animation:duesRosterIn .3s both;animation-delay:calc(var(--i,0)*18ms)}
+.dues-roster-no{flex:none;width:22px;text-align:center;font-size:11px;font-weight:800;opacity:.55}
+.dues-roster-who{flex:1;min-width:0}.dues-roster-who b{display:block;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.dues-roster-who small{display:block;font-size:11px;opacity:.65;margin-top:1px}
+.dues-roster-bar{height:5px;border-radius:99px;background:rgba(120,130,160,.22);margin-top:6px;overflow:hidden}.dues-roster-bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#16a34a,#22c55e)}
+.dues-roster-row.partial .dues-roster-bar i{background:linear-gradient(90deg,#d97706,#f59e0b)}
+.dues-roster-amt{flex:none;text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:4px;font-size:13px;font-weight:800}.dues-roster-amt small{font-size:10px;font-weight:600;opacity:.65}
+.dues-roster-badge{font-style:normal;font-size:10px;font-weight:800;padding:2px 9px;border-radius:999px}
+.dues-roster-badge.paid{background:#dcfce7;color:#166534}.dues-roster-badge.partial{background:#fef3c7;color:#92400e}.dues-roster-badge.pending{background:#dbeafe;color:#1e40af}.dues-roster-badge.unpaid{background:#fee2e2;color:#991b1b}
+html[data-theme-resolved="dark"] .dues-roster-badge.paid{background:#14532d;color:#bbf7d0}html[data-theme-resolved="dark"] .dues-roster-badge.partial{background:#78350f;color:#fde68a}html[data-theme-resolved="dark"] .dues-roster-badge.pending{background:#1e3a8a;color:#bfdbfe}html[data-theme-resolved="dark"] .dues-roster-badge.unpaid{background:#7f1d1d;color:#fecaca}
+@keyframes duesRosterIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media(max-width:560px){.dues-roster-tools{width:100%}.dues-roster-tools input{flex:1}}
+</style>
 </body>
 </html>
