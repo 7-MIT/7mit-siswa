@@ -29832,85 +29832,78 @@ html[data-theme-resolved="dark"] .dues-roster-badge.paid{background:#14532d;colo
 
 <script id="personalModule">
 (()=>{
- "use strict";
- const root=document.getElementById("personal");if(!root)return;
- const $=q=>root.querySelector(q), role="student";
- const status=$("#personalStatus"), tools=$("#personalTeacherTools"), student=$("#personalStudent");
- const readForm=$("#personalReadingForm"), reflectForm=$("#personalReflectionForm");
- const state={category:"reading",student:"",client:null,user:null};
- const show=(message)=>status.textContent=message;
- // Only a verified Supabase Auth session can access the personal journal. Never trust a student name or client role as authorization.
- async function client(){
-   if(state.client)return state.client;
-   const mod=await import("https://esm.sh/@supabase/supabase-js@2.57.4");
-   const url=window.SUPABASE_URL||"https://lajzrempjyoqkubkumhb.supabase.co";
-   const key=window.SUPABASE_ANON_KEY;
-   if(!key)throw Error("Konfigurasi autentikasi Supabase belum tersedia.");
-   state.client=mod.createClient(url,key,{auth:{persistSession:true,autoRefreshToken:true}});
-   return state.client;
- }
- async function auth(){
-   const db=await client();const {data,error}=await db.auth.getUser();
-   if(error||!data.user)throw Error("Silakan masuk dengan akun.7mit yang terhubung ke Supabase Auth untuk menggunakan Personal.");
-   state.user=data.user;return db;
- }
- function text(tag,content){const el=document.createElement(tag);el.textContent=String(content??"");return el}
- function label(parent,key,val){if(val==null||val==="")return;const p=text("p",key+": "+val);parent.append(p)}
- function resetDate(){root.querySelectorAll('input[type="date"]').forEach(x=>{if(!x.value)x.value=new Date().toLocaleDateString("en-CA")})}
- function view(){const reading=state.category==="reading";$("#personalReadingPanel").classList.toggle("personal-hidden",!reading);$("#personalReflectionPanel").classList.toggle("personal-hidden",reading);$("#personalHistoryTitle").textContent=reading?"Riwayat Bacaan":"Riwayat Self-Reflection";root.querySelectorAll("[data-personal-tab]").forEach(b=>b.setAttribute("aria-selected",String(b.dataset.personalTab===state.category)));load()}
- async function load(){
-   const history=$("#personalHistory");history.replaceChildren(text("p","Memuat catatan…"));
-   try{
-     const db=await auth();
-     if(role==="guru"&&!state.student){history.replaceChildren(text("p","Pilih siswa untuk melihat jurnal."));return}
-     let query=db.from("personal_entries").select("id,student_id,category,entry_date,payload,created_at").eq("category",state.category).order("entry_date",{ascending:false}).limit(250);
-     if(role==="guru")query=query.eq("student_id",state.student);
-     else query=query.eq("student_id",state.user.id);
-     const {data,error}=await query;if(error)throw error;
-     history.replaceChildren();
-     if(!data?.length){history.append(text("p","Belum ada catatan."));return}
-     for(const entry of data){
-       const box=text("article","");box.className="personal-entry";
-       const top=text("div","");top.className="personal-top";
-       top.append(text("strong",entry.entry_date+" · "+(entry.payload?.title|| (entry.category==="reading"?"Reading":"Self-Reflection"))));
-       if(role!=="guru"){const del=text("button","Hapus");del.type="button";del.addEventListener("click",async()=>{if(!confirm("Hapus catatan ini?"))return;try{const db=await auth();const {error}=await db.from("personal_entries").delete().eq("id",entry.id).eq("student_id",state.user.id);if(error)throw error;await load()}catch(e){show("Gagal menghapus: "+e.message)}});top.append(del)}
-       box.append(top);
-       for(const [field,name] of Object.entries(state.category==="reading"?{reading_type:"Jenis",author:"Penulis / sumber",progress:"Progres",reflection:"Ringkasan / pelajaran"}:{mood:"Perasaan",highlights:"Hal baik",challenges:"Tantangan",lessons:"Pelajaran",next_steps:"Target"}))label(box,name,entry.payload?.[field]);
-       history.append(box)
-     }
-     show("Data Personal berhasil dimuat.");
-   }catch(e){history.replaceChildren(text("p","Jurnal belum dapat dimuat."));show("Personal belum siap: "+e.message)}
- }
- async function save(form,category){
-   try{
-     if(role==="guru")return;
-     const db=await auth();const payload=Object.fromEntries(new FormData(form).entries());
-     const entry_date=payload.entry_date;delete payload.entry_date;
-     const {error}=await db.from("personal_entries").insert({student_id:state.user.id,category,entry_date,payload});
-     if(error)throw error;form.reset();resetDate();show("Catatan berhasil disimpan.");await load();
-   }catch(e){show("Gagal menyimpan: "+e.message)}
- }
- async function init(){
-   resetDate();
-   if(role==="guru"){
-     tools.classList.remove("personal-hidden");readForm.classList.add("personal-hidden");reflectForm.classList.add("personal-hidden");
-     try{
-       const db=await auth();
-       // Teacher membership and the roster are verified by RLS policies, not by this UI.
-       const {data,error}=await db.from("personal_student_roster").select("student_id,display_name").order("display_name");
-       if(error)throw error;
-       student.replaceChildren(new Option("Pilih siswa",""));
-       for(const person of data||[])student.add(new Option(person.display_name,person.student_id));
-       show("Pilih siswa untuk membaca jurnal.");$("#personalHistory").replaceChildren(text("p","Pilih siswa terlebih dahulu."));
-     }catch(e){show("Daftar siswa belum dapat dimuat: "+e.message)}
-   }else await load();
- }
- root.querySelectorAll("[data-personal-tab]").forEach(b=>b.addEventListener("click",()=>{state.category=b.dataset.personalTab;view()}));
- student.addEventListener("change",()=>{state.student=student.value;load()});
- readForm.addEventListener("submit",e=>{e.preventDefault();save(readForm,"reading")});
- reflectForm.addEventListener("submit",e=>{e.preventDefault();save(reflectForm,"reflection")});
- $("#personalReload").addEventListener("click",()=>role==="guru"?init():load());
- init();
+"use strict";
+const root=document.getElementById("personal");if(!root)return;
+const $=s=>root.querySelector(s),role="student";
+const status=$("#personalStatus"),tools=$("#personalTeacherTools"),student=$("#personalStudent"),readForm=$("#personalReadingForm"),reflectForm=$("#personalReflectionForm");
+const state={category:"reading",student:""};
+const show=m=>status.textContent=m;
+const make=(tag,val)=>{const el=document.createElement(tag);el.textContent=String(val??"");return el};
+const API=()=>String(window.SUPABASE_URL||"https://lajzrempjyoqkubkumhb.supabase.co").replace(/\/$/,"")+"/functions/v1/personal-journal-api";
+async function call(action,body={}){
+ const token=await window.K7Session?.getToken?.();
+ if(!token)throw new Error("Sesi akun.7mit belum tersedia. Login ulang.");
+ const key=window.SUPABASE_ANON_KEY;
+ if(!key)throw new Error("Konfigurasi server.7mit tidak tersedia.");
+ const response=await fetch(API(),{method:"POST",headers:{"Content-Type":"application/json","apikey":key,"Authorization":"Bearer "+key,"x-7mit-session":String(token)},body:JSON.stringify({action,...body})});
+ const result=await response.json().catch(()=>({}));
+ if(!response.ok||result.ok===false)throw new Error(result.message||"Server gagal merespons.");
+ return result;
+}
+function date(){root.querySelectorAll('input[type="date"]').forEach(x=>{if(!x.value)x.value=new Date().toLocaleDateString("en-CA")})}
+function row(box,label,value){if(value===undefined||value===null||value==="")return;box.append(make("p",label+": "+value))}
+async function load(){
+ const holder=$("#personalHistory");holder.replaceChildren(make("p","Memuat jurnal…"));
+ try{
+  if(role==="guru"&&!state.student){holder.replaceChildren(make("p","Pilih siswa untuk membaca jurnal."));return}
+  const result=await call("list",{category:state.category,student_id:state.student});
+  holder.replaceChildren();
+  if(!result.entries?.length){holder.append(make("p","Belum ada catatan."));show("Jurnal berhasil dimuat.");return}
+  for(const x of result.entries){
+   const card=make("article","");card.className="personal-entry";
+   const top=make("div","");top.className="personal-top";
+   top.append(make("strong",x.entry_date+" · "+(x.payload?.title||(x.category==="reading"?"Reading":"Self-Reflection"))));
+   if(role!=="guru"){const del=make("button","Hapus");del.type="button";del.addEventListener("click",async()=>{if(!confirm("Hapus catatan ini?"))return;try{await call("delete",{id:x.id});await load()}catch(e){show("Gagal menghapus: "+e.message)}});top.append(del)}
+   card.append(top);
+   for(const [field,label] of Object.entries(state.category==="reading"?{reading_type:"Jenis",author:"Penulis / sumber",progress:"Progres",reflection:"Ringkasan / pelajaran"}:{mood:"Perasaan",highlights:"Hal baik",challenges:"Tantangan",lessons:"Pelajaran",next_steps:"Target"}))row(card,label,x.payload?.[field]);
+   holder.append(card);
+  }
+  show("Jurnal berhasil dimuat dari server.7mit.");
+ }catch(e){holder.replaceChildren(make("p","Jurnal belum dapat dimuat."));show(e.message)}
+}
+function view(){
+ const reading=state.category==="reading";
+ $("#personalReadingPanel").classList.toggle("personal-hidden",!reading);
+ $("#personalReflectionPanel").classList.toggle("personal-hidden",reading);
+ $("#personalHistoryTitle").textContent=reading?"Riwayat Bacaan":"Riwayat Self-Reflection";
+ root.querySelectorAll("[data-personal-tab]").forEach(b=>b.setAttribute("aria-selected",String(b.dataset.personalTab===state.category)));
+ load();
+}
+async function save(form,category){
+ try{
+  const data=Object.fromEntries(new FormData(form).entries()),entry_date=data.entry_date;delete data.entry_date;
+  await call("save",{category,entry_date,payload:data});
+  form.reset();date();show("Catatan berhasil disimpan ke server.7mit.");await load();
+ }catch(e){show("Gagal menyimpan: "+e.message)}
+}
+async function init(){
+ date();
+ if(role==="guru"){
+  tools.classList.remove("personal-hidden");readForm.classList.add("personal-hidden");reflectForm.classList.add("personal-hidden");
+  try{
+   const result=await call("roster");
+   student.replaceChildren(new Option("Pilih siswa",""));
+   for(const a of result.students||[])student.add(new Option(a.display_name,a.student_id));
+   show("Pilih siswa untuk melihat jurnal.");$("#personalHistory").replaceChildren(make("p","Pilih siswa terlebih dahulu."));
+  }catch(e){show("Daftar siswa gagal dimuat: "+e.message)}
+ }else await load();
+}
+root.querySelectorAll("[data-personal-tab]").forEach(b=>b.addEventListener("click",()=>{state.category=b.dataset.personalTab;view()}));
+student.addEventListener("change",()=>{state.student=student.value;load()});
+readForm.addEventListener("submit",e=>{e.preventDefault();save(readForm,"reading")});
+reflectForm.addEventListener("submit",e=>{e.preventDefault();save(reflectForm,"reflection")});
+$("#personalReload").addEventListener("click",()=>role==="guru"?init():load());
+init();
 })();
 </script>
 </body>
