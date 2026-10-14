@@ -29992,6 +29992,7 @@ function applyDate(date){
  const field=$("#srDate");field.min=key+"-01";field.max=max;field.value=date||max;
 }
 function openForm(entry){
+ if(entry){year.value=entry.entry_date.slice(0,4);month.value=String(Number(entry.entry_date.slice(5,7)));render()}
  const picked=entry||selectedEntry();
  form.reset();
  const date=picked?.entry_date||"";
