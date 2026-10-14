@@ -11987,7 +11987,7 @@ html[data-theme-resolved="dark"] .quiz-choice-note-v141{
             <button data-page="learningSchool"><span class="nav-icon"><i data-lucide="graduation-cap"></i></span>Belajar</button>
       <button data-page="studyTools"><span class="nav-icon"><i data-lucide="sparkles"></i></span>Alat Belajar</button>
       <button data-page="files"><span class="nav-icon"><i data-lucide="folder-open"></i></span>Files</button>
-      <button data-page="personal"><span class="nav-icon"><i data-lucide="user-round"></i></span>Personal</button>
+      <button data-page="selfReflections"><span class="nav-icon"><i data-lucide="notebook-pen"></i></span>Self Reflections</button>
       <button data-page="notes"><span class="nav-icon"><i data-lucide="notebook-pen"></i></span>Catatan</button>
       
       <button data-page="pricing"><span class="nav-icon"><i data-lucide="ban"></i></span>Pricing</button>
@@ -12018,21 +12018,85 @@ html[data-theme-resolved="dark"] .quiz-choice-note-v141{
 
   <main>
     
-<style id="personalStyles">
-#personal .personal-shell{display:grid;gap:18px}#personal .personal-card{background:var(--surface,#fff);border:1px solid var(--line,#e5e7eb);border-radius:19px;padding:20px;box-shadow:0 8px 22px rgba(20,25,40,.035)}#personal .personal-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}#personal .personal-field{display:grid;gap:7px}#personal .personal-full{grid-column:1/-1}#personal .personal-field input,#personal .personal-field select,#personal .personal-field textarea{width:100%;max-width:100%;border:1px solid #c5cbd5;background:var(--surface,#fff);color:inherit;border-radius:11px;padding:11px}#personal .personal-field textarea{min-height:95px;resize:vertical}#personal .personal-tabs{display:flex;gap:9px;flex-wrap:wrap}#personal .personal-tabs button{padding:10px 15px;border:1px solid #c8cdd5;border-radius:11px;background:transparent;color:inherit;cursor:pointer}#personal .personal-tabs button[aria-selected=true]{background:var(--accent,#9b233d);border-color:transparent;color:white}#personal .personal-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:15px}#personal .personal-primary{background:var(--accent,#9b233d);color:#fff;border:0;border-radius:11px;padding:11px 15px;cursor:pointer}#personal .personal-entry{border:1px solid #d4d8df;border-radius:13px;padding:15px;margin:12px 0;overflow-wrap:anywhere}#personal .personal-entry p{white-space:pre-wrap;line-height:1.5;margin:9px 0}#personal .personal-status{padding:12px;border-radius:11px;background:rgba(128,128,128,.1)}#personal .personal-muted{opacity:.75}#personal .personal-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}#personal .personal-top button{background:transparent;border:1px solid #c6cad3;border-radius:9px;padding:7px 10px;color:inherit;cursor:pointer}#personal .personal-disclosure{background:rgba(158,115,38,.10);border-left:3px solid #bb8a35;padding:10px 13px;border-radius:8px}#personal .personal-hidden{display:none!important}@media(max-width:650px){#personal .personal-grid{grid-template-columns:1fr}#personal .personal-card{padding:15px}}
+<style id="selfReflectionStyles">
+#selfReflections .sr-shell{display:grid;gap:22px;color:var(--ink,#172033)}
+#selfReflections .sr-tabs{display:inline-flex;flex-wrap:wrap;gap:5px;background:#fff;padding:6px;border:1px solid #e0e6f0;border-radius:18px;width:fit-content}
+#selfReflections .sr-tabs button{border:0;border-radius:13px;background:transparent;padding:12px 18px;display:flex;align-items:center;gap:9px;color:#61738e;font-size:15px;font-weight:750;cursor:pointer}
+#selfReflections .sr-tabs button[aria-pressed=true]{color:#fff;background:linear-gradient(110deg,#2869f5,#20a5e6);box-shadow:0 6px 15px #2878e63c}
+#selfReflections .sr-hero{border:1px solid #d9e1ed;background:linear-gradient(120deg,#eaf1ff 0%,#fff 95%);border-radius:26px;padding:28px 31px}
+#selfReflections h3{margin:0;font-size:23px;font-weight:800;letter-spacing:-.4px}
+#selfReflections .sr-hint{margin:6px 0 0;color:#677992;line-height:1.6}
+#selfReflections .sr-hero-meta{display:flex;align-items:center;gap:8px;margin:12px 0 0;color:#60718a}
+#selfReflections .sr-controls{display:flex;flex-wrap:wrap;gap:14px;margin-top:22px;align-items:end}
+#selfReflections .sr-field{display:grid;gap:7px;font-weight:650;color:#65768e}
+#selfReflections input,#selfReflections select,#selfReflections textarea{color:#172033;background:#fff;border:1px solid #dbe2ec;border-radius:13px;padding:11px 13px;font:inherit;max-width:100%}
+#selfReflections select{min-width:160px}
+#selfReflections .sr-field label{font-size:13px}
+#selfReflections .sr-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:15px}
+#selfReflections .sr-stat{background:#fff;border:1px solid #dfe6f0;border-radius:21px;padding:23px 22px;box-shadow:0 7px 20px #1e38560a}
+#selfReflections .sr-stat span{display:block;color:#677891;font-weight:750;font-size:14px;margin-bottom:10px}
+#selfReflections .sr-stat strong{font-size:32px;line-height:1.1;font-weight:850;letter-spacing:-.6px}
+#selfReflections .sr-sheet{background:#fff;border:1px solid #dfe6f0;border-radius:26px;padding:24px;min-width:0}
+#selfReflections .sr-sheet-head{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-bottom:19px;flex-wrap:wrap}
+#selfReflections .sr-add{border:0;background:linear-gradient(110deg,#2871f6,#1ea4e8);color:#fff;font-weight:800;padding:12px 17px;border-radius:13px;display:inline-flex;align-items:center;gap:8px;box-shadow:0 8px 17px #1e82e62e;cursor:pointer}
+#selfReflections .sr-add:disabled{opacity:.5;cursor:not-allowed}
+#selfReflections .sr-table-scroll{overflow-x:auto}
+#selfReflections table{width:100%;border-collapse:separate;border-spacing:0;min-width:630px}
+#selfReflections th{background:#dcf1f8;color:#274e60;padding:15px 12px;text-align:left;font-size:12px;letter-spacing:.07em;text-transform:uppercase;border-bottom:1px solid #d5e9f3}
+#selfReflections th:first-child{border-radius:14px 0 0 0}#selfReflections th:last-child{border-radius:0 14px 0 0}
+#selfReflections td{border-bottom:1px solid #edf1f5;padding:14px 12px;color:#263854;vertical-align:top}
+#selfReflections .sr-emotion{display:inline-block;border-radius:100px;padding:5px 10px;background:#edf5ff;color:#2867cc;font-weight:700;font-size:12px}
+#selfReflections .sr-row-actions{display:flex;gap:7px;flex-wrap:wrap}
+#selfReflections .sr-row-actions button{border:1px solid #d8e2f0;background:#fff;border-radius:10px;padding:7px 10px;color:#2659a0;font-weight:700;cursor:pointer}
+#selfReflections .sr-row-actions button.sr-danger{color:#b6334c}
+#selfReflections .sr-empty{text-align:center;color:#718099;padding:30px 15px;line-height:1.65}
+#selfReflections .sr-info{background:#edf5ff;color:#315d9d;padding:11px 15px;border-radius:13px;line-height:1.5}
+#selfReflections .sr-privacy{color:#6d7890;font-size:12px;line-height:1.6}
+#selfReflections .sr-overlay{position:fixed;inset:0;z-index:10050;background:#0b1a37a1;display:flex;align-items:center;justify-content:center;padding:18px}
+#selfReflections .sr-overlay[hidden]{display:none!important}
+#selfReflections .sr-dialog{background:#fff;color:#16253a;border-radius:23px;padding:24px;width:min(690px,100%);max-height:92dvh;overflow:auto;box-shadow:0 24px 100px #001c3e60}
+#selfReflections .sr-dialog-head{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:16px}
+#selfReflections .sr-icon-btn{background:#f1f5fa;color:#465773;border:0;border-radius:11px;padding:9px 12px;cursor:pointer}
+#selfReflections .sr-form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}
+#selfReflections .sr-full{grid-column:1/-1}
+#selfReflections .sr-field textarea{min-height:85px;resize:vertical}
+#selfReflections .sr-dialog-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:20px}
+#selfReflections .sr-dialog-actions button{border-radius:12px;padding:11px 17px;border:1px solid #d9e1ed;background:#fff;color:#283a59;font-weight:750;cursor:pointer}
+#selfReflections .sr-dialog-actions .sr-submit{background:#267cf2;color:#fff;border:0}
+#selfReflections .sr-detail p{white-space:pre-wrap;line-height:1.6;margin:12px 0}
+#selfReflections .sr-detail strong{display:block;color:#5d718d;font-size:12px;text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px}
+@media(max-width:850px){#selfReflections .sr-stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:530px){#selfReflections .sr-hero,#selfReflections .sr-sheet{padding:19px;border-radius:20px}#selfReflections .sr-stat{padding:17px}#selfReflections .sr-stat strong{font-size:27px}#selfReflections .sr-form-grid{grid-template-columns:1fr}#selfReflections .sr-tabs{width:100%;justify-content:center}#selfReflections .sr-tabs button{flex:1;justify-content:center;padding:10px 9px;font-size:13px}}
+@media(prefers-reduced-motion:no-preference){#selfReflections .sr-stat,#selfReflections .sr-sheet{animation:sr-enter .25s ease-out both}@keyframes sr-enter{from{opacity:.25;transform:translateY(7px)}to{opacity:1;transform:none}}}
 </style>
-<section class="page" id="personal">
- <header class="topbar"><div class="title"><h2>Personal</h2><p>Book Reading / Religious Reading dan Self-Reflection dalam satu tempat.</p></div></header>
- <div class="personal-shell">
-  <div class="personal-disclosure">Catatan Personal adalah informasi pribadi. Guru yang berwenang dapat membaca jurnal siswa untuk pendampingan pembelajaran. Jangan tulis kata sandi atau informasi yang tidak ingin dibagikan kepada guru.</div>
-  <div id="personalStatus" class="personal-status" role="status" aria-live="polite">Menghubungkan jurnal Personal…</div>
-  <div id="personalTeacherTools" class="personal-card personal-hidden"><h3>Jurnal Siswa</h3><p class="personal-muted">Pilih siswa untuk membaca seluruh catatan Book Reading / Religious Reading dan Self-Reflection.</p><div class="personal-field"><label for="personalStudent">Pilih siswa</label><select id="personalStudent"><option value="">Pilih siswa</option></select></div></div>
-  <div class="personal-tabs" role="tablist" aria-label="Kategori Personal"><button type="button" data-personal-tab="reading" aria-selected="true">Book Reading / Religious Reading</button><button type="button" data-personal-tab="reflection" aria-selected="false">Self-Reflection</button></div>
-  <div id="personalReadingPanel" class="personal-card"><h3>Book Reading / Religious Reading</h3><p class="personal-muted">Catat bacaan, tanggal, progres, dan pembelajaran.</p><form id="personalReadingForm"><div class="personal-grid"><div class="personal-field"><label>Judul bacaan *<input name="title" maxlength="180" required></label></div><div class="personal-field"><label>Jenis bacaan<select name="reading_type"><option value="book">Book Reading</option><option value="religious">Religious Reading</option></select></label></div><div class="personal-field"><label>Penulis / sumber<input name="author" maxlength="180"></label></div><div class="personal-field"><label>Tanggal<input type="date" name="entry_date" required></label></div><div class="personal-field personal-full"><label>Halaman / progres<input name="progress" maxlength="160"></label></div><div class="personal-field personal-full"><label>Ringkasan dan pelajaran<textarea name="reflection" maxlength="5000"></textarea></label></div></div><div class="personal-actions"><button class="personal-primary" type="submit">Simpan Bacaan</button></div></form></div>
-  <div id="personalReflectionPanel" class="personal-card personal-hidden"><h3>Self-Reflection</h3><p class="personal-muted">Refleksi terhadap diri sendiri, pencapaian, tantangan, dan target perbaikan.</p><form id="personalReflectionForm"><div class="personal-grid"><div class="personal-field"><label>Tanggal<input name="entry_date" type="date" required></label></div><div class="personal-field"><label>Perasaan hari ini<select name="mood"><option value="">Pilih (opsional)</option><option>Senang</option><option>Tenang</option><option>Semangat</option><option>Lelah</option><option>Sedih</option><option>Cemas</option><option>Campur aduk</option></select></label></div><div class="personal-field personal-full"><label>Hal baik / pencapaian<textarea name="highlights" maxlength="5000"></textarea></label></div><div class="personal-field personal-full"><label>Tantangan<textarea name="challenges" maxlength="5000"></textarea></label></div><div class="personal-field personal-full"><label>Apa yang saya pelajari?<textarea name="lessons" maxlength="5000"></textarea></label></div><div class="personal-field personal-full"><label>Target perbaikan diri<textarea name="next_steps" maxlength="5000"></textarea></label></div></div><div class="personal-actions"><button class="personal-primary" type="submit">Simpan Refleksi</button></div></form></div>
-  <div class="personal-card"><div class="personal-top"><div><h3 id="personalHistoryTitle">Riwayat Bacaan</h3><p class="personal-muted">Catatan tersimpan pada akun masing-masing siswa.</p></div><button type="button" id="personalReload">Muat ulang</button></div><div id="personalHistory" aria-live="polite"><p>Belum dimuat.</p></div></div>
+<section class="page" id="selfReflections">
+ <header class="topbar"><div class="title"><h2>Self Reflections</h2><p>Catat pengalaman, pembelajaran, dan perbaikan dirimu dalam satu semester.</p></div></header>
+ <div class="sr-shell">
+  <div class="sr-tabs" role="group" aria-label="Filter refleksi"><button type="button" data-sr-filter="all" aria-pressed="true"><i data-lucide="notebook-pen"></i> Semua Refleksi</button><button type="button" data-sr-filter="month" aria-pressed="false"><i data-lucide="calendar-days"></i> Bulan Ini</button></div>
+  <section class="sr-hero" aria-labelledby="srTargetTitle"><h3 id="srTargetTitle">Target Self Reflections</h3><p class="sr-hint">Sasaran pribadi: <strong>20 refleksi</strong> per semester. Catatan tidak dinilai berdasarkan isi atau perasaanmu.</p><p class="sr-hero-meta"><i data-lucide="calendar-check"></i> Tahun ajaran aktif: <strong id="srCurrentPeriod">—</strong></p>
+    <div class="sr-controls">
+      <div class="sr-field"><label for="srSemester">Semester</label><select id="srSemester"><option value="1">Semester 1</option><option value="2">Semester 2</option></select></div>
+      <div class="sr-field"><label for="srYear">Tahun Ajaran</label><select id="srYear"></select></div>
+      <div class="sr-field" id="srTeacherControl" hidden><label for="srStudent">Pilih Siswa</label><select id="srStudent"><option value="">Pilih siswa</option></select></div>
+    </div>
+  </section>
+  <div class="sr-stats" aria-label="Statistik refleksi"><div class="sr-stat"><span>Total Reflections</span><strong id="srTotal">0</strong></div><div class="sr-stat"><span>Bulan Ini</span><strong id="srMonth">0</strong></div><div class="sr-stat"><span>Target Semester</span><strong id="srTarget">20</strong></div><div class="sr-stat"><span>Sisa Target</span><strong id="srRemaining">20</strong></div></div>
+  <section class="sr-sheet"><div class="sr-sheet-head"><div><h3>Reflection List</h3><p class="sr-hint" id="srListSub">Daftar refleksi yang telah kamu tulis.</p></div><button class="sr-add" type="button" id="srAdd"><i data-lucide="plus"></i> Add</button></div>
+    <div class="sr-info" id="srStatus" role="status" aria-live="polite">Memuat Self Reflections dari server.7mit…</div>
+    <div class="sr-table-scroll"><table><thead><tr><th>No.</th><th>Tanggal</th><th>Mood</th><th>What Happened Today</th><th>Aksi</th></tr></thead><tbody id="srRows"><tr><td colspan="5" class="sr-empty">Memuat data…</td></tr></tbody></table></div>
+    <p class="sr-privacy">Refleksi bersifat pribadi dan dapat dibaca oleh guru yang berwenang untuk pendampingan siswa. Akses dan penyimpanan melalui sesi akun.7mit di server.7mit.</p>
+  </section>
  </div>
+ <div class="sr-overlay" id="srModal" hidden><div class="sr-dialog" role="dialog" aria-modal="true" aria-labelledby="srModalTitle"><div class="sr-dialog-head"><h3 id="srModalTitle">Add Self Reflection</h3><button type="button" class="sr-icon-btn" id="srClose" aria-label="Tutup dialog"><i data-lucide="x"></i></button></div>
+ <form id="srForm"><div class="sr-form-grid"><div class="sr-field"><label for="srDate">Tanggal</label><input id="srDate" name="entry_date" type="date" required></div><div class="sr-field"><label for="srMood">Mood / Perasaan</label><select id="srMood" name="mood"><option value="">Pilih (opsional)</option><option>Senang</option><option>Tenang</option><option>Semangat</option><option>Lelah</option><option>Sedih</option><option>Cemas</option><option>Campur aduk</option></select></div>
+ <div class="sr-field sr-full"><label for="srHappened">What Happened Today</label><textarea id="srHappened" name="happened" maxlength="5000" placeholder="Apa yang terjadi hari ini?"></textarea></div>
+ <div class="sr-field sr-full"><label for="srLearned">What I Learned</label><textarea id="srLearned" name="learned" maxlength="5000" placeholder="Apa yang kamu pelajari?"></textarea></div>
+ <div class="sr-field sr-full"><label for="srImprove">What I Should Improve</label><textarea id="srImprove" name="improve" maxlength="5000" placeholder="Apa yang ingin kamu perbaiki?"></textarea></div>
+ <div class="sr-field sr-full"><label for="srNextSteps">Next Action</label><textarea id="srNextSteps" name="next_steps" maxlength="5000" placeholder="Langkah kecil yang akan kamu lakukan"></textarea></div></div>
+ <div class="sr-dialog-actions"><button type="button" id="srCancel">Batal</button><button type="submit" class="sr-submit" id="srSave">Simpan Refleksi</button></div></form>
+ <div class="sr-detail" id="srDetails" hidden></div></div></div>
 </section>
+
 <section class="page active" id="dashboard">
       <header class="topbar">
         <div class="title"><h2>Selamat datang, Siswa Kelas 7 MIT</h2><p>Lihat informasi resmi, agenda, tugas, keuangan, dan data kelas.</p><div class="portal-account-chip">akun.7mit <b data-active-account-username>—</b></div></div>
@@ -29830,80 +29894,117 @@ html[data-theme-resolved="dark"] .dues-roster-badge.paid{background:#14532d;colo
 @media(max-width:560px){.dues-roster-tools{width:100%}.dues-roster-tools input{flex:1}}
 </style>
 
-<script id="personalModule">
+<script id="selfReflectionsModule">
 (()=>{
 "use strict";
-const root=document.getElementById("personal");if(!root)return;
-const $=s=>root.querySelector(s),role="student";
-const status=$("#personalStatus"),tools=$("#personalTeacherTools"),student=$("#personalStudent"),readForm=$("#personalReadingForm"),reflectForm=$("#personalReflectionForm");
-const state={category:"reading",student:""};
-const show=m=>status.textContent=m;
-const make=(tag,val)=>{const el=document.createElement(tag);el.textContent=String(val??"");return el};
+const root=document.getElementById("selfReflections");if(!root)return;
+const role="student",$=sel=>root.querySelector(sel);
+const rows=$("#srRows"),status=$("#srStatus"),year=$("#srYear"),semester=$("#srSemester"),student=$("#srStudent"),modal=$("#srModal"),form=$("#srForm");
+const state={entries:[],filtered:[],student:"",filter:"all",ready:false,busy:false};
+const target=20;
+const e=(tag,content)=>{const node=document.createElement(tag);node.textContent=String(content??"");return node};
+function say(message){status.textContent=message}
+function todayWIB(){return new Date(Date.now()+7*3600000).toISOString().slice(0,10)}
+function thisMonthWIB(){return todayWIB().slice(0,7)}
+function setNumber(id,n){$(id).textContent=String(n)}
+function currentSelection(){return year.value+" · Semester "+semester.value}
+function actualPeriod(date){const [yyyy,mm]=date.split("-").map(Number);return{schoolStart:mm>=7?yyyy:yyyy-1,semester:mm>=7?1:2}}
+function inSemester(value){const [y,m]=value.split("-").map(Number);const start=Number(year.value.slice(0,4));return semester.value==="1"?(y===start&&m>=7&&m<=12):(y===start+1&&m>=1&&m<=6)}
+const iconUpdate=()=>{try{window.lucide?.createIcons?.({nodes:[root]})}catch(_){}};
 const API=()=>String(window.SUPABASE_URL||"https://lajzrempjyoqkubkumhb.supabase.co").replace(/\/$/,"")+"/functions/v1/personal-journal-api";
-async function call(action,body={}){
+async function api(action,extras={}){
  const token=await window.K7Session?.getToken?.();
- if(!token)throw new Error("Sesi akun.7mit belum tersedia. Login ulang.");
+ if(!token)throw Error("Sesi akun.7mit tidak tersedia. Silakan login kembali.");
  const key=window.SUPABASE_ANON_KEY;
- if(!key)throw new Error("Konfigurasi server.7mit tidak tersedia.");
- const response=await fetch(API(),{method:"POST",headers:{"Content-Type":"application/json","apikey":key,"Authorization":"Bearer "+key,"x-7mit-session":String(token)},body:JSON.stringify({action,...body})});
+ if(!key)throw Error("Konfigurasi server.7mit belum tersedia.");
+ const response=await fetch(API(),{method:"POST",headers:{"Content-Type":"application/json","apikey":key,"Authorization":"Bearer "+key,"x-7mit-session":String(token)},body:JSON.stringify({action,...extras})});
  const result=await response.json().catch(()=>({}));
- if(!response.ok||result.ok===false)throw new Error(result.message||"Server gagal merespons.");
+ if(!response.ok||result.ok===false)throw Error(result.message||"Server gagal merespons.");
  return result;
 }
-function date(){root.querySelectorAll('input[type="date"]').forEach(x=>{if(!x.value)x.value=new Date().toLocaleDateString("en-CA")})}
-function row(box,label,value){if(value===undefined||value===null||value==="")return;box.append(make("p",label+": "+value))}
+function statAndRows(){
+ const semesterEntries=state.entries.filter(x=>inSemester(x.entry_date));
+ const monthTotal=semesterEntries.filter(x=>x.entry_date.startsWith(thisMonthWIB())).length;
+ const visible=semesterEntries.filter(x=>state.filter==="all"||x.entry_date.startsWith(thisMonthWIB()));
+ state.filtered=visible;
+ setNumber("#srTotal",semesterEntries.length);setNumber("#srMonth",monthTotal);setNumber("#srTarget",target);setNumber("#srRemaining",Math.max(0,target-semesterEntries.length));
+ $("#srCurrentPeriod").textContent=currentSelection();
+ $("#srListSub").textContent=(role==="guru"?"Riwayat refleksi siswa":"Riwayat refleksi pribadimu")+" · "+currentSelection();
+ rows.replaceChildren();
+ if(role==="guru"&&!state.student){const tr=e("tr","");const td=e("td","Pilih siswa untuk melihat jurnal refleksinya.");td.colSpan=5;td.className="sr-empty";tr.append(td);rows.append(tr);return}
+ if(!visible.length){const tr=e("tr","");const td=e("td","Belum ada refleksi untuk periode ini.");td.colSpan=5;td.className="sr-empty";tr.append(td);rows.append(tr);return}
+ for(const [i,x] of visible.entries()){
+  const tr=e("tr",""),payload=x.payload||{};
+  tr.append(e("td",i+1),e("td",x.entry_date));
+  const mood=e("td","");mood.append(e("span",payload.mood||"—"));mood.firstChild.className="sr-emotion";tr.append(mood);
+  const summary=String(payload.happened||payload.highlights||"—");
+  tr.append(e("td",summary.length>88?summary.slice(0,85)+"…":summary));
+  const actions=e("td",""),buttons=e("div","");buttons.className="sr-row-actions";
+  const detail=e("button","Lihat");detail.type="button";detail.addEventListener("click",()=>openDetail(x));buttons.append(detail);
+  if(role!=="guru"){const del=e("button","Hapus");del.className="sr-danger";del.type="button";del.addEventListener("click",async()=>{if(!confirm("Hapus refleksi ini? Tindakan ini tidak dapat dibatalkan."))return;try{await api("delete",{id:x.id});say("Refleksi dihapus.");await load()}catch(err){say("Gagal menghapus: "+err.message)}});buttons.append(del)}
+  actions.append(buttons);tr.append(actions);rows.append(tr);
+ }
+}
 async function load(){
- const holder=$("#personalHistory");holder.replaceChildren(make("p","Memuat jurnal…"));
+ if(state.busy)return;
+ state.busy=true;
+ say("Menghubungkan ke server.7mit…");
  try{
-  if(role==="guru"&&!state.student){holder.replaceChildren(make("p","Pilih siswa untuk membaca jurnal."));return}
-  const result=await call("list",{category:state.category,student_id:state.student});
-  holder.replaceChildren();
-  if(!result.entries?.length){holder.append(make("p","Belum ada catatan."));show("Jurnal berhasil dimuat.");return}
-  for(const x of result.entries){
-   const card=make("article","");card.className="personal-entry";
-   const top=make("div","");top.className="personal-top";
-   top.append(make("strong",x.entry_date+" · "+(x.payload?.title||(x.category==="reading"?"Reading":"Self-Reflection"))));
-   if(role!=="guru"){const del=make("button","Hapus");del.type="button";del.addEventListener("click",async()=>{if(!confirm("Hapus catatan ini?"))return;try{await call("delete",{id:x.id});await load()}catch(e){show("Gagal menghapus: "+e.message)}});top.append(del)}
-   card.append(top);
-   for(const [field,label] of Object.entries(state.category==="reading"?{reading_type:"Jenis",author:"Penulis / sumber",progress:"Progres",reflection:"Ringkasan / pelajaran"}:{mood:"Perasaan",highlights:"Hal baik",challenges:"Tantangan",lessons:"Pelajaran",next_steps:"Target"}))row(card,label,x.payload?.[field]);
-   holder.append(card);
-  }
-  show("Jurnal berhasil dimuat dari server.7mit.");
- }catch(e){holder.replaceChildren(make("p","Jurnal belum dapat dimuat."));show(e.message)}
+  if(role==="guru"&&!state.student){state.entries=[];statAndRows();say("Pilih siswa untuk melihat Self Reflections.");return}
+  const res=await api("list",{category:"reflection",student_id:state.student});
+  state.entries=res.entries||[];
+  statAndRows();say("Data berhasil dimuat dari server.7mit.");
+ }catch(err){state.entries=[];statAndRows();say("Gagal memuat refleksi: "+err.message)}
+ finally{state.busy=false}
 }
-function view(){
- const reading=state.category==="reading";
- $("#personalReadingPanel").classList.toggle("personal-hidden",!reading);
- $("#personalReflectionPanel").classList.toggle("personal-hidden",reading);
- $("#personalHistoryTitle").textContent=reading?"Riwayat Bacaan":"Riwayat Self-Reflection";
- root.querySelectorAll("[data-personal-tab]").forEach(b=>b.setAttribute("aria-selected",String(b.dataset.personalTab===state.category)));
- load();
-}
-async function save(form,category){
- try{
-  const data=Object.fromEntries(new FormData(form).entries()),entry_date=data.entry_date;delete data.entry_date;
-  await call("save",{category,entry_date,payload:data});
-  form.reset();date();show("Catatan berhasil disimpan ke server.7mit.");await load();
- }catch(e){show("Gagal menyimpan: "+e.message)}
+let previousFocus=null;
+function openModal(){previousFocus=document.activeElement;modal.hidden=false;$("#srDetails").hidden=true;form.hidden=false;$("#srModalTitle").textContent="Add Self Reflection";form.reset();$("#srDate").value=todayWIB();$("#srDate").focus();iconUpdate()}
+function closeModal(){modal.hidden=true;form.hidden=false;$("#srDetails").hidden=true;previousFocus?.focus?.()}
+function openDetail(entry){
+ previousFocus=document.activeElement;modal.hidden=false;form.hidden=true;$("#srDetails").hidden=false;$("#srModalTitle").textContent="Self Reflection · "+entry.entry_date;
+ const details=$("#srDetails");details.replaceChildren();
+ const payload=entry.payload||{};
+ for(const [label,val] of [["Mood / Perasaan",payload.mood],["What Happened Today",payload.happened||payload.highlights],["What I Learned",payload.learned||payload.lessons],["What I Should Improve",payload.improve||payload.challenges],["Next Action",payload.next_steps]]){
+  if(!val)continue;const item=e("p","");item.append(e("strong",label),e("span",val));details.append(item)
+ }
+ if(!details.childNodes.length)details.append(e("p","Tidak ada isi refleksi."));
+ $("#srClose").focus()
 }
 async function init(){
- date();
- if(role==="guru"){
-  tools.classList.remove("personal-hidden");readForm.classList.add("personal-hidden");reflectForm.classList.add("personal-hidden");
-  try{
-   const result=await call("roster");
-   student.replaceChildren(new Option("Pilih siswa",""));
-   for(const a of result.students||[])student.add(new Option(a.display_name,a.student_id));
-   show("Pilih siswa untuk melihat jurnal.");$("#personalHistory").replaceChildren(make("p","Pilih siswa terlebih dahulu."));
-  }catch(e){show("Daftar siswa gagal dimuat: "+e.message)}
- }else await load();
+ if(!state.ready){
+  const current=todayWIB(),p=actualPeriod(current);
+  for(let y=p.schoolStart-2;y<=p.schoolStart+2;y++)year.add(new Option(y+"/"+(y+1),y+"/"+(y+1)));
+  year.value=p.schoolStart+"/"+(p.schoolStart+1);semester.value=String(p.semester);
+  $("#srAdd").hidden=role==="guru";$("#srTeacherControl").hidden=role!=="guru";
+  if(role==="guru"){
+   try{const res=await api("roster");student.replaceChildren(new Option("Pilih siswa",""));for(const person of res.students||[])student.add(new Option(person.display_name,person.student_id))}catch(err){say("Daftar siswa gagal dimuat: "+err.message)}
+  }
+  state.ready=true;
+ }
+ await load();
 }
-root.querySelectorAll("[data-personal-tab]").forEach(b=>b.addEventListener("click",()=>{state.category=b.dataset.personalTab;view()}));
+root.querySelectorAll("[data-sr-filter]").forEach(b=>b.addEventListener("click",()=>{
+ state.filter=b.dataset.srFilter;
+ root.querySelectorAll("[data-sr-filter]").forEach(item=>item.setAttribute("aria-pressed",String(item===b)));
+ statAndRows()
+}));
+year.addEventListener("change",statAndRows);semester.addEventListener("change",statAndRows);
 student.addEventListener("change",()=>{state.student=student.value;load()});
-readForm.addEventListener("submit",e=>{e.preventDefault();save(readForm,"reading")});
-reflectForm.addEventListener("submit",e=>{e.preventDefault();save(reflectForm,"reflection")});
-$("#personalReload").addEventListener("click",()=>role==="guru"?init():load());
-init();
+$("#srAdd").addEventListener("click",openModal);$("#srClose").addEventListener("click",closeModal);$("#srCancel").addEventListener("click",closeModal);
+modal.addEventListener("click",event=>{if(event.target===modal)closeModal()});
+document.addEventListener("keydown",event=>{if(event.key==="Escape"&&!modal.hidden)closeModal()});
+form.addEventListener("submit",async event=>{
+ event.preventDefault();if(state.busy)return;
+ const submit=$("#srSave");submit.disabled=true;
+ try{const body=Object.fromEntries(new FormData(form).entries());const entry_date=body.entry_date;delete body.entry_date;
+ await api("save",{category:"reflection",entry_date,payload:body});closeModal();await load();say("Self Reflection berhasil disimpan di server.7mit.")
+ }catch(err){say("Gagal menyimpan: "+err.message)}finally{submit.disabled=false}
+});
+document.addEventListener("click",event=>{
+ const button=event.target.closest?.('[data-page="selfReflections"],[data-go="selfReflections"]');
+ if(button)setTimeout(init,0)
+});
+if(root.classList.contains("active"))init();else statAndRows();
 })();
 </script>
 </body>
