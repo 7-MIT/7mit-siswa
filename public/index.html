@@ -12070,31 +12070,44 @@ html[data-theme-resolved="dark"] .quiz-choice-note-v141{
 @media(prefers-reduced-motion:no-preference){#selfReflections .sr-stat,#selfReflections .sr-sheet{animation:sr-enter .25s ease-out both}@keyframes sr-enter{from{opacity:.25;transform:translateY(7px)}to{opacity:1;transform:none}}}
 </style>
 <section class="page" id="selfReflections">
- <header class="topbar"><div class="title"><h2>Self Reflections</h2><p>Catat pengalaman, pembelajaran, dan perbaikan dirimu dalam satu semester.</p></div></header>
+ <header class="topbar"><div class="title"><h2>Self Reflections</h2><p>Refleksi diri bulanan: pengalaman, pembelajaran, dan target perbaikan setiap bulan.</p></div></header>
  <div class="sr-shell">
-  <div class="sr-tabs" role="group" aria-label="Filter refleksi"><button type="button" data-sr-filter="all" aria-pressed="true"><i data-lucide="notebook-pen"></i> Semua Refleksi</button><button type="button" data-sr-filter="month" aria-pressed="false"><i data-lucide="calendar-days"></i> Bulan Ini</button></div>
-  <section class="sr-hero" aria-labelledby="srTargetTitle"><h3 id="srTargetTitle">Target Self Reflections</h3><p class="sr-hint">Sasaran pribadi: <strong>20 refleksi</strong> per semester. Catatan tidak dinilai berdasarkan isi atau perasaanmu.</p><p class="sr-hero-meta"><i data-lucide="calendar-check"></i> Tahun ajaran aktif: <strong id="srCurrentPeriod">—</strong></p>
-    <div class="sr-controls">
-      <div class="sr-field"><label for="srSemester">Semester</label><select id="srSemester"><option value="1">Semester 1</option><option value="2">Semester 2</option></select></div>
-      <div class="sr-field"><label for="srYear">Tahun Ajaran</label><select id="srYear"></select></div>
-      <div class="sr-field" id="srTeacherControl" hidden><label for="srStudent">Pilih Siswa</label><select id="srStudent"><option value="">Pilih siswa</option></select></div>
-    </div>
+  <div class="sr-tabs" role="group" aria-label="Lihat refleksi"><button type="button" data-sr-filter="month" aria-pressed="true"><i data-lucide="calendar-days"></i> Bulan Terpilih</button><button type="button" data-sr-filter="all" aria-pressed="false"><i data-lucide="history"></i> Semua Bulan</button></div>
+  <section class="sr-hero" aria-labelledby="srTargetTitle">
+   <h3 id="srTargetTitle">Target Refleksi Bulanan</h3>
+   <p class="sr-hint">Isi <strong>1 Self Reflection setiap bulan</strong>. Jika ingin memperbaiki jawaban, kamu dapat mengedit refleksi bulan yang sama tanpa membuat catatan ganda.</p>
+   <p class="sr-hero-meta"><i data-lucide="calendar-check"></i> Periode yang dipilih: <strong id="srCurrentPeriod">—</strong></p>
+   <div class="sr-controls">
+    <div class="sr-field"><label for="srMonthSelect">Bulan</label><select id="srMonthSelect"></select></div>
+    <div class="sr-field"><label for="srYear">Tahun</label><select id="srYear"></select></div>
+    <div class="sr-field" id="srTeacherControl" hidden><label for="srStudent">Pilih Siswa</label><select id="srStudent"><option value="">Pilih siswa</option></select></div>
+   </div>
   </section>
-  <div class="sr-stats" aria-label="Statistik refleksi"><div class="sr-stat"><span>Total Reflections</span><strong id="srTotal">0</strong></div><div class="sr-stat"><span>Bulan Ini</span><strong id="srMonth">0</strong></div><div class="sr-stat"><span>Target Semester</span><strong id="srTarget">20</strong></div><div class="sr-stat"><span>Sisa Target</span><strong id="srRemaining">20</strong></div></div>
-  <section class="sr-sheet"><div class="sr-sheet-head"><div><h3>Reflection List</h3><p class="sr-hint" id="srListSub">Daftar refleksi yang telah kamu tulis.</p></div><button class="sr-add" type="button" id="srAdd"><i data-lucide="plus"></i> Add</button></div>
-    <div class="sr-info" id="srStatus" role="status" aria-live="polite">Memuat Self Reflections dari server.7mit…</div>
-    <div class="sr-table-scroll"><table><thead><tr><th>No.</th><th>Tanggal</th><th>Mood</th><th>What Happened Today</th><th>Aksi</th></tr></thead><tbody id="srRows"><tr><td colspan="5" class="sr-empty">Memuat data…</td></tr></tbody></table></div>
-    <p class="sr-privacy">Refleksi bersifat pribadi dan dapat dibaca oleh guru yang berwenang untuk pendampingan siswa. Akses dan penyimpanan melalui sesi akun.7mit di server.7mit.</p>
+  <div class="sr-stats" aria-label="Statistik refleksi bulanan">
+   <div class="sr-stat"><span>Bulan Terisi Tahun Ini</span><strong id="srTotal">0</strong></div>
+   <div class="sr-stat"><span>Refleksi Bulan Terpilih</span><strong id="srMonth">0</strong></div>
+   <div class="sr-stat"><span>Target Bulanan</span><strong id="srTarget">1</strong></div>
+   <div class="sr-stat"><span>Status Pengisian</span><strong id="srRemaining">Belum</strong></div>
+  </div>
+  <section class="sr-sheet">
+   <div class="sr-sheet-head"><div><h3>Monthly Reflection List</h3><p class="sr-hint" id="srListSub">Daftar refleksi setiap bulan.</p></div><button class="sr-add" type="button" id="srAdd"><i data-lucide="plus"></i> Isi Refleksi</button></div>
+   <div class="sr-info" id="srStatus" role="status" aria-live="polite">Menghubungkan ke server.7mit…</div>
+   <div class="sr-table-scroll"><table><thead><tr><th>No.</th><th>Bulan / Tanggal</th><th>Perasaan</th><th>Refleksi Bulanan</th><th>Aksi</th></tr></thead><tbody id="srRows"><tr><td colspan="5" class="sr-empty">Memuat data…</td></tr></tbody></table></div>
+   <p class="sr-privacy">Data hanya untuk siswa pemilik akun dan guru yang berwenang. Jawaban kamu dapat dibaca oleh guru untuk pendampingan. Data disimpan di server.7mit dan tidak dipublikasikan.</p>
   </section>
  </div>
- <div class="sr-overlay" id="srModal" hidden><div class="sr-dialog" role="dialog" aria-modal="true" aria-labelledby="srModalTitle"><div class="sr-dialog-head"><h3 id="srModalTitle">Add Self Reflection</h3><button type="button" class="sr-icon-btn" id="srClose" aria-label="Tutup dialog"><i data-lucide="x"></i></button></div>
- <form id="srForm"><div class="sr-form-grid"><div class="sr-field"><label for="srDate">Tanggal</label><input id="srDate" name="entry_date" type="date" required></div><div class="sr-field"><label for="srMood">Mood / Perasaan</label><select id="srMood" name="mood"><option value="">Pilih (opsional)</option><option>Senang</option><option>Tenang</option><option>Semangat</option><option>Lelah</option><option>Sedih</option><option>Cemas</option><option>Campur aduk</option></select></div>
- <div class="sr-field sr-full"><label for="srHappened">What Happened Today</label><textarea id="srHappened" name="happened" maxlength="5000" placeholder="Apa yang terjadi hari ini?"></textarea></div>
- <div class="sr-field sr-full"><label for="srLearned">What I Learned</label><textarea id="srLearned" name="learned" maxlength="5000" placeholder="Apa yang kamu pelajari?"></textarea></div>
- <div class="sr-field sr-full"><label for="srImprove">What I Should Improve</label><textarea id="srImprove" name="improve" maxlength="5000" placeholder="Apa yang ingin kamu perbaiki?"></textarea></div>
- <div class="sr-field sr-full"><label for="srNextSteps">Next Action</label><textarea id="srNextSteps" name="next_steps" maxlength="5000" placeholder="Langkah kecil yang akan kamu lakukan"></textarea></div></div>
- <div class="sr-dialog-actions"><button type="button" id="srCancel">Batal</button><button type="submit" class="sr-submit" id="srSave">Simpan Refleksi</button></div></form>
- <div class="sr-detail" id="srDetails" hidden></div></div></div>
+ <div class="sr-overlay" id="srModal" hidden><div class="sr-dialog" role="dialog" aria-modal="true" aria-labelledby="srModalTitle">
+  <div class="sr-dialog-head"><h3 id="srModalTitle">Isi Self Reflection Bulanan</h3><button type="button" class="sr-icon-btn" id="srClose" aria-label="Tutup dialog"><i data-lucide="x"></i></button></div>
+  <form id="srForm"><div class="sr-form-grid">
+   <div class="sr-field"><label for="srDate">Tanggal Refleksi</label><input id="srDate" name="entry_date" type="date" required></div>
+   <div class="sr-field"><label for="srMood">Perasaan Selama Bulan Ini</label><select id="srMood" name="mood"><option value="">Pilih (opsional)</option><option>Senang</option><option>Tenang</option><option>Semangat</option><option>Lelah</option><option>Sedih</option><option>Cemas</option><option>Campur aduk</option></select></div>
+   <div class="sr-field sr-full"><label for="srHappened">What Happened This Month? *</label><textarea id="srHappened" name="happened" maxlength="5000" required placeholder="Kegiatan, pengalaman, atau hal penting selama bulan ini."></textarea></div>
+   <div class="sr-field sr-full"><label for="srLearned">What I Learned This Month *</label><textarea id="srLearned" name="learned" maxlength="5000" required placeholder="Apa yang kamu pelajari selama bulan ini?"></textarea></div>
+   <div class="sr-field sr-full"><label for="srImprove">What I Should Improve Next Month *</label><textarea id="srImprove" name="improve" maxlength="5000" required placeholder="Apa yang ingin kamu perbaiki bulan depan?"></textarea></div>
+   <div class="sr-field sr-full"><label for="srNextSteps">My Next Action Plan *</label><textarea id="srNextSteps" name="next_steps" maxlength="5000" required placeholder="Langkah konkret untuk bulan berikutnya."></textarea></div>
+  </div><div class="sr-dialog-actions"><button type="button" id="srCancel">Batal</button><button type="submit" class="sr-submit" id="srSave">Simpan Refleksi</button></div></form>
+  <div class="sr-detail" id="srDetails" hidden></div>
+ </div></div>
 </section>
 
 <section class="page active" id="dashboard">
@@ -29899,112 +29912,146 @@ html[data-theme-resolved="dark"] .dues-roster-badge.paid{background:#14532d;colo
 "use strict";
 const root=document.getElementById("selfReflections");if(!root)return;
 const role="student",$=sel=>root.querySelector(sel);
-const rows=$("#srRows"),status=$("#srStatus"),year=$("#srYear"),semester=$("#srSemester"),student=$("#srStudent"),modal=$("#srModal"),form=$("#srForm");
-const state={entries:[],filtered:[],student:"",filter:"all",ready:false,busy:false};
-const target=20;
-const e=(tag,content)=>{const node=document.createElement(tag);node.textContent=String(content??"");return node};
-function say(message){status.textContent=message}
-function todayWIB(){return new Date(Date.now()+7*3600000).toISOString().slice(0,10)}
-function thisMonthWIB(){return todayWIB().slice(0,7)}
-function setNumber(id,n){$(id).textContent=String(n)}
-function currentSelection(){return year.value+" · Semester "+semester.value}
-function actualPeriod(date){const [yyyy,mm]=date.split("-").map(Number);return{schoolStart:mm>=7?yyyy:yyyy-1,semester:mm>=7?1:2}}
-function inSemester(value){const [y,m]=value.split("-").map(Number);const start=Number(year.value.slice(0,4));return semester.value==="1"?(y===start&&m>=7&&m<=12):(y===start+1&&m>=1&&m<=6)}
-const iconUpdate=()=>{try{window.lucide?.createIcons?.({nodes:[root]})}catch(_){}};
+const rows=$("#srRows"),status=$("#srStatus"),year=$("#srYear"),month=$("#srMonthSelect"),student=$("#srStudent"),modal=$("#srModal"),form=$("#srForm");
+const monthNames=["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
+const state={entries:[],student:"",filter:"month",ready:false,busy:false,request:0};
+const make=(tag,val)=>{const el=document.createElement(tag);el.textContent=String(val??"");return el};
+const nowWIB=()=>new Date(Date.now()+7*3600000).toISOString().slice(0,10);
+const monthKey=()=>year.value+"-"+month.value.padStart(2,"0");
+const selectedName=()=>monthNames[Number(month.value)-1]+" "+year.value;
+const say=text=>status.textContent=text;
+const number=(selector,value)=>$(selector).textContent=String(value);
+const updateIcons=()=>{try{window.lucide?.createIcons?.({nodes:[root]})}catch(_){}};
 const API=()=>String(window.SUPABASE_URL||"https://lajzrempjyoqkubkumhb.supabase.co").replace(/\/$/,"")+"/functions/v1/personal-journal-api";
-async function api(action,extras={}){
+async function api(action,params={}){
  const token=await window.K7Session?.getToken?.();
- if(!token)throw Error("Sesi akun.7mit tidak tersedia. Silakan login kembali.");
+ if(!token)throw Error("Sesi akun.7mit tidak ditemukan. Silakan login kembali.");
  const key=window.SUPABASE_ANON_KEY;
- if(!key)throw Error("Konfigurasi server.7mit belum tersedia.");
- const response=await fetch(API(),{method:"POST",headers:{"Content-Type":"application/json","apikey":key,"Authorization":"Bearer "+key,"x-7mit-session":String(token)},body:JSON.stringify({action,...extras})});
+ if(!key)throw Error("Konfigurasi server.7mit tidak tersedia.");
+ const response=await fetch(API(),{method:"POST",headers:{"Content-Type":"application/json","apikey":key,"Authorization":"Bearer "+key,"x-7mit-session":String(token)},body:JSON.stringify({action,...params})});
  const result=await response.json().catch(()=>({}));
- if(!response.ok||result.ok===false)throw Error(result.message||"Server gagal merespons.");
+ if(!response.ok||result.ok===false)throw Error(result.message||"Permintaan gagal diproses.");
  return result;
 }
-function statAndRows(){
- const semesterEntries=state.entries.filter(x=>inSemester(x.entry_date));
- const monthTotal=semesterEntries.filter(x=>x.entry_date.startsWith(thisMonthWIB())).length;
- const visible=semesterEntries.filter(x=>state.filter==="all"||x.entry_date.startsWith(thisMonthWIB()));
- state.filtered=visible;
- setNumber("#srTotal",semesterEntries.length);setNumber("#srMonth",monthTotal);setNumber("#srTarget",target);setNumber("#srRemaining",Math.max(0,target-semesterEntries.length));
- $("#srCurrentPeriod").textContent=currentSelection();
- $("#srListSub").textContent=(role==="guru"?"Riwayat refleksi siswa":"Riwayat refleksi pribadimu")+" · "+currentSelection();
+const selectedEntry=()=>state.entries.find(x=>x.entry_date.startsWith(monthKey()));
+function render(){
+ const key=monthKey(),currentMonth=nowWIB().slice(0,7);
+ const selected=state.entries.filter(x=>x.entry_date.startsWith(key));
+ const yearly=state.entries.filter(x=>x.entry_date.slice(0,4)===year.value);
+ const visible=state.filter==="month"?selected:yearly;
+ number("#srTotal",new Set(yearly.map(x=>x.entry_date.slice(0,7))).size);
+ number("#srMonth",selected.length?1:0);
+ number("#srTarget",1);
+ number("#srRemaining",selected.length?"Sudah":"Belum");
+ $("#srCurrentPeriod").textContent=selectedName();
+ $("#srListSub").textContent=(role==="guru"?"Jurnal siswa":"Jurnal refleksi pribadimu")+" · "+(state.filter==="month"?selectedName():"Tahun "+year.value);
+ const add=$("#srAdd");
+ if(role!=="guru"){
+  add.hidden=false;
+  add.disabled=key>currentMonth;
+  add.textContent=selected.length?"Edit Refleksi":"＋ Isi Refleksi";
+  add.title=key>currentMonth?"Refleksi bulan depan belum dapat diisi.":"Isi satu refleksi setiap bulan.";
+ }else add.hidden=true;
  rows.replaceChildren();
- if(role==="guru"&&!state.student){const tr=e("tr","");const td=e("td","Pilih siswa untuk melihat jurnal refleksinya.");td.colSpan=5;td.className="sr-empty";tr.append(td);rows.append(tr);return}
- if(!visible.length){const tr=e("tr","");const td=e("td","Belum ada refleksi untuk periode ini.");td.colSpan=5;td.className="sr-empty";tr.append(td);rows.append(tr);return}
- for(const [i,x] of visible.entries()){
-  const tr=e("tr",""),payload=x.payload||{};
-  tr.append(e("td",i+1),e("td",x.entry_date));
-  const mood=e("td","");mood.append(e("span",payload.mood||"—"));mood.firstChild.className="sr-emotion";tr.append(mood);
-  const summary=String(payload.happened||payload.highlights||"—");
-  tr.append(e("td",summary.length>88?summary.slice(0,85)+"…":summary));
-  const actions=e("td",""),buttons=e("div","");buttons.className="sr-row-actions";
-  const detail=e("button","Lihat");detail.type="button";detail.addEventListener("click",()=>openDetail(x));buttons.append(detail);
-  if(role!=="guru"){const del=e("button","Hapus");del.className="sr-danger";del.type="button";del.addEventListener("click",async()=>{if(!confirm("Hapus refleksi ini? Tindakan ini tidak dapat dibatalkan."))return;try{await api("delete",{id:x.id});say("Refleksi dihapus.");await load()}catch(err){say("Gagal menghapus: "+err.message)}});buttons.append(del)}
-  actions.append(buttons);tr.append(actions);rows.append(tr);
+ if(role==="guru"&&!state.student){const tr=make("tr",""),cell=make("td","Pilih siswa terlebih dahulu.");cell.colSpan=5;cell.className="sr-empty";tr.append(cell);rows.append(tr);return}
+ if(!visible.length){const tr=make("tr",""),cell=make("td","Belum ada refleksi pada periode ini.");cell.colSpan=5;cell.className="sr-empty";tr.append(cell);rows.append(tr);return}
+ for(const [i,entry] of visible.entries()){
+  const p=entry.payload||{},tr=make("tr","");
+  tr.append(make("td",i+1),make("td",monthNames[Number(entry.entry_date.slice(5,7))-1]+" "+entry.entry_date));
+  const mood=make("td",""),tag=make("span",p.mood||"—");tag.className="sr-emotion";mood.append(tag);tr.append(mood);
+  const summary=String(p.happened||p.highlights||"—");
+  tr.append(make("td",summary.length>85?summary.slice(0,85)+"…":summary));
+  const action=make("td",""),buttons=make("div","");buttons.className="sr-row-actions";
+  const open=make("button","Lihat");open.type="button";open.addEventListener("click",()=>details(entry));buttons.append(open);
+  if(role!=="guru"){
+   const edit=make("button","Edit");edit.type="button";edit.addEventListener("click",()=>openForm(entry));buttons.append(edit);
+   const remove=make("button","Hapus");remove.type="button";remove.className="sr-danger";
+   remove.addEventListener("click",async()=>{if(!confirm("Hapus refleksi bulan "+entry.entry_date.slice(0,7)+"?"))return;try{await api("delete",{id:entry.id});await load();say("Refleksi berhasil dihapus.")}catch(error){say("Gagal menghapus: "+error.message)}});buttons.append(remove);
+  }
+  action.append(buttons);tr.append(action);rows.append(tr);
  }
 }
 async function load(){
- if(state.busy)return;
- state.busy=true;
- say("Menghubungkan ke server.7mit…");
+ const request=++state.request;
+ say("Memuat data dari server.7mit…");
+ if(role==="guru"&&!state.student){state.entries=[];render();say("Pilih siswa untuk melihat refleksi bulanannya.");return}
  try{
-  if(role==="guru"&&!state.student){state.entries=[];statAndRows();say("Pilih siswa untuk melihat Self Reflections.");return}
-  const res=await api("list",{category:"reflection",student_id:state.student});
-  state.entries=res.entries||[];
-  statAndRows();say("Data berhasil dimuat dari server.7mit.");
- }catch(err){state.entries=[];statAndRows();say("Gagal memuat refleksi: "+err.message)}
- finally{state.busy=false}
+  const result=await api("list",{category:"reflection",student_id:state.student});
+  if(request!==state.request)return;
+  state.entries=Array.isArray(result.entries)?result.entries:[];
+  render();say("Refleksi bulanan berhasil dimuat dari server.7mit.");
+ }catch(error){if(request!==state.request)return;state.entries=[];render();say("Gagal memuat jurnal: "+error.message)}
 }
-let previousFocus=null;
-function openModal(){previousFocus=document.activeElement;modal.hidden=false;$("#srDetails").hidden=true;form.hidden=false;$("#srModalTitle").textContent="Add Self Reflection";form.reset();$("#srDate").value=todayWIB();$("#srDate").focus();iconUpdate()}
-function closeModal(){modal.hidden=true;form.hidden=false;$("#srDetails").hidden=true;previousFocus?.focus?.()}
-function openDetail(entry){
- previousFocus=document.activeElement;modal.hidden=false;form.hidden=true;$("#srDetails").hidden=false;$("#srModalTitle").textContent="Self Reflection · "+entry.entry_date;
- const details=$("#srDetails");details.replaceChildren();
- const payload=entry.payload||{};
- for(const [label,val] of [["Mood / Perasaan",payload.mood],["What Happened Today",payload.happened||payload.highlights],["What I Learned",payload.learned||payload.lessons],["What I Should Improve",payload.improve||payload.challenges],["Next Action",payload.next_steps]]){
-  if(!val)continue;const item=e("p","");item.append(e("strong",label),e("span",val));details.append(item)
+let focused=null;
+function showDialog(){focused=document.activeElement;modal.hidden=false;$("#srClose").focus();updateIcons()}
+function closeDialog(){modal.hidden=true;form.hidden=false;$("#srDetails").hidden=true;focused?.focus?.()}
+function applyDate(date){
+ const key=monthKey();
+ const last=new Date(Date.UTC(Number(year.value),Number(month.value),0)).toISOString().slice(0,10);
+ const max=last<nowWIB()?last:nowWIB();
+ const field=$("#srDate");field.min=key+"-01";field.max=max;field.value=date||max;
+}
+function openForm(entry){
+ const picked=entry||selectedEntry();
+ form.reset();
+ const date=picked?.entry_date||"";
+ applyDate(date);
+ const p=picked?.payload||{};
+ for(const field of ["mood","happened","learned","improve","next_steps"]){if(form.elements[field])form.elements[field].value=p[field]||({happened:p.highlights,learned:p.lessons,improve:p.challenges}[field])||""}
+ $("#srModalTitle").textContent=picked?"Edit Self Reflection · "+selectedName():"Self Reflection · "+selectedName();
+ $("#srSave").textContent=picked?"Simpan Perubahan":"Kirim Refleksi Bulanan";
+ form.hidden=false;$("#srDetails").hidden=true;showDialog();$("#srDate").focus();
+}
+function details(entry){
+ const area=$("#srDetails");area.replaceChildren();
+ for(const [name,answer] of [["Mood / Perasaan",entry.payload?.mood],["What Happened This Month?",entry.payload?.happened||entry.payload?.highlights],["What I Learned This Month",entry.payload?.learned||entry.payload?.lessons],["What I Should Improve",entry.payload?.improve||entry.payload?.challenges],["Next Action Plan",entry.payload?.next_steps]]){
+  if(!answer)continue;const item=make("p","");item.append(make("strong",name),make("span",answer));area.append(item)
  }
- if(!details.childNodes.length)details.append(e("p","Tidak ada isi refleksi."));
- $("#srClose").focus()
+ if(!area.childNodes.length)area.append(make("p","Tidak ada jawaban."));
+ $("#srModalTitle").textContent="Refleksi · "+entry.entry_date;
+ form.hidden=true;area.hidden=false;showDialog();
 }
 async function init(){
  if(!state.ready){
-  const current=todayWIB(),p=actualPeriod(current);
-  for(let y=p.schoolStart-2;y<=p.schoolStart+2;y++)year.add(new Option(y+"/"+(y+1),y+"/"+(y+1)));
-  year.value=p.schoolStart+"/"+(p.schoolStart+1);semester.value=String(p.semester);
-  $("#srAdd").hidden=role==="guru";$("#srTeacherControl").hidden=role!=="guru";
-  if(role==="guru"){
-   try{const res=await api("roster");student.replaceChildren(new Option("Pilih siswa",""));for(const person of res.students||[])student.add(new Option(person.display_name,person.student_id))}catch(err){say("Daftar siswa gagal dimuat: "+err.message)}
-  }
+  const now=nowWIB(),y=Number(now.slice(0,4));
+  for(let i=1;i<=12;i++)month.add(new Option(monthNames[i-1],String(i)));
+  for(let i=y-3;i<=y+1;i++)year.add(new Option(String(i),String(i)));
+  year.value=String(y);month.value=String(Number(now.slice(5,7)));
+  $("#srTeacherControl").hidden=role!=="guru";$("#srAdd").hidden=role==="guru";
   state.ready=true;
+  if(role==="guru"){
+   try{const data=await api("roster");student.replaceChildren(new Option("Pilih siswa",""));for(const person of data.students||[])student.add(new Option(person.display_name,person.student_id))}catch(error){say("Daftar siswa tidak tersedia: "+error.message)}
+  }
  }
  await load();
 }
-root.querySelectorAll("[data-sr-filter]").forEach(b=>b.addEventListener("click",()=>{
- state.filter=b.dataset.srFilter;
- root.querySelectorAll("[data-sr-filter]").forEach(item=>item.setAttribute("aria-pressed",String(item===b)));
- statAndRows()
+root.querySelectorAll("[data-sr-filter]").forEach(button=>button.addEventListener("click",()=>{
+ state.filter=button.dataset.srFilter;
+ root.querySelectorAll("[data-sr-filter]").forEach(b=>b.setAttribute("aria-pressed",String(b===button)));
+ render()
 }));
-year.addEventListener("change",statAndRows);semester.addEventListener("change",statAndRows);
+year.addEventListener("change",render);
+month.addEventListener("change",render);
 student.addEventListener("change",()=>{state.student=student.value;load()});
-$("#srAdd").addEventListener("click",openModal);$("#srClose").addEventListener("click",closeModal);$("#srCancel").addEventListener("click",closeModal);
-modal.addEventListener("click",event=>{if(event.target===modal)closeModal()});
-document.addEventListener("keydown",event=>{if(event.key==="Escape"&&!modal.hidden)closeModal()});
+$("#srAdd").addEventListener("click",()=>{if(role==="guru"||monthKey()>nowWIB().slice(0,7))return;openForm()});
+$("#srClose").addEventListener("click",closeDialog);$("#srCancel").addEventListener("click",closeDialog);
+modal.addEventListener("click",event=>{if(event.target===modal)closeDialog()});
+document.addEventListener("keydown",event=>{if(event.key==="Escape"&&!modal.hidden)closeDialog()});
 form.addEventListener("submit",async event=>{
  event.preventDefault();if(state.busy)return;
- const submit=$("#srSave");submit.disabled=true;
- try{const body=Object.fromEntries(new FormData(form).entries());const entry_date=body.entry_date;delete body.entry_date;
- await api("save",{category:"reflection",entry_date,payload:body});closeModal();await load();say("Self Reflection berhasil disimpan di server.7mit.")
- }catch(err){say("Gagal menyimpan: "+err.message)}finally{submit.disabled=false}
+ const button=$("#srSave");button.disabled=true;state.busy=true;
+ try{
+  const payload=Object.fromEntries(new FormData(form).entries()),entry_date=payload.entry_date;delete payload.entry_date;
+  if(entry_date.slice(0,7)!==monthKey())throw Error("Tanggal harus sesuai bulan yang dipilih.");
+  const outcome=await api("save",{category:"reflection",entry_date,payload});
+  closeDialog();await load();say(outcome.updated?"Refleksi bulan ini berhasil diperbarui.":"Refleksi bulanan berhasil dikirim ke server.7mit.");
+ }catch(error){say("Gagal menyimpan: "+error.message)}
+ finally{state.busy=false;button.disabled=false}
 });
 document.addEventListener("click",event=>{
- const button=event.target.closest?.('[data-page="selfReflections"],[data-go="selfReflections"]');
- if(button)setTimeout(init,0)
+ if(event.target.closest?.('[data-page="selfReflections"],[data-go="selfReflections"]'))setTimeout(init,0)
 });
-if(root.classList.contains("active"))init();else statAndRows();
+if(root.classList.contains("active"))init();
 })();
 </script>
 </body>
