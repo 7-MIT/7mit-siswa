@@ -25901,7 +25901,7 @@ function telkomCreatePeer(remoteKey){
      const meth=(x.payments||[]).map(p=>`${rmeth(p.method)} ${fmt(p.amount)}`).join(' · ');
      const amt=x.status==='paid'?fmt(x.paid_amount):x.status==='partial'?`${fmt(x.paid_amount)} <small>dari ${fmt(x.amount)}</small>`:x.status==='pending'?`<small>menunggu</small> ${fmt(x.pending_amount)}`:fmt(x.amount);
      const sub=x.status==='partial'?`Sisa ${fmt(x.remaining)}`:x.status==='paid'?'Lunas':x.status==='pending'?`Pembayaran sedang diproses${x.paid_amount?' · sudah '+fmt(x.paid_amount):''}`:'Belum membayar';
-     return`<div class="dues-roster-row ${cls}" style="--i:${Math.min(i,14)}"><span class="dues-roster-no">${i+1}</span><div class="dues-roster-who"><b>${esc(x.name)}</b><small>${esc(sub)}${meth?' · '+esc(meth):''}</small>${x.status==='partial'||x.status==='paid'?`<div class="dues-roster-bar"><i style="width:${pct}%"></i></div>`:''}</div><div class="dues-roster-amt"><span>${amt}</span><em class="dues-roster-badge ${cls}">${lab}</em></div></div>`;
+     return`<div class="dues-roster-row ${cls}" style="--i:${Math.min(i,14)}"><span class="dues-roster-no">${i+1}</span><div class="dues-roster-who"><b>${esc(x.name)}</b><small>${esc(sub)}${meth?' · '+esc(meth):''}</small>${x.prepaid?`<span class="dues-roster-pre" title="${x.prepaid.periods} periode berikutnya sudah lunas">Dibayar di muka s.d. periode ${x.prepaid.until_cycle}${x.prepaid.until_date?' ('+new Date(x.prepaid.until_date+'T00:00:00').toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'})+')':''}</span>`:''}${x.status==='partial'||x.status==='paid'?`<div class="dues-roster-bar"><i style="width:${pct}%"></i></div>`:''}</div><div class="dues-roster-amt"><span>${amt}</span><em class="dues-roster-badge ${cls}">${lab}</em></div></div>`;
    }).join(''):'<div class="dues-empty">Tidak ada siswa pada filter ini.</div>';
  }
  document.addEventListener('click',e=>{
@@ -29803,6 +29803,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 .dues-roster-row{display:flex;align-items:center;gap:10px;padding:9px 11px;border-radius:12px;border:1px solid var(--line,#e5e9f0);background:rgba(120,130,160,.06);animation:duesRosterIn .3s both;animation-delay:calc(var(--i,0)*18ms)}
 .dues-roster-no{flex:none;width:22px;text-align:center;font-size:11px;font-weight:800;opacity:.55}
 .dues-roster-who{flex:1;min-width:0}.dues-roster-who b{display:block;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.dues-roster-who small{display:block;font-size:11px;opacity:.65;margin-top:1px}
+.dues-roster-pre{display:inline-block;margin-top:4px;padding:2px 9px;border-radius:999px;font-size:10px;font-weight:800;background:#ede9fe;color:#5b21b6}html[data-theme-resolved="dark"] .dues-roster-pre{background:#4c1d95;color:#ddd6fe}
 .dues-roster-bar{height:5px;border-radius:99px;background:rgba(120,130,160,.22);margin-top:6px;overflow:hidden}.dues-roster-bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#16a34a,#22c55e)}
 .dues-roster-row.partial .dues-roster-bar i{background:linear-gradient(90deg,#d97706,#f59e0b)}
 .dues-roster-amt{flex:none;text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:4px;font-size:13px;font-weight:800}.dues-roster-amt small{font-size:10px;font-weight:600;opacity:.65}
